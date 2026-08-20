@@ -26,7 +26,7 @@ const FAQ_DATA = [
   {
     category: 'Costos y Pagos',
     questions: [
-      { q: '¿Cuál es el costo de constituir una sociedad?', a: 'Los costos varían según el tipo: SRL (500 CUP), SA (1,200 CUP), Cooperativa (300 CUP). Adicionalmente se debe pagar por la reserva de denominación y el certificado digital.' },
+      { q: '¿Cuál es el costo de constituir una sociedad?', a: 'La Resolución 51/2021 unifica la tarifa: presentación de primera inscripción 900 CUP y asiento de primera inscripción 1,200 CUP. La reserva de denominación cuesta 600 CUP. Las tarifas no incluyen impuestos.' },
       { q: '¿Cómo puedo realizar el pago de los aranceles?', a: 'Los pagos pueden realizarse en línea a través de la plataforma mediante transferencia bancaria o en las oficinas del Registro Mercantil en efectivo o con tarjeta.' },
     ],
   },

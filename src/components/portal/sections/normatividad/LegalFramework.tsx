@@ -1,46 +1,42 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Gavel, FileText, ExternalLink } from 'lucide-react';
+import { Gavel, FileText, ExternalLink, CalendarDays } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
-const LEGAL_FRAMEWORK = [
-  {
-    category: 'Leyes',
-    items: [
-      'Ley No. 48/84 - Ley de las Sociedades Mercantiles',
-      'Ley No. 118/2013 - Ley de la Inversión Extranjera (VUCE)',
-      'Ley No. 107/2016 - Ley del Registro Mercantil',
-      'Código de Comercio de Cuba',
-    ],
-  },
-  {
-    category: 'Decretos Ley',
-    items: [
-      'Decreto Ley No. 354/2019 - Reglamento del Registro Mercantil',
-      'Decreto Ley No. 349/2019 - Solicitud de Primera Inscripción de un Sujeto',
-    ],
-  },
-  {
-    category: 'Resoluciones',
-    items: [
-      'Resolución No. 120/2020 - Normas Procedimentales',
-      'Resolución No. 85/2021 - Tarifa de Derechos',
-      'Resolución No. 45/2023 - Digitalización de Trámites',
-      'Resolución No. 92/2024 - Estado de Situación Digitales',
-    ],
-  },
-  {
-    category: 'Instrucciones',
-    items: [
-      'Instrucción No. 01/2024 - Procedimiento de Constitución Digital',
-      'Instrucción No. 02/2024 - Modificaciones Societarias',
-      'Instrucción No. 03/2024 - Depósito de Estado de Situación',
-    ],
-  },
+interface RegulationItem {
+  id: string;
+  title: string;
+  type: string;
+  number?: string;
+  description?: string;
+  content?: string;
+  effectiveDate?: string;
+}
+
+const FALLBACK_FRAMEWORK = [
+  { category: 'Marco legal', items: ['Decreto-Ley No. 226/2001 — Del Registro Mercantil'] },
+  { category: 'Reglamento', items: ['Resolución No. 230/2002 — Reglamento del Registro Mercantil'] },
+  { category: 'Tarifas', items: ['Resolución No. 51/2021 — Tarifas del Registro Mercantil'] },
+  { category: 'Estadísticas', items: ['Extracto estadístico SIEC — Granma, febrero-marzo 2026'] },
 ];
 
-export default function LegalFramework() {
+export default function LegalFramework({ regulations }: { regulations: RegulationItem[] }) {
+  const grouped: Record<string, RegulationItem[]> = regulations.length > 0
+    ? regulations.reduce<Record<string, RegulationItem[]>>((groups, regulation) => {
+        const category = regulation.type || 'Normativa';
+        (groups[category] ||= []).push(regulation);
+        return groups;
+      }, {})
+    : FALLBACK_FRAMEWORK.reduce<Record<string, RegulationItem[]>>((groups, category) => {
+        groups[category.category] = category.items.map((title, index) => ({
+          id: `${category.category}-${index}`,
+          title,
+          type: category.category,
+        }));
+        return groups;
+      }, {});
+
   return (
     <Card className="glass-card overflow-hidden">
       <CardHeader className="p-6">
@@ -51,18 +47,25 @@ export default function LegalFramework() {
       </CardHeader>
       <CardContent className="px-6 pb-6">
         <Accordion type="multiple" className="w-full">
-          {LEGAL_FRAMEWORK.map((category) => (
-            <AccordionItem key={category.category} value={category.category}>
+          {Object.entries(grouped).map(([category, items]) => (
+            <AccordionItem key={category} value={category}>
               <AccordionTrigger className="text-[#1A1A1A] font-semibold hover:no-underline">
-                {category.category}
+                {category}
               </AccordionTrigger>
               <AccordionContent>
                 <ul className="space-y-2">
-                  {category.items.map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-[#1A1A1A] cursor-pointer transition-colors">
+                  {items.map((item) => (
+                    <li key={item.id} className="rounded-lg border border-[#D6C9BA] p-3 text-sm text-muted-foreground transition-colors hover:border-[#9E3A2E]">
                       <FileText className="w-4 h-4 text-[#9E3A2E] shrink-0" />
-                      {item}
-                      <ExternalLink className="w-3 h-3 ml-auto" />
+                      <div className="mt-2">
+                        <p className="font-semibold text-[#1A1A1A]">{item.title}</p>
+                        {item.description && <p className="mt-1 leading-relaxed">{item.description}</p>}
+                        {item.effectiveDate && (
+                          <p className="mt-2 flex items-center gap-1 text-xs"><CalendarDays className="h-3 w-3" /> Vigencia/publicación: {item.effectiveDate}</p>
+                        )}
+                        {item.content && <p className="mt-2 whitespace-pre-line leading-relaxed">{item.content}</p>}
+                      </div>
+                      {item.id.startsWith('http') && <ExternalLink className="w-3 h-3 ml-auto" />}
                     </li>
                   ))}
                 </ul>

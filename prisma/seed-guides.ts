@@ -81,11 +81,11 @@ async function main() {
   }
 
   const glosarioFAQs = [
-    { question: '¿Qué es una SRL?', answer: 'La SRL (Sociedad de Responsabilidad Limitada) es un tipo de sociedad mercantil donde la responsabilidad de los socios se limita al capital aportado. Requiere mínimo 2 socios, capital social mínimo de 5,000 CUP, y se rige por la Ley No. 107/2016 del Registro Mercantil. Es el tipo societario más común en Cuba por su flexibilidad operativa y menor complejidad administrativa.', category: 'Glosario', order: 8 },
+    { question: '¿Qué es una SRL?', answer: 'La SRL (Sociedad de Responsabilidad Limitada) es un tipo de sociedad mercantil donde la responsabilidad de los socios se limita al capital aportado. Su inscripción y publicidad se rigen por el Decreto-Ley No. 226/2001 y la Resolución No. 230/2002.', category: 'Glosario', order: 8 },
     { question: '¿Qué es una SA?', answer: 'La SA (Sociedad Anónima) es una sociedad mercantil cuyo capital está dividido en acciones. Los accionistas responden únicamente por el capital suscrito. Requiere mínimo 3 accionistas, capital social mínimo de 50,000 CUP, y debe contar con un consejo de administración.', category: 'Glosario', order: 9 },
     { question: '¿Qué es el NIRE?', answer: 'El NIRE (Número de Identificación Registral) es un código alfanumérico único que identifica a cada sociedad inscrita en el Registro Mercantil de Cuba. Se asigna en el momento de la inscripción. Formato: RMC-AAAA-NNNNN.', category: 'Glosario', order: 10 },
-    { question: '¿Qué es una Nota Simple?', answer: 'La Nota Simple es un documento informativo que contiene los datos públicos básicos de una sociedad: denominación social, NIRE, tipo societario, capital, domicilio, administradores y estado registral. Costo: 50 CUP, emisión en 1 día hábil.', category: 'Glosario', order: 11 },
-    { question: '¿Qué es el Registro Mercantil?', answer: 'El Registro Mercantil de Cuba es un registro público administrativo dependiente del Ministerio de Justicia que inscribe sociedades mercantiles y sus actos modificativos. Proporciona publicidad formal y seguridad jurídica. Regulado por la Ley No. 107/2016.', category: 'Glosario', order: 12 },
+    { question: '¿Qué es una Nota Simple?', answer: 'La Nota Simple Informativa contiene un resumen de los datos públicos registrales. La Resolución 51/2021 fija su tarifa en 300 CUP; la expedición se rige por los plazos y requisitos de legitimación de la Resolución 230/2002.', category: 'Glosario', order: 11 },
+    { question: '¿Qué es el Registro Mercantil?', answer: 'El Registro Mercantil de Cuba es un registro público administrativo dependiente del Ministerio de Justicia que inscribe sujetos y actos mercantiles. Proporciona publicidad formal y seguridad jurídica. Regulado por el Decreto-Ley No. 226/2001 y la Resolución No. 230/2002.', category: 'Glosario', order: 12 },
   ];
 
   for (const f of glosarioFAQs) {

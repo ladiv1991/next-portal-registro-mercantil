@@ -7,7 +7,10 @@ DB_CONTAINER="${DB_CONTAINER:-registro-mercantil-postgres}"
 DB_USER="${DB_USER:-portal_rmc}"
 DB_NAME="${DB_NAME:-registro_mercantil}"
 APP_URL="${APP_URL:-http://localhost:3003}"
-MIGRATION="${PROJECT_ROOT}/prisma/migrations/20260820_minjus_content_update/migration.sql"
+MIGRATIONS=(
+  "${PROJECT_ROOT}/prisma/migrations/20260820_minjus_content_update/migration.sql"
+  "${PROJECT_ROOT}/prisma/migrations/20260820_normative_portal_update/migration.sql"
+)
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -24,7 +27,9 @@ cd "$PROJECT_ROOT"
 
 command -v docker >/dev/null || fail "Docker no está instalado."
 command -v bun >/dev/null || fail "Bun no está instalado."
-[ -f "$MIGRATION" ] || fail "No existe la migración: $MIGRATION"
+for migration in "${MIGRATIONS[@]}"; do
+  [ -f "$migration" ] || fail "No existe la migración: $migration"
+done
 
 phase "1. Preflight"
 docker inspect "$APP_CONTAINER" >/dev/null 2>&1 || fail "No existe el contenedor $APP_CONTAINER."
@@ -41,8 +46,10 @@ BACKUP_FILE="$BACKUP_DIR/registro_mercantil_$(date +%Y%m%d_%H%M%S).dump"
 docker exec "$DB_CONTAINER" pg_dump -U "$DB_USER" -d "$DB_NAME" -Fc > "$BACKUP_FILE"
 log "Backup creado: $BACKUP_FILE"
 
-docker exec -i "$DB_CONTAINER" psql -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME" < "$MIGRATION"
-log "Migración MINJUS aplicada"
+for migration in "${MIGRATIONS[@]}"; do
+  docker exec -i "$DB_CONTAINER" psql -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME" < "$migration"
+  log "Migración aplicada: $(basename "$(dirname "$migration")")"
+done
 
 phase "3. Validación del código"
 bunx tsc --noEmit
@@ -72,5 +79,9 @@ docker exec "$DB_CONTAINER" psql -X -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAM
   | tee /tmp/minjus-verification.txt
 grep -q 'Solicitud de Primera Inscripción de un Sujeto' /tmp/minjus-verification.txt \
   || fail "No se encontró el servicio de Primera Inscripción."
+docker exec "$DB_CONTAINER" psql -X -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME" -c \
+  "SELECT title, type, \"effectiveDate\" FROM \"Regulation\" WHERE visible = true ORDER BY \"order\";"
+docker exec "$DB_CONTAINER" psql -X -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME" -c \
+  "SELECT label, value, suffix FROM \"Statistic\" WHERE label LIKE 'Granma:%' ORDER BY \"order\";"
 log "Contenido MINJUS verificado"
 log "Despliegue completado"

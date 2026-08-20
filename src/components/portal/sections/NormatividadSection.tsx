@@ -97,10 +97,10 @@ export default function NormatividadSection() {
             whileInView="animate"
             viewport={{ once: true, margin: '-50px' }}
           >
-            <LegalFramework />
+            <LegalFramework regulations={regulations} />
           </motion.div>
         )}
-        {regulations.length === 0 && <LegalFramework />}
+        {regulations.length === 0 && <LegalFramework regulations={[]} />}
 
         {/* 2. Tarifa de Derechos */}
         <FeeSchedule />
