@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+
+# Permite ejecutar también `sh scripts/update-minjus.sh` en servidores donde
+# el operador no use el intérprete indicado por el shebang.
+if [ -z "${BASH_VERSION:-}" ]; then
+  command -v bash >/dev/null 2>&1 || {
+    printf '%s\n' '[ERROR] Este script requiere Bash.' >&2
+    exit 1
+  }
+  exec bash "$0" "$@"
+fi
+
 set -Eeuo pipefail
 
 PROJECT_ROOT="${PROJECT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
