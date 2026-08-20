@@ -186,7 +186,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-sm text-muted-foreground mb-1">Tipo de Sociedad</Label>
+                    <Label className="text-sm text-muted-foreground mb-1">Tipo de Sujeto</Label>
                     <Select>
                       <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
                       <SelectContent>
@@ -201,7 +201,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     <Select>
                       <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
                       <SelectContent>
-                        {['Vigente', 'Extinta', 'Cancelada', 'Suspendida', 'Cancelada'].map(s => (
+                        {['Vigente', 'Extinta', 'Cancelada', 'Suspendida'].map(s => (
                           <SelectItem key={s} value={s}>{s}</SelectItem>
                         ))}
                       </SelectContent>
@@ -286,9 +286,9 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                               )}
                               <TableCell>
                                 <Badge className={
-                                  company.status === 'Vigente', 'Extinta', 'Cancelada' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                  ['Vigente', 'Extinta', 'Cancelada'].includes(company.status || '') ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                 }>
-                                  {company.status || 'Vigente', 'Extinta', 'Cancelada'}
+                                  {company.status || 'Vigente'}
                                 </Badge>
                               </TableCell>
                               <TableCell>
@@ -304,7 +304,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                                     type: company.type || '',
                                     province: company.province || '',
                                     activity: company.activity || '',
-                                    status: company.status || 'Vigente', 'Extinta', 'Cancelada',
+                                    status: company.status || 'Vigente',
                                     constitution: company.constitution || '',
                                   }} />
                                 </TableCell>
@@ -415,12 +415,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
             >
               {[
-                { title: 'Certificación Completa', desc: 'Todos los datos registrales de la sociedad', cost: '250 CUP' },
-                { title: 'Certificación de Actos', desc: 'Actos específicos inscritos', cost: '150 CUP' },
-                { title: 'Certificación de Estatutos', desc: 'Copia certificada de los estatutos vigentes', cost: '100 CUP' },
-                { title: 'Certificación de Nómina', desc: 'Relación de socios/partícipes', cost: '100 CUP' },
-                { title: 'Certificación de Cargos', desc: 'Cargos vigentes de representantes', cost: '80 CUP' },
-                { title: 'Certificación Literal', desc: 'Copia íntegra de los asientos registrales', cost: '300 CUP' },
+                { title: 'Certificación Literal', desc: 'Copia fiel del asiento registral', cost: '900 CUP' },
+                { title: 'Certificación En Relación', desc: 'Extremos determinados de los asientos', cost: '600 CUP' },
+                { title: 'Certificación Negativa', desc: 'Acredita que los datos no constan en el Registro', cost: '600 CUP' },
+                { title: 'Nota Simple Informativa', desc: 'Resumen de datos públicos sin valor probatorio', cost: '300 CUP' },
               ].map((cert) => (
                 <motion.div key={cert.title} variants={fadeInUp}>
                   <div className="glass-card-inner p-4 hover:border-[#7A2A1E]/30">

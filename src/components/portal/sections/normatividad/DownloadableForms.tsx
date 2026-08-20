@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download } from 'lucide-react';
 
 const FORMS = [
-  { name: 'Solicitud de Constitución de Sociedad', format: 'PDF editable', size: '245 KB' },
+  { name: 'Solicitud de Primera Inscripción de un Sujeto', format: 'PDF editable', size: '245 KB' },
   { name: 'Modelo de Estatutos Sociales - SRL', format: 'PDF', size: '180 KB' },
   { name: 'Modelo de Estatutos Sociales - SA', format: 'PDF', size: '210 KB' },
   { name: 'Solicitud de Modificación Societaria', format: 'PDF editable', size: '198 KB' },

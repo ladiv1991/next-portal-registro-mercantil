@@ -311,7 +311,7 @@ model SearchableName {
   nire      String?
   type      String   @default("Sociedad")
   province  String?
-  status    String   @default("Activa")
+  status    String   @default("Vigente")
   visible   Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

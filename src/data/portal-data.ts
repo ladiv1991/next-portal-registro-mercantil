@@ -28,10 +28,10 @@ export const NAV_ITEMS = [
 
 export const QUICK_ACCESS_CARDS = [
   { title: 'Consultas Públicas', description: 'Busque sociedades, administradores y documentos registrados', icon: 'Search', color: 'bg-[#1A1A1A]', section: 'consultas' },
-  { title: 'Solicitud de Primera Inscripción de un Sujeto', description: 'Inicie el proceso de constitución de forma digital', icon: 'Building2', color: 'bg-[#9E3A2E]', section: 'tramites' },
+  { title: 'Solicitud de Primera Inscripción de un Sujeto', description: 'Solicitud conforme al DL 226/2001', icon: 'Building2', color: 'bg-[#9E3A2E]', section: 'tramites' },
   { title: 'Modificaciones', description: 'Realice solicitud de inscripción de modificaciones de los datos registrales de su sujeto', icon: 'PenTool', color: 'bg-[#7A2A1E]', section: 'tramites' },
   { title: 'Estado de Situación', description: 'Deposite y consulte estado de situación de sociedades', icon: 'FileSpreadsheet', color: 'bg-[#1A1A1A]', section: 'tramites' },
-  { title: 'Inversión Extranjera (VUCE) (VUCE)', description: 'Trámites para representaciones y sucursales extranjeras', icon: 'Globe2', color: 'bg-[#9E3A2E]', section: 'tramites' },
+  { title: 'Inversión Extranjera (VUCE)', description: 'Trámites para representaciones y sucursales extranjeras', icon: 'Globe2', color: 'bg-[#9E3A2E]', section: 'tramites' },
   { title: 'Certificaciones', description: 'Obtenga certificaciones y notas simples registrales', icon: 'Award', color: 'bg-[#7A2A1E]', section: 'consultas' },
 ];
 
@@ -192,7 +192,7 @@ export const FEE_SCHEDULE = [
 ];
 
 export const FORMS = [
-  { name: 'Solicitud de Constitución de Sociedad', format: 'PDF editable', size: '245 KB' },
+  { name: 'Solicitud de Primera Inscripción de un Sujeto', format: 'PDF editable', size: '245 KB' },
   { name: 'Modelo de Estatutos Sociales - SRL', format: 'PDF', size: '180 KB' },
   { name: 'Modelo de Estatutos Sociales - SA', format: 'PDF', size: '210 KB' },
   { name: 'Solicitud de Modificación Societaria', format: 'PDF editable', size: '198 KB' },
