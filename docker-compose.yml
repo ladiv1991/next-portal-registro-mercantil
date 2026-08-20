@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  app:
+    build:
+      args:
+          DOCKER_REGISTRY: ${DOCKER_REGISTRY}
+          HTTP_PROXY: ${HTTP_PROXY:-}
+          HTTPS_PROXY: ${HTTP_PROXY:-}
+          NO_PROXY: 'localhost,127.0.0.1,::1,*.local,deb.debian.org,security.debian.org'
+      context: .
+      dockerfile: Dockerfile
+    container_name: registro-mercantil-app
+    environment:
+      DATABASE_URL: postgresql://portal_rmc:PortalRMC2026!Secure@postgres:5432/registro_mercantil
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: production
+      # Agregar URL pública para Next.js
+      NEXT_PUBLIC_APP_URL: https://portal-registromercantil.test.xutil.cu
+    ports:
+      - "3003:3000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    # Traefik labels (optional, if using traefik as reverse proxy)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rmc-app.rule=Host(`portal-registromercantil.test.xutil.cu`)"
+      - "traefik.http.routers.rmc-app.rule=HostRegexp(`{host:.+}`)"
+      - "traefik.http.routers.rmc-app.entrypoints=web"
+      - "traefik.http.services.rmc-app.loadbalancer.server.port=3000"
+
+  traefik:
+    image: ${DOCKER_REGISTRY}traefik:v3.0
+    container_name: registro-mercantil-traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:8081"
+    ports:
+      - "8082:8081"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+  postgres:
+    image: ${DOCKER_REGISTRY}postgres:15
+    container_name: registro-mercantil-postgres
+    environment:
+      POSTGRES_USER: portal_rmc
+      POSTGRES_PASSWORD: "PortalRMC2026!Secure"
+      POSTGRES_DB: registro_mercantil
+      HTTP_PROXY: http://voacosta:L4d1v*ok@10.12.0.205:3128
+      HTTPS_PROXY: http://voacosta:L4d1v*ok@10.12.0.205:3128
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

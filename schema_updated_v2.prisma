@@ -1,0 +1,136 @@
+// ============================================================================
+// Schema Prisma v2 — Registro Mercantil de Cuba
+// Fecha: 2026-04-30
+// Correcciones vs v1:
+//   - SearchableName.id es String @default(cuid()) — coincide con la DB existente
+//   - Modification.searchableNameId es String — coincide con SearchableName.id
+//   - Eliminada referencia a gin_trgm_ops
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// PROVINCIAS
+// ============================================================================
+model Province {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(4)    // Código DPA 2 dígitos (ej: "21")
+  name      String   @unique @db.VarChar(100)  // Nombre de la provincia
+  order     Int      @default(0)               // Orden de visualización
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+
+  municipalities Municipality[]
+  searchableNames SearchableName[]
+
+  @@map("Province")
+}
+
+// ============================================================================
+// MUNICIPIOS
+// ============================================================================
+model Municipality {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique @db.VarChar(4)     // Código DPA 4 dígitos (ej: "2101")
+  name         String   @db.VarChar(150)            // Nombre del municipio
+  provinceCode String   @db.VarChar(4)              // FK al código de provincia
+  createdAt    DateTime @default(now()) @map("createdAt")
+  updatedAt    DateTime @updatedAt @map("updatedAt")
+
+  province        Province        @relation(fields: [provinceCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
+  searchableNames SearchableName[]
+
+  @@index([provinceCode], map: "idx_municipality_provinceCode")
+  @@map("Municipality")
+}
+
+// ============================================================================
+// NOMBRES BUSCABLES (Entidad principal — expandido)
+// ============================================================================
+model SearchableName {
+  id                    String    @id @default(cuid())                     // TEXT — Prisma cuid
+  name                  String    @db.Text                               // Denominación
+  nire                  String?   @unique @db.VarChar(50)                // Código/NIRE del registro (UNIQUE para ON CONFLICT)
+  type                  String?   @db.VarChar(50)                         // Tipo: UBPC, CPA, CCS, SRL, SURL, ESTATAL, AEI, SM, MIXTA, etc.
+  category              String?   @db.VarChar(80)                         // Categoría: Cooperativa Agropecuaria, MIPYME, Sociedad Mercantil, AEI
+  province              String?   @db.VarChar(100)                        // Nombre de la provincia
+  provinceCode          String?   @db.VarChar(4)                          // Código DPA de provincia
+  municipality          String?   @db.VarChar(150)                        // Nombre del municipio
+  municipalityCode      String?   @db.VarChar(4)                          // Código DPA de municipio
+  status                String    @default("VIGENTE") @db.VarChar(50)     // VIGENTE, BAJA, BAJA EN EL AÑO, CANCELADA, etc.
+  visible               Boolean   @default(true)                          // Visible en búsquedas públicas
+  registrationDate      DateTime? @map("registrationDate")                // Fecha de inscripción (ALTA / Fecha)
+  deregistrationDate    DateTime? @map("deregistrationDate")              // Fecha de baja (BAJA)
+  cnae                  String?   @db.VarChar(50)                         // Código de actividad económica (CNAE)
+  economicActivity      String?   @db.Text                                // Descripción de actividad (NAE / Actividad Principal)
+  organizationCode      Int?                                               // Código del organismo (ORGA)
+  organizationName      String?   @db.VarChar(255)                        // Nombre del organismo (DESCO)
+  parentOrganization    String?   @db.VarChar(500)                        // Organismo superior (DESCU)
+  shortName             String?   @db.VarChar(255)                        // Nombre corto (CORTA)
+  volume                String?   @db.VarChar(20)                         // Tomo del registro
+  folio                 Int?                                               // Folio del registro
+  sheet                 Int?                                               // Hoja del registro
+  address               String?   @db.Text                                // Domicilio social
+  legalRepresentative   String?   @db.VarChar(500) @map("legalRepresentative") // Representante legal
+  phone                 String?   @db.VarChar(100)                        // Teléfono
+  email                 String?   @db.VarChar(255)                        // Correo electrónico
+  modifications         String?   @db.Text                                // Texto libre de modificaciones
+  modDenominacion       Boolean   @default(false) @map("modDenominacion") // Mod. De Denominación
+  modDomicilio          Boolean   @default(false) @map("modDomicilio")    // Mod. De Domicilio
+  modObjetoSocial       Boolean   @default(false) @map("modObjetoSocial") // Mod. De Objeto Social
+  incorporacionSocios   Boolean   @default(false) @map("incorporacionSocios") // Incorporación de Socios
+  establecimiento       Boolean   @default(false) @map("establecimiento") // Establecimiento
+  bajaSocios            Boolean   @default(false) @map("bajaSocios")      // Baja de Socios
+  disolucion            Boolean   @default(false) @map("disolucion")      // Disolución
+  liquidacion           Boolean   @default(false) @map("liquidacion")     // Liquidación
+  extincion             Boolean   @default(false) @map("extincion")       // Extinción
+  cancelacion           Boolean   @default(false) @map("cancelacion")     // Cancelación
+  employerDescription   String?   @db.Text @map("employerDescription")    // Descripción empleadora (AEI)
+  descEstado            String?   @db.VarChar(100) @map("descEstado")     // Descripción del estado (SM)
+  sourceFile            String?   @db.VarChar(255) @map("sourceFile")     // Archivo Excel origen
+  sourceSheet           String?   @db.VarChar(100) @map("sourceSheet")    // Hoja del Excel origen
+  createdAt             DateTime  @default(now()) @map("createdAt")
+  updatedAt             DateTime  @updatedAt @map("updatedAt")
+
+  // Relaciones
+  modificationRecords Modification[]
+
+  @@index([name], map: "idx_searchable_name_name_simple")
+  @@index([nire], map: "idx_searchable_name_nire")
+  @@index([type], map: "idx_searchable_name_type")
+  @@index([category], map: "idx_searchable_name_category")
+  @@index([provinceCode], map: "idx_searchable_name_province")
+  @@index([municipalityCode], map: "idx_searchable_name_municipality")
+  @@index([status], map: "idx_searchable_name_status")
+  @@index([visible], map: "idx_searchable_name_visible")
+  @@index([registrationDate], map: "idx_searchable_name_registrationDate")
+  @@index([sourceFile, sourceSheet], map: "idx_searchable_name_source")
+  @@map("SearchableName")
+}
+
+// ============================================================================
+// MODIFICACIONES (Historial agrupado por entidad)
+// ============================================================================
+model Modification {
+  id                Int       @id @default(autoincrement())
+  searchableNameId  String    @map("searchableNameId")             // TEXT — coincide con SearchableName.id (Prisma cuid)
+  modificationType  String    @db.VarChar(100) @map("modificationType") // Tipo de modificación
+  description       String?   @db.Text                                        // Descripción
+  modificationDate  DateTime? @map("modificationDate")                        // Fecha (si disponible)
+  sourceText        String?   @db.Text @map("sourceText")                    // Texto original
+  createdAt         DateTime  @default(now()) @map("createdAt")
+  updatedAt         DateTime  @updatedAt @map("updatedAt")
+
+  searchableName SearchableName @relation(fields: [searchableNameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([searchableNameId], map: "idx_modification_searchableNameId")
+  @@index([modificationType], map: "idx_modification_type")
+  @@map("Modification")
+}

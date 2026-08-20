@@ -1,0 +1,161 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { FileText, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { fadeInUp, staggerContainer } from '@/data/portal-data';
+import ProcedureCard from './tramites/ProcedureCard';
+import ConstitutionSteps from './tramites/ConstitutionSteps';
+import ModificationTypes from './tramites/ModificationTypes';
+import ForeignInvestment from './tramites/ForeignInvestment';
+import AuthenticationModal from '@/components/portal/auth/AuthenticationModal';
+import PremiumModal from '@/components/portal/PremiumModal';
+
+interface ProcedureItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  time?: string;
+  cost?: string;
+  requirements?: string;
+  steps?: string;
+  order: number;
+  visible: boolean;
+}
+
+export default function TramitesSection() {
+  const [loading, setLoading] = useState(true);
+  const [procedures, setProcedures] = useState<ProcedureItem[]>([]);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch('/api/public/content');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success) setProcedures(json.data.procedures || []);
+        }
+      } catch {
+        // Silent fail
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const handleIniciarTramite = () => {
+    // First show premium modal with plans
+    setPremiumModalOpen(true);
+  };
+
+  const handlePlanSelected = () => {
+    // After selecting a plan, show auth modal
+    setPremiumModalOpen(false);
+    setAuthModalOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
+        {/* Header skeleton */}
+        <section className="bg-[#1A1A1A] py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Skeleton className="h-6 w-40 mx-auto mb-4 bg-white/20" />
+            <Skeleton className="h-10 w-64 mx-auto mb-3 bg-white/20" />
+            <Skeleton className="h-5 w-96 mx-auto bg-white/20" />
+          </div>
+        </section>
+        {/* Content skeleton */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="p-6 rounded-xl border border-gray-200">
+                <Skeleton className="h-5 w-3/4 mb-3" />
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
+      {/* Header */}
+      <section className="bg-[#1A1A1A] py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Badge className="mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30">
+            <FileText className="w-3 h-3 mr-1" />
+            Trámites en Línea
+          </Badge>
+          <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">
+            <Badge variant="outline" className="ml-3 text-xs border-yellow-500 text-yellow-600 bg-yellow-50">Próximamente disponible</Badge>Gestión de Trámites</h1>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Realice todos sus trámites mercantiles de forma digital. Constitución, modificaciones, estado de situación e inversión extranjera.
+          </p>
+        </div>
+      </section>
+
+      {/* Login Prompt */}
+      <div className="bg-[#7A2A1E]/10 border-b border-[#7A2A1E]/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-[#9E3A2E]" />
+              <span className="text-sm text-[#1A1A1A]">
+                Para iniciar un trámite necesita una cuenta de usuario.{' '}
+                <button className="text-[#9E3A2E] font-medium underline">Regístrese aquí</button>
+              </span>
+            </div>
+            <Button size="sm" className="bg-[#9E3A2E] text-[#1A1A1A] hover:bg-[#9E3A2E]-light" onClick={() => setAuthModalOpen(true)}>
+              Iniciar Sesión
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Main Procedures */}
+        {procedures.length > 0 && (
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: '-50px' }}
+          >
+            <ProcedureCard onIniciarTramite={handleIniciarTramite} />
+          </motion.div>
+        )}
+        {!procedures.length && <ProcedureCard onIniciarTramite={handleIniciarTramite} />}
+
+        {/* Constitution Steps */}
+        <ConstitutionSteps />
+
+        {/* Modifications */}
+        <ModificationTypes />
+
+        {/* Foreign Investment */}
+        <ForeignInvestment />
+      </div>
+
+      {/* Authentication Modal */}
+      <AuthenticationModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+
+      {/* Premium Modal */}
+      <PremiumModal
+        isOpen={premiumModalOpen}
+        onClose={() => setPremiumModalOpen(false)}
+        onSelectPlan={handlePlanSelected}
+      />
+    </motion.div>
+  );
+}

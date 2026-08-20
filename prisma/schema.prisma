@@ -1,0 +1,409 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("editor")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  auditLogs AuditLog[]
+}
+
+model PortalUser {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  phone         String?
+  identityCard  String?  // CI
+  enzonaId      String?  @unique // ID de usuario en ENZONA
+  enzonaToken   String?  // Token de acceso ENZONA
+  role          String   @default("user") // user, operator, admin
+  isVerified    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  lastLogin     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  subscriptions UserSubscription[]
+  procedures    UserProcedure[]
+  informationRequests InformationRequest[]
+
+  @@index([email])
+  @@index([enzonaId])
+  @@index([role])
+}
+
+model UserRole {
+  id          String   @id @default(cuid())
+  name        String   @unique // user, operator, admin
+  description String?
+  permissions String[] // Array de permisos
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model UserProcedure {
+  id            String   @id @default(cuid())
+  userId        String
+  user          PortalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  type          String   // constitution, modification, annual_accounts, etc
+  status        String   @default("pending") // pending, processing, completed, rejected
+  referenceNumber String? // Número de trámite
+  requestDate   DateTime @default(now())
+  completedDate DateTime?
+  description   String?
+  documents     String[] // URLs o IDs de documentos
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([requestDate])
+}
+
+model InformationRequest {
+  id            String   @id @default(cuid())
+  userId        String
+  user          PortalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       String
+  message       String
+  status        String   @default("pending") // pending, in_review, answered, closed
+  attachments   String[] // URLs de archivos adjuntos
+  response      String?
+  respondedBy   String?  // Email del administrador que respondió
+  respondedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model MenuItem {
+  id        String   @id @default(cuid())
+  label     String
+  icon      String   @default("Circle")
+  sectionId String?  @unique
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  blocks      Block[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  pageId    String
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      String
+  title     String?
+  content   String   @default("{}")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pageId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity   String
+  entityId String?
+  details   String?
+  createdAt DateTime @default(now())
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+// ============================
+// CMS Content Models
+// ============================
+
+model Slider {
+  id         String   @id @default(cuid())
+  title      String
+  subtitle   String?
+  message    String
+  imageUrl   String?
+  link       String?
+  linkLabel  String?
+  active     Boolean  @default(true)
+  startDate  String?
+  endDate    String?
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Service {
+  id        String   @id @default(cuid())
+  title     String
+  description String
+  icon      String   @default("Circle")
+  color     String   @default("#C8A951")
+  sectionId String?
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Statistic {
+  id        String   @id @default(cuid())
+  label     String
+  value     Int      @default(0)
+  suffix    String   @default("")
+  icon      String   @default("TrendingUp")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NewsArticle {
+  id          String    @id @default(cuid())
+  title       String
+  summary     String
+  content     String    @default("")
+  category    String    @default("General")
+  imageUrl    String?
+  source      String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  featured    Boolean   @default(false)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Procedure {
+  id           String             @id @default(cuid())
+  title        String
+  description  String
+  icon         String   @default("FileText")
+  time         String   @default("")
+  cost         String   @default("")
+  requirements String   @default("")
+  steps        String   @default("")
+  order        Int              @default(0)
+  visible      Boolean           @default(true)
+  documents    ProcedureDocument[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model ProcedureDocument {
+  id           String    @id @default(cuid())
+  procedureId  String
+  procedure    Procedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  name         String
+  fileName     String
+  fileSize     Int       @default(0)
+  mimeType     String    @default("application/pdf")
+  url          String
+  description  String    @default("")
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([procedureId])
+}
+
+model Regulation {
+  id            String   @id @default(cuid())
+  title         String
+  type          String   @default("Ley")
+  number        String?
+  description   String
+  content       String   @default("")
+  fileUrl       String?
+  effectiveDate String?
+  category      String   @default("Registro General")
+  order         Int      @default(0)
+  visible       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   @default("General")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VideoTutorial {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  duration     String   @default("")
+  category     String   @default("General")
+  videoUrl     String
+  thumbnailUrl String?
+  views        Int      @default(0)
+  order        Int      @default(0)
+  visible      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Webinar {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  date         String
+  time         String   @default("")
+  location     String?
+  status       String   @default("Próximo")
+  maxAttendees Int?
+  order        Int      @default(0)
+  visible      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ContactChannel {
+  id        String   @id @default(cuid())
+  type      String
+  label     String
+  value     String
+  icon      String   @default("Phone")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SearchableName {
+  id        String   @id @default(cuid())
+  name      String
+  nire      String?
+  type      String   @default("Sociedad")
+  province  String?
+  status    String   @default("Activa")
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([nire])
+  @@index([visible])
+}
+
+model BotConfig {
+  id          String   @id @default("default")
+  provider    String   @default("z-ai-web-dev-sdk")
+  model       String   @default("")
+  apiUrl      String   @default("")
+  apiKey      String   @default("")
+  systemPrompt String   @default("")
+  maxTokens   Int      @default(2048)
+  temperature Float    @default(0.7)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Guide {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  icon        String   @default("BookOpen")
+  steps       String   @default("[]")
+  order       Int      @default(0)
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SitePage {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String   @default("")
+  visible   Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentPlan {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  currency    String   @default("CUP")
+  duration    Int      @default(30) // días
+  features    String[] // JSON array de características
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  subscriptions UserSubscription[]
+
+  @@index([isActive])
+}
+
+model UserSubscription {
+  id            String   @id @default(cuid())
+  userId        String
+  user          PortalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId        String
+  plan          PaymentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  startDate     DateTime @default(now())
+  endDate       DateTime
+  isActive      Boolean  @default(true)
+  enzonaRef     String?  // Referencia de pago de ENZONA
+  paymentStatus String   @default("pending") // pending, completed, failed, cancelled
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isActive])
+  @@index([endDate])
+}
+
+model EnzonaConfig {
+  id                String   @id @default("default")
+  apiUrl            String   @default("https://api.enzona.net")
+  consumerKey       String   @default("")
+  consumerSecret    String   @default("")
+  merchantId        String   @default("")
+  returnUrl         String   @default("")
+  cancelUrl         String   @default("")
+  testMode          Boolean  @default(true)
+  currency          String   @default("CUP")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
