@@ -1,13 +1,22 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'rmc-cuba-secret-key-2026';
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret || secret.length < 32) {
+    throw new Error('JWT_SECRET debe estar definido y tener al menos 32 caracteres');
+  }
+
+  return secret;
+}
 
 export interface JWTPayload {
   userId: string;
   email: string;
   name: string;
   role: string;
+  type?: 'portal' | 'cms';
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -19,12 +28,12 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export function generateToken(payload: JWTPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '8h' });
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: '8h' });
 }
 
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return jwt.verify(token, getJwtSecret()) as JWTPayload;
   } catch {
     return null;
   }

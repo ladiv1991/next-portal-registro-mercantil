@@ -153,7 +153,7 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                 <div className="pt-2 border-t border-gray-100">
                   <p className="text-xs text-center text-muted-foreground">
                     <BadgeInfo className="w-3 h-3 inline-block mr-1 -mt-0.5" />
-                    Credenciales de prueba: <span className="font-mono text-[#1A1A1A]">admin@registromercantil.cu</span> / <span className="font-mono text-[#1A1A1A]">Admin2026!</span>
+                    El acceso es exclusivo para usuarios autorizados del Registro Mercantil.
                   </p>
                 </div>
               </form>
