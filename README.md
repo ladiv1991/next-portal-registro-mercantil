@@ -230,6 +230,36 @@ npm run db:restore
 docker compose up -d --build
 ```
 
+### Despliegue completo con dominio y migraciones
+
+El script solicita el DNS del portal y actualiza automáticamente `.env`, `NEXT_PUBLIC_APP_URL` y la regla `Host` de Traefik. También inicia PostgreSQL, crea un backup previo, aplica Prisma, ejecuta el seed y publica la aplicación:
+
+```bash
+bash scripts/deploy.sh
+```
+
+También se puede pasar el DNS como argumento:
+
+```bash
+bash scripts/deploy.sh portal.registromercantil.cu
+```
+
+Por defecto se usa `http`. Para HTTPS:
+
+```bash
+PORTAL_SCHEME=https bash scripts/deploy.sh portal.registromercantil.cu
+```
+
+Variables opcionales:
+
+```bash
+SEED_DATABASE=false bash scripts/deploy.sh portal.registromercantil.cu
+BACKUP_BEFORE_DEPLOY=false bash scripts/deploy.sh portal.registromercantil.cu
+PROJECT_DIR=/opt/portal-mercantil bash scripts/deploy.sh portal.registromercantil.cu
+```
+
+El DNS debe tener un registro `A` o `CNAME` apuntando al servidor donde se ejecuta Traefik. El script configura el enrutamiento, pero no puede crear el registro DNS en el proveedor externo.
+
 ### Verificar estado
 
 ```bash

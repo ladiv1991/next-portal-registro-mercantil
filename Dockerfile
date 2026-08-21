@@ -15,7 +15,7 @@ RUN npm ci
 # Copy source and build the production artifact inside the image.
 COPY . .
 RUN npx prisma generate
-RUN npm run build
+RUN npm run build --ignore-scripts
 
 EXPOSE 3000
 

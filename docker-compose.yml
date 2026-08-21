@@ -14,8 +14,7 @@ services:
       DATABASE_URL: postgresql://portal_rmc:PortalRMC2026!Secure@postgres:5432/registro_mercantil
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: production
-      # Agregar URL pública para Next.js
-      NEXT_PUBLIC_APP_URL: https://portal-registromercantil.test.xutil.cu
+      NEXT_PUBLIC_APP_URL: ${PORTAL_SCHEME:-http}://${PORTAL_DOMAIN:-localhost:3003}
     ports:
       - "3003:3000"
     depends_on:
@@ -24,8 +23,7 @@ services:
     # Traefik labels (optional, if using traefik as reverse proxy)
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.rmc-app.rule=Host(`portal-registromercantil.test.xutil.cu`)"
-      - "traefik.http.routers.rmc-app.rule=HostRegexp(`{host:.+}`)"
+      - "traefik.http.routers.rmc-app.rule=Host(`${PORTAL_DOMAIN:-localhost}`)"
       - "traefik.http.routers.rmc-app.entrypoints=web"
       - "traefik.http.services.rmc-app.loadbalancer.server.port=3000"
 
