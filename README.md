@@ -110,534 +110,310 @@ NEXT_PUBLIC_APP_URL=http://registro-mercantil.xetid.cu:8081
 
 ### 4. Configurar Base de Datos
 
-#### Opción A: PostgreSQL con Docker (Recomendado)
+## 🚀 Instalación y configuración
+
+### Requisitos
+
+- Node.js 20+
+- npm o bun
+- Docker y Docker Compose
+- PostgreSQL 15 (se recomienda usar el contenedor incluido en el proyecto)
+
+### 1) Clonar y preparar el entorno
 
 ```bash
-# Iniciar PostgreSQL
-docker compose up -d postgres
-
-# Generar cliente Prisma
-bun run db:generate
-
-# Crear esquema
-bun run db:push
-
-# Poblar datos iniciales
-bun run seed
+git clone <repo-url>
+cd next-portal-registro-mercantil
+npm install
 ```
 
-#### Opción B: SQLite (Desarrollo)
+Si prefieres `bun`, también funciona:
 
 ```bash
-# Cambiar en .env
-DATABASE_URL=file:./db/custom.db
-
-# Crear base de datos
-bun run db:push
-bun run seed
+bun install
 ```
 
-## 🏃‍♂️ Desarrollo
+### 2) Variables de entorno
 
-### Iniciar Servidor de Desarrollo
-
-```bash
-# Inicia automáticamente setup.sh
-bun run dev
-```
-
-El servidor estará disponible en:
-- **Local**: http://localhost:3008
-- **Red**: http://10.255.255.254:3008
-
-### Comandos de Desarrollo
-
-```bash
-# Ver logs en tiempo real
-tail -f dev.log
-
-# Ejecutar linter
-bun run lint
-
-# Resetear base de datos
-bun run db:reset
-```
-
-## 🤖 Configuración del Chatbot IA
-
-Después de remover la dependencia `z-ai-web-dev-sdk`, el chatbot ahora usa proveedores OpenAI-compatible por defecto.
-
-### Configuración vía CMS
-
-1. **Acceder al Panel Administrativo**:
-   - URL: `/admin`
-   - Credenciales por defecto: `admin@registromercantil.cu` / `Admin123!`
-
-2. **Configurar el Proveedor IA**:
-   - Ir a **CMS → Configuración del Bot**
-   - Seleccionar **Proveedor**: `openai-compatible`
-   - Configurar:
-     - **URL de API**: `https://api.openai.com/v1` (o cualquier proveedor compatible)
-     - **Clave API**: Tu API key de OpenAI
-     - **Modelo**: `gpt-3.5-turbo` o `gpt-4`
-     - **Prompt del Sistema**: Personalizar respuestas
-     - **Temperatura**: 0.7 (creatividad)
-     - **Tokens Máximos**: 2048
-
-3. **Probar la Conexión**:
-   - Usar el botón **"Probar Conexión"** en el CMS
-   - Verificar que el chatbot responda correctamente
-
-### Proveedores Compatibles
-
-- **OpenAI**: `https://api.openai.com/v1`
-- **Azure OpenAI**: `https://your-resource.openai.azure.com/`
-- **Ollama**: `http://localhost:11434/v1` (para modelos locales)
-- **Otros**: Cualquier API compatible con OpenAI
-
-## 🏗️ Compilación para Producción
-
-### 1. Construir la Aplicación
-
-```bash
-# Construye para standalone deployment
-bun run build
-```
-
-### 2. Ejecutar en Producción Local
-
-```bash
-# Ejecutar servidor de producción
-bun run start
-```
-
-### 3. Despliegue con Traefik
-
-#### Configurar Infraestructura
-
-```bash
-# Iniciar PostgreSQL y Traefik
-docker compose up -d
-
-# Verificar contenedores
-docker ps
-```
-
-#### Variables de Entorno para Producción
+Crea un `.env` o `.env.local` con estas variables básicas:
 
 ```env
-# URL de producción
-NEXT_PUBLIC_APP_URL=https://registro-mercantil.xetid.cu:3000
-
-# Base de datos de producción
-DATABASE_URL=postgresql://user:password@prod-host:5432/db_name
+DATABASE_URL=postgresql://portal_rmc:PortalRMC2026!Secure@localhost:5433/registro_mercantil
+JWT_SECRET=change-this-secret-in-production
+NEXT_PUBLIC_APP_URL=http://localhost:3003
 ```
 
-#### Configurar Traefik Labels
+> En Docker Compose la aplicación usa `postgres:5432` dentro de la red de contenedores, mientras que desde el host se expone en `localhost:5433`.
 
-Para desplegar con Traefik, agregar labels al contenedor:
+### 3) Base de datos
 
-```yaml
-services:
-  app:
-    image: registro-mercantil-app:latest
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`registro-mercantil.xetid.cu`)"
-      - "traefik.http.routers.app.entrypoints=web"
-      - "traefik.http.services.app.loadbalancer.server.port=3000"
-```
+El proyecto usa Prisma y ejecuta una sincronización automática con `db push` antes de arrancar la app.
 
-### 4. Despliegue con Docker
-
-#### Dockerfile de Producción
-
-```dockerfile
-FROM node:18-alpine AS base
-
-# Instalar dependencias solo de producción
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY package.json ./
-RUN bun install --frozen-lockfile
-
-# Construir la aplicación
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN bun run build
-
-# Imagen de producción
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-EXPOSE 3000
-ENV PORT=3000
-CMD ["node", "server.js"]
-```
-
-#### Construir y Ejecutar
+#### Opción A: contenedor PostgreSQL del proyecto
 
 ```bash
-# Construir imagen
-docker build -t registro-mercantil-app .
-
-# Ejecutar contenedor
-docker run -p 3000:3000 registro-mercantil-app
+docker compose up -d postgres
+npm run db:migrate:all
+npm run db:migrate:all:seed
 ```
 
-## 📖 Uso de Funcionalidades
-
-### 🔍 Búsqueda de Sociedades
-
-1. **Desde la Homepage**: Campo de búsqueda principal
-2. **Desde Consultas**: Pestañas por denominación o NIRE
-3. **Búsqueda Avanzada**: Filtros por provincia, tipo de sociedad
-
-**Características de Búsqueda**:
-- ✅ Insensible a mayúsculas/minúsculas
-- ✅ Ignora signos de puntuación (puntos, comas, guiones)
-- ✅ Autocompletado en tiempo real
-- ✅ Resultados con estado, tipo y provincia
-
-### 📝 Trámites Digitales
-
-1. **Constitución de Sociedades**
-2. **Modificaciones Registrales**
-3. **Cuentas Anuales**
-4. **Certificaciones**
-
-### 📰 Gestión de Contenido (CMS)
-
-#### Acceder al Panel Admin
-
-1. Ir a `/acceso`
-2. Iniciar sesión con credenciales admin
-3. Credenciales por defecto:
-   - **Usuario**: admin@registromercantil.cu
-   - **Contraseña**: PortalRMC2026!
-
-#### Funciones del CMS
-
-- **Sliders**: Gestionar banners de la homepage
-- **Servicios**: Configurar servicios principales
-- **Noticias**: Publicar anuncios y novedades
-- **Procedimientos**: Documentar trámites
-- **Estadísticas**: Actualizar cifras del registro
-- **Chatbot**: Configurar respuestas IA
-
-### 🤖 Chatbot IA
-
-Configurado para responder consultas sobre:
-- Información registral
-- Procedimientos administrativos
-- Requisitos legales
-- Estado de trámites
-
-**Configuración**:
-- Modelo: OpenAI-compatible (GPT-3.5-turbo por defecto)
-- Proveedor alternativo: Configurable vía CMS
-- Personalización completa vía panel administrativo
-
-## 🔧 Comandos Útiles
-
-| Comando | Descripción |
-|---------|-------------|
-| `bun run dev` | Servidor desarrollo (puerto 3008) |
-| `bun run build` | Build producción |
-| `bun run start` | Servidor producción |
-| `bun run lint` | Ejecutar ESLint |
-| `bun run db:generate` | Generar cliente Prisma |
-| `bun run db:push` | Sincronizar esquema BD |
-| `bun run db:migrate` | Ejecutar migraciones |
-| `bun run db:reset` | Resetear BD y reseed |
-| `bun run db:backup` | Crear backup de BD |
-| `bun run db:restore` | Restaurar BD desde backup |
-| `bun run seed` | Poblar datos iniciales |
-
-## 💾 Backup y Restauración de Base de Datos
-
-### Exportar Base de Datos (Backup)
-
-#### Opción 1: Backup Completo con Docker
+#### Opción B: iniciar todo el stack
 
 ```bash
-# Crear backup del contenedor PostgreSQL
-docker exec registro-mercantil-postgres pg_dump -U portal_rmc -d registro_mercantil > backup_$(date +%Y%m%d_%H%M%S).sql
-
-# O con compresión
-docker exec registro-mercantil-postgres pg_dump -U portal_rmc -d registro_mercantil | gzip > backup_$(date +%Y%m%d_%H%M%S).sql.gz
+docker compose up -d --build
 ```
 
-#### Opción 2: Backup desde Host (si PostgreSQL no está en Docker)
+Esto levanta la aplicación, PostgreSQL y Traefik. La app queda en:
+
+- Desarrollo local: http://localhost:3008
+- Docker local: http://localhost:3003
+- Traefik: http://localhost:8082
+
+## ✅ Usuarios por defecto y autenticación
+
+El proyecto tiene dos cuentas semilla por diseño:
+
+- admin@registromercantil.cu / Admin2026!
+- editor@registromercantil.cu / Editor2026!
+
+Esto no es un error: el seed crea un usuario administrador y otro editor para el CMS. Si el sistema dice "usuario o contraseña incorrectos" pero la contraseña es correcta, normalmente se debe a una de estas causas:
+
+1. La app está apuntando a otra base de datos o a un contenedor viejo.
+2. Hay sesión/cookie vieja en el navegador.
+3. El contenedor de la app se está ejecutando sin la última base de datos inicializada.
+
+### Verificar autenticación
 
 ```bash
-# Backup completo
-pg_dump -h localhost -p 5432 -U portal_rmc -d registro_mercantil > backup_$(date +%Y%m%d_%H%M%S).sql
-
-# Backup comprimido
-pg_dump -h localhost -p 5432 -U portal_rmc -d registro_mercantil | gzip > backup_$(date +%Y%m%d_%H%M%S).sql.gz
-
-# Solo esquema (sin datos)
-pg_dump -h localhost -p 5432 -U portal_rmc -d registro_mercantil --schema-only > schema_$(date +%Y%m%d_%H%M%S).sql
-
-# Solo datos (sin esquema)
-pg_dump -h localhost -p 5432 -U portal_rmc -d registro_mercantil --data-only > data_$(date +%Y%m%d_%H%M%S).sql
+npm run auth:check
 ```
 
-### Restaurar Base de Datos (Restore)
-
-#### Opción 1: Restaurar desde Docker
+### Reforzar contraseña del admin
 
 ```bash
-# Detener la aplicación primero
+npm run auth:reset-admin
+```
+
+También se puede pasar un email y contraseña manuales:
+
+```bash
+node scripts/reset-admin-password.js --email admin@registromercantil.cu --password Admin2026!
+```
+
+## 🏃 Desarrollo local
+
+```bash
+npm run dev
+```
+
+El arranque incluye el prehook de Prisma y refleja los logs en `dev.log`.
+
+### Comandos frecuentes
+
+```bash
+npm run lint
+npm run build
+npm run start
+npm run db:generate
+npm run db:push
+npm run db:reset
+npm run seed
+npm run db:backup
+npm run db:restore
+```
+
+## 🚀 Despliegue con Docker
+
+### Construir y levantar
+
+```bash
+docker compose up -d --build
+```
+
+### Verificar estado
+
+```bash
+docker ps
+docker compose logs -f app postgres traefik
+```
+
+### Configurar dominios públicos
+
+```bash
+npm run app:configure-domains
+```
+
+Este script genera la configuración necesaria para la app según los dominios y la URL pública del entorno.
+
+### Variables de ejemplo para producción
+
+```env
+DATABASE_URL=postgresql://portal_rmc:PortalRMC2026!Secure@postgres:5432/registro_mercantil
+JWT_SECRET=mi_secreto_super_seguro
+NEXT_PUBLIC_APP_URL=https://portal-registromercantil.test.xutil.cu
+```
+
+## 🧱 Migraciones y semillas
+
+El proyecto incluye automatización para mantener la base de datos consistente:
+
+```bash
+npm run db:migrate:all
+npm run db:migrate:all:seed
+```
+
+Estas órdenes ejecutan:
+
+- `prisma db push`
+- `prisma generate`
+- `prisma/seed.ts` si se incluye `--seed`
+
+También se ejecutan automáticamente antes de `dev`, `build` y `start` por los hooks de package.json.
+
+## 💾 Backups y restauración de la base de datos
+
+### Copia de seguridad manual
+
+```bash
+docker exec registro-mercantil-postgres pg_dump -U portal_rmc -d registro_mercantil > backups/backup_$(date +%Y%m%d_%H%M%S).sql
+docker exec registro-mercantil-postgres pg_dump -U portal_rmc -d registro_mercantil | gzip > backups/backup_$(date +%Y%m%d_%H%M%S).sql.gz
+```
+
+### Restauración
+
+```bash
 docker compose down app
-
-# Restaurar desde backup
-docker exec -i registro-mercantil-postgres psql -U portal_rmc -d registro_mercantil < backup_20241201_120000.sql
-
-# O desde backup comprimido
-gunzip -c backup_20241201_120000.sql.gz | docker exec -i registro-mercantil-postgres psql -U portal_rmc -d registro_mercantil
-
-# Reiniciar la aplicación
+gunzip -c backups/backup_20250101_120000.sql.gz | docker exec -i registro-mercantil-postgres psql -U portal_rmc -d registro_mercantil
 docker compose up -d app
 ```
 
-#### Opción 2: Restaurar desde Host
+### Scripts automatizados
 
 ```bash
-# Detener servicios que usen la BD
-docker compose down app
-
-# Restaurar desde backup
-psql -h localhost -p 5432 -U portal_rmc -d registro_mercantil < backup_20241201_120000.sql
-
-# O desde backup comprimido
-gunzip -c backup_20241201_120000.sql.gz | psql -h localhost -p 5432 -U portal_rmc -d registro_mercantil
-
-# Reiniciar servicios
-docker compose up -d app
+bash scripts/backup-db.sh
+bash scripts/restore-db.sh backups/backup_20250101_120000.sql.gz
 ```
 
-### Scripts Automatizados
+Los scripts están diseñados para crear y restaurar copias de seguridad desde PostgreSQL con gestión de nombre y compresión.
 
-Crear script `scripts/backup-db.sh`:
+## 📜 Logs
+
+### Logs del proyecto
 
 ```bash
-#!/bin/bash
-# backup-db.sh - Script para backup automático de la base de datos
-
-BACKUP_DIR="./backups"
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_FILE="$BACKUP_DIR/backup_$TIMESTAMP.sql.gz"
-
-mkdir -p $BACKUP_DIR
-
-echo "📦 Creando backup: $BACKUP_FILE"
-
-# Backup con Docker
-docker exec registro-mercantil-postgres pg_dump -U portal_rmc -d registro_mercantil | gzip > $BACKUP_FILE
-
-if [ $? -eq 0 ]; then
-    echo "✅ Backup completado: $BACKUP_FILE"
-    echo "📊 Tamaño: $(du -h $BACKUP_FILE | cut -f1)"
-    
-    # Mantener solo los últimos 10 backups
-    cd $BACKUP_DIR
-    ls -t backup_*.sql.gz | tail -n +11 | xargs -r rm
-    echo "🧹 Backups antiguos eliminados"
-else
-    echo "❌ Error al crear backup"
-    exit 1
-fi
-```
-
-Crear script `scripts/restore-db.sh`:
-
-```bash
-#!/bin/bash
-# restore-db.sh - Script para restaurar base de datos desde backup
-
-if [ -z "$1" ]; then
-    echo "❌ Uso: $0 <archivo_backup.sql.gz>"
-    echo "📁 Backups disponibles:"
-    ls -la ./backups/backup_*.sql.gz 2>/dev/null || echo "   Ningún backup encontrado"
-    exit 1
-fi
-
-BACKUP_FILE="$1"
-
-if [ ! -f "$BACKUP_FILE" ]; then
-    echo "❌ Archivo no encontrado: $BACKUP_FILE"
-    exit 1
-fi
-
-echo "⚠️  ATENCIÓN: Esta acción eliminará todos los datos actuales"
-read -p "¿Está seguro de restaurar desde $BACKUP_FILE? (yes/no): " confirm
-
-if [ "$confirm" != "yes" ]; then
-    echo "❌ Operación cancelada"
-    exit 0
-fi
-
-echo "🛑 Deteniendo servicios..."
-docker compose down app
-
-echo "🔄 Restaurando base de datos..."
-gunzip -c "$BACKUP_FILE" | docker exec -i registro-mercantil-postgres psql -U portal_rmc -d registro_mercantil
-
-if [ $? -eq 0 ]; then
-    echo "✅ Restauración completada"
-    echo "🚀 Reiniciando servicios..."
-    docker compose up -d app
-    echo "✅ Proceso finalizado"
-else
-    echo "❌ Error durante la restauración"
-    exit 1
-fi
-```
-
-#### Hacer ejecutables los scripts:
-
-```bash
-chmod +x scripts/backup-db.sh scripts/restore-db.sh
-```
-
-#### Agregar comandos al package.json:
-
-```json
-{
-  "scripts": {
-    "db:backup": "bash scripts/backup-db.sh",
-    "db:restore": "bash scripts/restore-db.sh"
-  }
-}
-```
-
-### Recomendaciones de Backup
-
-- **Frecuencia**: Diaria para producción, semanal para desarrollo
-- **Almacenamiento**: Mantener backups en ubicación segura externa
-- **Retención**: 30 días para backups diarios, 1 año para mensuales
-- **Verificación**: Probar restauración periódicamente
-- **Compresión**: Usar `.gz` para ahorrar espacio
-- **Automatización**: Configurar cron jobs para backups automáticos
-
-### Migraciones con Prisma
-
-Si solo necesitas migrar datos entre entornos:
-
-```bash
-# Exportar datos como JSON
-bunx prisma db pull --force
-
-# Importar datos
-bun run db:push
-```
-
-## 🌐 URLs y Puertos
-
-### Desarrollo
-- **Aplicación**: http://localhost:3008
-- **Traefik Dashboard**: http://localhost:8081/dashboard
-- **PostgreSQL**: localhost:5432
-
-### Producción
-- **Aplicación**: https://registro-mercantil.xetid.cu
-- **Caddy Proxy**: registro-mercantil.xetid.cu:81
-
-## 🔒 Seguridad
-
-- **Autenticación**: JWT con expiración de 8 horas
-- **Contraseñas**: bcrypt con cost factor 12
-- **Validación**: Input sanitization y rate limiting
-- **HTTPS**: Configurado en producción
-- **CORS**: Configurado para orígenes permitidos
-
-## 📊 Monitoreo
-
-### Logs
-```bash
-# Logs de desarrollo
 tail -f dev.log
-
-# Logs de producción
 tail -f server.log
 ```
 
-### Base de Datos
+### Logs de Docker
+
 ```bash
-# Conectar a PostgreSQL
-docker exec -it registro-mercantil-postgres psql -U portal_rmc -d registro_mercantil
-
-# Ver tablas
-\dt
-
-# Ver datos de ejemplo
-SELECT name, nire, status FROM "SearchableName" LIMIT 5;
+docker compose logs -f app
+docker compose logs -f postgres
+docker compose logs -f traefik
 ```
 
-## 🐛 Solución de Problemas
+### Diagnóstico rápido de autenticación
 
-### Error: Puerto 3008 en uso
 ```bash
-# Matar proceso
+npm run auth:check
+docker compose logs -f app | grep -i "auth\|login\|jwt\|prisma"
+```
+
+## 🐛 Problemas comunes
+
+### Error: login falla incluso con credenciales correctas
+
+1. Borra cookies del navegador para el dominio actual.
+2. Verifica que el contenedor que estás usando apunta a la misma base de datos.
+3. Revisa que el usuario exista y esté activo:
+
+```bash
+npm run auth:check
+```
+
+4. Si el problema persiste, restaura la contraseña del admin:
+
+```bash
+npm run auth:reset-admin
+```
+
+### Error: el contenedor no arranca
+
+```bash
+docker compose down
+docker compose up -d --build
+docker compose logs -f app
+```
+
+### Error: build falla por Node o .next
+
+```bash
+rm -rf .next node_modules
+npm install
+npm run build
+```
+
+### Puerto ocupado
+
+```bash
+lsof -i :3008
+lsof -i :3003
+```
+
+Si hace falta, libera el puerto manualmente:
+
+```bash
 fuser -k 3008/tcp
-
-# O encontrar PID
-lsof -ti:3008 | xargs kill -9
+fuser -k 3003/tcp
 ```
 
-### Error: Base de datos no conecta
+## 🔒 Seguridad recomendada para producción
+
+- Cambia `JWT_SECRET` por un valor fuerte.
+- Usa HTTPS terminal y proxy inverso como Traefik/Caddy.
+- No dejes credenciales de producción en repositorios públicos.
+- Haz backups periódicos e incluye una comprobación de integridad de la base de datos.
+
+## 🤖 Configuración del chatbot IA
+
+Desde el CMS se puede configurar el proveedor compatible con OpenAI:
+
+1. Entrar al panel del CMS.
+2. Ir a Configuración del Bot.
+3. Elegir proveedor `openai-compatible`.
+4. Definir URL del endpoint, clave API, modelo y prompt del sistema.
+
+Proveedores habituales:
+
+- OpenAI: `https://api.openai.com/v1`
+- Azure OpenAI: `https://<resource>.openai.azure.com/`
+- Ollama: `http://localhost:11434/v1`
+
+## 📌 Resumen de uso rápido
+
 ```bash
-# Verificar contenedor
-docker ps | grep postgres
-
-# Reiniciar servicios
-docker compose down && docker compose up -d
+docker compose up -d --build
+npm run auth:check
+npm run db:migrate:all:seed
 ```
 
-### Error: Build falla
-```bash
-# Limpiar cache
-rm -rf .next node_modules/.cache
+Luego, inicia sesión en el CMS con:
 
-# Reinstalar dependencias
-bun install
-
-# Build limpio
-bun run build
-```
+- Email: admin@registromercantil.cu
+- Contraseña: Admin2026!
 
 ## 🤝 Contribución
 
-1. Fork el proyecto
-2. Crear rama feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Crear Pull Request
+1. Crear una rama.
+2. Hacer los cambios.
+3. Ejecutar validaciones relevantes.
+4. Abrir un Pull Request con descripción clara.
 
 ## 📄 Licencia
 
 Este proyecto es propiedad del Registro Mercantil de Cuba.
 
-## 📞 Soporte
-
-Para soporte técnico:
-- **Email**: soporte@registromercantil.cu
-- **Panel Admin**: Sección "Centro de Asistencia"
-- **Chatbot IA**: Disponible 24/7 en el portal
-
 ---
 
-**Desarrollado por el Registro Mercantil de Cuba** 🏛️
+Desarrollado por el Registro Mercantil de Cuba.
