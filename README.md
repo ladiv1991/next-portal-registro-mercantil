@@ -258,6 +258,18 @@ BACKUP_BEFORE_DEPLOY=false bash scripts/deploy.sh portal.registromercantil.cu
 PROJECT_DIR=/opt/portal-mercantil bash scripts/deploy.sh portal.registromercantil.cu
 ```
 
+El script también valida el registro Docker configurado en `DOCKER_REGISTRY`. En modo `auto` (por defecto), si el registro privado no tiene conectividad, usa automáticamente Docker Hub para `node`, `postgres` y `traefik`:
+
+```bash
+# Usar siempre Docker Hub
+DOCKER_REGISTRY_MODE=public bash scripts/deploy.sh portal.registromercantil.cu
+
+# Usar obligatoriamente el registro privado; falla si no es accesible
+DOCKER_REGISTRY_MODE=private bash scripts/deploy.sh portal.registromercantil.cu
+```
+
+El error `failed to fetch oauth token` junto con `no route to host` indica que el registro privado no es alcanzable desde el servidor. No es un error de Prisma ni de la aplicación.
+
 El DNS debe tener un registro `A` o `CNAME` apuntando al servidor donde se ejecuta Traefik. El script configura el enrutamiento, pero no puede crear el registro DNS en el proveedor externo.
 
 ### Verificar estado

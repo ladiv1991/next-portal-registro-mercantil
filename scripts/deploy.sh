@@ -10,6 +10,7 @@ POSTGRES_CONTAINER="registro-mercantil-postgres"
 ENV_FILE="$PROJECT_DIR/.env"
 SEED_DATABASE="${SEED_DATABASE:-true}"
 BACKUP_BEFORE_DEPLOY="${BACKUP_BEFORE_DEPLOY:-true}"
+DOCKER_REGISTRY_MODE="${DOCKER_REGISTRY_MODE:-auto}"
 
 die() {
     echo "❌ $*" >&2
@@ -18,6 +19,56 @@ die() {
 
 require_command() {
     command -v "$1" >/dev/null 2>&1 || die "No se encontró el comando requerido: $1"
+}
+
+read_env_value() {
+    local key="$1"
+    [[ -f "$ENV_FILE" ]] || return 0
+    sed -n "s/^${key}=//p" "$ENV_FILE" | head -n 1
+}
+
+configure_docker_registry() {
+    local configured_registry
+    local registry_host
+    local status
+
+    case "$DOCKER_REGISTRY_MODE" in
+        public)
+            export DOCKER_REGISTRY=""
+            echo "🐳 Registro Docker: Docker Hub público"
+            ;;
+        private)
+            configured_registry="$(read_env_value DOCKER_REGISTRY)"
+            [[ -n "$configured_registry" ]] || die "DOCKER_REGISTRY_MODE=private requiere DOCKER_REGISTRY en $ENV_FILE"
+            export DOCKER_REGISTRY="$configured_registry"
+            echo "🐳 Registro Docker privado: $configured_registry"
+            ;;
+        auto)
+            configured_registry="$(read_env_value DOCKER_REGISTRY)"
+            if [[ -z "$configured_registry" ]]; then
+                export DOCKER_REGISTRY=""
+                echo "🐳 Registro Docker: Docker Hub público"
+                return
+            fi
+
+            registry_host="${configured_registry#http://}"
+            registry_host="${registry_host#https://}"
+            registry_host="${registry_host%%/*}"
+            status="$(curl -k -sS --connect-timeout 5 --max-time 10 -o /dev/null -w '%{http_code}' "https://${registry_host}/v2/" || true)"
+            if [[ "$status" != "000" ]]; then
+                export DOCKER_REGISTRY="$configured_registry"
+                echo "🐳 Registro Docker privado disponible ($registry_host, HTTP $status)"
+            else
+                export DOCKER_REGISTRY=""
+                echo "⚠️  Registro privado no accesible: $registry_host"
+                echo "   Se usará Docker Hub público para node, postgres y traefik."
+                echo "   Para obligar el registro privado: DOCKER_REGISTRY_MODE=private bash scripts/deploy.sh"
+            fi
+            ;;
+        *)
+            die "DOCKER_REGISTRY_MODE debe ser auto, public o private"
+            ;;
+    esac
 }
 
 upsert_env() {
@@ -50,9 +101,11 @@ echo "================================================"
 echo ""
 
 require_command docker
+require_command curl
 docker compose version >/dev/null 2>&1 || die "Docker Compose no está disponible"
 
 cd "$PROJECT_DIR"
+configure_docker_registry
 
 if [[ -n "${1:-}" ]]; then
     PORTAL_DOMAIN="$1"
