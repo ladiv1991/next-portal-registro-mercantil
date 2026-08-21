@@ -3,31 +3,22 @@ ARG DOCKER_REGISTRY
 # ARG HTTPS_PROXY= ${HTTP_PROXY:-}
 # ARG NO_PROXY=localhost,127.0.0.1,::1,*.local,deb.debian.org,security.debian.org
 
-
-
-FROM ${DOCKER_REGISTRY}node:18
-
+FROM ${DOCKER_REGISTRY}node:20
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
+# Install dependencies needed to build the Next.js app.
 COPY package*.json ./
 COPY prisma ./prisma/
+RUN npm ci
 
-# Instalar dependencias
-RUN npm ci --only=production
-
-# Copiar el build standalone
-COPY .next/standalone ./
-
-# Copiar public
-COPY public ./public
-
-# Copiar archivos necesarios
-COPY next.config.ts ./
+# Copy source and build the production artifact inside the image.
+COPY . .
+RUN npx prisma generate
+RUN npm run build
 
 EXPOSE 3000
 
 ENV PORT=3000
 
-CMD ["node", "server.js"]
+CMD ["node", ".next/standalone/server.js"]

@@ -30,27 +30,32 @@ export function PricingPlans({
   isLoading = false,
   hideDescription = false,
 }: PricingPlansProps) {
-  const [allPlans, setAllPlans] = useState<PricingPlan[]>(plans);
+  const [allPlans, setAllPlans] = useState<PricingPlan[]>(() => plans);
 
   useEffect(() => {
-    if (plans.length === 0) {
-      fetchPlans();
-    } else {
-      setAllPlans(plans);
+    if (plans.length > 0) {
+      return;
     }
-  }, [plans]);
 
-  const fetchPlans = async () => {
-    try {
-      const res = await fetch('/api/payment/plans');
-      if (res.ok) {
-        const data = await res.json();
-        setAllPlans(data.plans || data.data || []);
-      }
-    } catch { /* empty */ }
-  };
+    let isActive = true;
 
-  const displayPlans = allPlans.length > 0 ? allPlans : getDefaultPlans();
+    fetch('/api/payment/plans')
+      .then((res) => res.ok ? res.json() : Promise.resolve(null))
+      .then((data) => {
+        if (!isActive) return;
+        setAllPlans(data?.plans || data?.data || []);
+      })
+      .catch(() => {
+        if (!isActive) return;
+        setAllPlans([]);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [plans.length]);
+
+  const displayPlans = plans.length > 0 ? plans : allPlans.length > 0 ? allPlans : getDefaultPlans();
   const sortedPlans = [...displayPlans].sort((a, b) => a.price - b.price);
   const recommended = sortedPlans[1] || sortedPlans[0];
 

@@ -75,7 +75,15 @@ function SectionSkeleton() {
 // ============================================================
 
 export default function Home() {
-  const [activeSection, setActiveSection] = useState('home');
+  const [activeSection, setActiveSection] = useState(() => {
+    if (typeof window === 'undefined') return 'home';
+    const pending = sessionStorage.getItem('navigateToSection');
+    if (pending) {
+      sessionStorage.removeItem('navigateToSection');
+      return pending;
+    }
+    return 'home';
+  });
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [cmsUser, setCmsUser] = useState<CmsUser | null>(null);
   const [loginError, setLoginError] = useState('');
@@ -88,24 +96,6 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // ---- Chatbot navigation: listen for section changes from FloatingChatbot ----
-  useEffect(() => {
-    const handleNavigate = (e: Event) => {
-      const section = (e as CustomEvent<string>).detail;
-      if (section) handleNavClick(section);
-    };
-    window.addEventListener('navigate-to-section', handleNavigate);
-
-    // Also check sessionStorage on mount (in case navigation happened before mount)
-    const pending = sessionStorage.getItem('navigateToSection');
-    if (pending) {
-      sessionStorage.removeItem('navigateToSection');
-      handleNavClick(pending);
-    }
-
-    return () => window.removeEventListener('navigate-to-section', handleNavigate);
-  }, []);
-
   // ---- Navigation ----
   const handleNavClick = useCallback((sectionId: string, query?: string) => {
     setActiveSection(sectionId);
@@ -114,6 +104,17 @@ export default function Home() {
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+
+  // ---- Chatbot navigation: listen for section changes from FloatingChatbot ----
+  useEffect(() => {
+    const handleNavigate = (e: Event) => {
+      const section = (e as CustomEvent<string>).detail;
+      if (section) handleNavClick(section);
+    };
+
+    window.addEventListener('navigate-to-section', handleNavigate);
+    return () => window.removeEventListener('navigate-to-section', handleNavigate);
+  }, [handleNavClick]);
 
   // ---- Authentication ----
   const handleCmsLogin = async (email: string, password: string): Promise<boolean> => {
