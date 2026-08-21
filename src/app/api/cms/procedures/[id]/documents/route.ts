@@ -3,19 +3,12 @@ import { db } from '@/lib/db';
 import { requireAuth, requireAdmin } from '@/lib/api-auth';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png', 'image/webp']);
-
-function sanitizeFilename(filename: string): string {
-  const extension = path.extname(filename || '').toLowerCase();
-  const basename = path.basename(filename || 'upload', extension).replace(/[^a-zA-Z0-9_-]/g, '_');
-  return `${Date.now()}_${basename || 'file'}${extension}`;
-}
+import { maxUploadBytes, sanitizeUploadFilename, validateUpload } from '@/lib/upload-security';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await requireAuth();
+    // Document uploads mutate CMS storage and therefore require administrator privileges.
+    await requireAdmin();
     const { id } = await params;
     const documents = await db.procedureDocument.findMany({
       where: { procedureId: id },
@@ -48,20 +41,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ success: false, error: 'Trámite no encontrado' }, { status: 404 });
     }
 
-    if (file.size === 0 || file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ success: false, error: 'El archivo es inválido o supera el tamaño máximo permitido (5 MB)' }, { status: 400 });
-    }
-
-    const mimeType = file.type?.toLowerCase();
-    const extension = path.extname(file.name || '').toLowerCase();
-    if (!mimeType || !ALLOWED_MIME_TYPES.has(mimeType) || !['.pdf', '.jpg', '.jpeg', '.png', '.webp'].includes(extension)) {
-      return NextResponse.json({ success: false, error: 'Tipo de archivo no permitido' }, { status: 400 });
-    }
+    const validationError = validateUpload(file, 'document');
+    if (validationError) return NextResponse.json({ success: false, error: `${validationError} (máximo ${Math.round(maxUploadBytes('document') / 1024 / 1024)} MB)` }, { status: 400 });
 
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'procedures');
     await mkdir(uploadsDir, { recursive: true });
 
-    const fileName = sanitizeFilename(file.name);
+    const fileName = sanitizeUploadFilename(file.name);
     const filePath = `/uploads/procedures/${fileName}`;
     const fullPath = path.join(uploadsDir, fileName);
 

@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
+import { generatePortalToken, verifyPortalPassword } from '@/lib/portal-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,9 +39,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For now, we'll use a simple password check
-    // In production, this should be properly hashed
-    const isValidPassword = password === 'temp-password'; // TODO: Implement proper password hashing
+    // Compare a per-user bcrypt hash; no shared password or development bypass is accepted.
+    const isValidPassword = user.passwordHash
+      ? await verifyPortalPassword(password, user.passwordHash)
+      : false;
 
     if (!isValidPassword) {
       return NextResponse.json(
@@ -53,16 +51,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create JWT token
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-        type: 'portal',
-      },
-      JWT_SECRET,
-      { expiresIn: '8h' }
-    );
+    // Sign the session only after the password was verified.
+    const token = generatePortalToken({ userId: user.id, email: user.email, type: 'portal' });
 
     // Set HTTP-only cookie
     const response = NextResponse.json({

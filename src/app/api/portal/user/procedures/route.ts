@@ -1,25 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
-
-function getUserIdFromRequest(request: NextRequest): string | null {
-  try {
-    const token = request.cookies.get('portal-token')?.value;
-    if (!token) return null;
-
-    const decoded = Buffer.from(token, 'base64').toString('utf-8');
-    const data = JSON.parse(decoded);
-    return data.userId;
-  } catch {
-    return null;
-  }
-}
+import { getPortalUserId } from '@/lib/portal-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = getUserIdFromRequest(request);
+    const userId = getPortalUserId(request);
     if (!userId) {
       return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
     }

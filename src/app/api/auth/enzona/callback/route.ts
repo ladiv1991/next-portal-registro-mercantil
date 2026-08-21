@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { generatePortalToken } from '@/lib/portal-auth';
 
 /**
  * OAuth callback de ENZONA
@@ -81,14 +82,8 @@ export async function GET(request: NextRequest) {
     });
 
     // Crear sesión JWT
-    const token = Buffer.from(
-      JSON.stringify({
-        userId: user.id,
-        email: user.email,
-        role: user.role,
-        type: 'portal',
-      })
-    ).toString('base64');
+    // Base64 is only encoding; use the signed session format used by password login.
+    const token = generatePortalToken({ userId: user.id, email: user.email, type: 'portal' });
 
     // Redirigir a dashboard con token
     const response = NextResponse.redirect(

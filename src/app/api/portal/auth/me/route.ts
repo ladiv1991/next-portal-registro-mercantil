@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
+import { verifyPortalToken } from '@/lib/portal-auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,8 +10,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
     }
 
-    // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    // Verify the signature and token type before using the embedded user id.
+    const decoded = verifyPortalToken(token);
 
     if (decoded.type !== 'portal') {
       return NextResponse.json({ success: false, error: 'Token inválido' }, { status: 401 });
