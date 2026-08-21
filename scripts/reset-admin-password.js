@@ -21,7 +21,10 @@ function parseArgs(argv) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://portal_rmc:PortalRMC2026!Secure@localhost:5433/registro_mercantil';
+  const DATABASE_URL = process.env.DATABASE_URL;
+  if (!DATABASE_URL) {
+    throw new Error('DATABASE_URL must be configured before resetting the admin password.');
+  }
   const email = args.email || process.env.CMS_ADMIN_EMAIL || 'admin@registromercantil.cu';
   const password = args.password || process.env.CMS_ADMIN_PASSWORD || 'Admin2026!';
 

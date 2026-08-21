@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   compress: true,
 
   async headers() {
+    // These headers reduce clickjacking, MIME confusion, referrer leakage, and browser API exposure.
     return [
       {
         source: '/:path*',

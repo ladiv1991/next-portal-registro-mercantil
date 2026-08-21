@@ -11,10 +11,14 @@ services:
       dockerfile: Dockerfile
     container_name: registro-mercantil-app
     environment:
-      DATABASE_URL: postgresql://portal_rmc:PortalRMC2026!Secure@postgres:5432/registro_mercantil
-      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgresql://portal_rmc:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD_is_required}@postgres:5432/registro_mercantil
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET_is_required}
       NODE_ENV: production
       NEXT_PUBLIC_APP_URL: ${PORTAL_SCHEME:-http}://${PORTAL_DOMAIN:-localhost:3003}
+      UPLOAD_MAX_FILE_MB: ${UPLOAD_MAX_FILE_MB:-5}
+      UPLOAD_MAX_IMAGE_MB: ${UPLOAD_MAX_IMAGE_MB:-5}
+      UPLOAD_MAX_DOCUMENT_MB: ${UPLOAD_MAX_DOCUMENT_MB:-20}
+      UPLOAD_MAX_VIDEO_MB: ${UPLOAD_MAX_VIDEO_MB:-100}
     ports:
       - "3003:3000"
     depends_on:
@@ -46,10 +50,10 @@ services:
     container_name: registro-mercantil-postgres
     environment:
       POSTGRES_USER: portal_rmc
-      POSTGRES_PASSWORD: "PortalRMC2026!Secure"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD_is_required}
       POSTGRES_DB: registro_mercantil
-      HTTP_PROXY: http://voacosta:L4d1v*ok@10.12.0.205:3128
-      HTTPS_PROXY: http://voacosta:L4d1v*ok@10.12.0.205:3128
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
     ports:
       - "5433:5432"
     volumes:

@@ -381,6 +381,25 @@ Recomendación:
 
 ## Recomendación final
 
+## Cambios aplicados en esta ejecución
+
+- [x] JWT CMS y portal sin secretos fallback; `JWT_SECRET` exige al menos 32 caracteres.
+- [x] Tokens portal firmados y verificados centralmente; se eliminó el uso de Base64 como autenticación.
+- [x] Login portal sin contraseña fija; requiere `PortalUser.passwordHash` con bcrypt.
+- [x] Upload genérico y de documentos protegido con `requireAdmin`.
+- [x] Límites separados por `.env`: `UPLOAD_MAX_FILE_MB`, `UPLOAD_MAX_IMAGE_MB`, `UPLOAD_MAX_DOCUMENT_MB` y `UPLOAD_MAX_VIDEO_MB`.
+- [x] Validación de carpeta, MIME, extensión y nombre aleatorio para uploads.
+- [x] Logs de queries Prisma reducidos en producción.
+- [x] Secretos de PostgreSQL y proxy retirados de `docker-compose.yml`.
+- [x] Cabeceras HTTP de protección configuradas en `next.config.ts`.
+
+Pendientes que requieren una decisión operativa o infraestructura externa:
+
+- [ ] Migrar los archivos existentes fuera de `public/uploads` y servirlos mediante endpoint autorizado o almacenamiento privado.
+- [ ] Implementar el intercambio real del código OAuth con ENZONA; el callback de demostración no debe habilitarse en producción.
+- [ ] Añadir rate limiting distribuido y pruebas automatizadas de CSRF/XSS.
+- [ ] Rotar inmediatamente los secretos que hayan estado expuestos antes de esta corrección.
+
 La prioridad absoluta es bloquear las rutas de autenticación y uploads antes de seguir con mejoras “estéticas”. Si no se corrigen los fallbacks de secretos, la contraseña fija del portal y el upload sin validación, la aplicación estará en una condición insegura para cualquier despliegue con acceso externo.
 
 ## Siguientes pasos concretos

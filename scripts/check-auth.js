@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://portal_rmc:PortalRMC2026!Secure@localhost:5433/registro_mercantil';
+const DATABASE_URL = process.env.DATABASE_URL;
 const ADMIN_EMAIL = process.env.CMS_ADMIN_EMAIL || 'admin@registromercantil.cu';
 const ADMIN_PASSWORD = process.env.CMS_ADMIN_PASSWORD || 'Admin2026!';
 
@@ -12,6 +12,11 @@ function maskDatabaseUrl(url) {
 
 async function main() {
   console.log('=== Auth diagnostics ===');
+  if (!DATABASE_URL) {
+    console.error('DATABASE_URL must be configured before running auth diagnostics.');
+    process.exitCode = 1;
+    return;
+  }
   console.log(`DATABASE_URL=${maskDatabaseUrl(DATABASE_URL)}`);
 
   const prisma = new PrismaClient({
