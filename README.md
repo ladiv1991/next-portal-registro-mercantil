@@ -141,6 +141,13 @@ Crea un `.env` o `.env.local` con estas variables básicas:
 DATABASE_URL=postgresql://portal_rmc:PortalRMC2026!Secure@localhost:5433/registro_mercantil
 JWT_SECRET=change-this-secret-in-production
 NEXT_PUBLIC_APP_URL=http://localhost:3003
+
+# Secretos y límites de archivos
+JWT_SECRET=genere-un-secreto-aleatorio-de-al-menos-32-caracteres
+UPLOAD_MAX_FILE_MB=5
+UPLOAD_MAX_IMAGE_MB=5
+UPLOAD_MAX_DOCUMENT_MB=20
+UPLOAD_MAX_VIDEO_MB=100
 ```
 
 > En Docker Compose la aplicación usa `postgres:5432` dentro de la red de contenedores, mientras que desde el host se expone en `localhost:5433`.
