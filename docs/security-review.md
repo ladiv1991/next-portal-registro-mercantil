@@ -1,5 +1,52 @@
 # Revisión de seguridad del portal: front-end, back-end y despliegue
 
+## Revisión de seguimiento: código y aplicación en ejecución
+
+**Fecha:** 2026-08-21
+**Método:** revisión estática del repositorio, `npm audit` de dependencias de producción y pruebas HTTP no destructivas contra `localhost:3003` y Traefik en `localhost:8082`.
+
+### Resultado ejecutivo actualizado
+
+El informe compartido mezclaba el estado anterior del repositorio con recomendaciones que ya fueron aplicadas. El estado real es:
+
+| ID | Estado actual | Evidencia verificada |
+|---|---|---|
+| S-001 | **Corregido en código; pendiente validar en runtime** | `src/lib/auth.ts` rechaza `JWT_SECRET` ausente o menor de 32 caracteres. |
+| S-002 | **No corregido** | No existe middleware ni limiter en `src`; `/api/search` responde sin rate limit visible. |
+| S-003 | **No reproducible como SQL injection** | `/api/search` usa `$queryRaw` parametrizado; sigue pendiente sanitización funcional, mínimo de longitud y rate limiting. |
+| S-004 | **Corregido en Compose; rotación pendiente** | PostgreSQL, JWT y proxy se leen desde entorno; hay que rotar cualquier secreto expuesto históricamente. |
+| S-005 | **Corregido en código; no desplegado en la app activa** | `next.config.ts` define CSP y headers, pero `curl http://localhost:3003/` no los devuelve. Requiere rebuild/redeploy. |
+| S-006 | **No corregido** | Existe `AuditLog`, pero no hay implementación `logAuditEvent` ni uso consistente en endpoints. |
+| S-007 | **Parcial / riesgo abierto** | `HomeSection` usa `ReactMarkdown` sin sanitización explícita y el chatbot usa `dangerouslySetInnerHTML`. |
+| S-008 | **Parcialmente corregido** | Prisma ya no registra queries en producción; todavía deben normalizarse respuestas y logs de errores. |
+| S-009 | **Informe original impreciso** | No hay CORS explícito permisivo en el código; el riesgo principal es ausencia de una política documentada, no “CORS default de desarrollo” en producción. |
+| S-010 | **Parcialmente corregido** | Hay límites/MIME/extensión server-side, pero no magic bytes, antivirus ni almacenamiento privado. |
+| S-011 | **No corregido** | No existe validación `X-CSRF-Token` ni middleware CSRF. `SameSite=Lax` es mitigación parcial, no sustituto universal. |
+| S-012 | **No corregido** | No hay nonce; la CSP actual depende de `script-src 'self'`. |
+| S-013 | **Riesgo confirmado** | `npm audit --omit=dev --audit-level=high`: 22 vulnerabilidades de producción: 1 crítica, 14 altas, 6 moderadas y 1 baja. |
+| S-014 | **No corregido** | No se encontró pipeline de secret scanning en el repositorio. |
+
+### Pruebas HTTP realizadas sobre la app activa
+
+- `GET /` respondió `200`, pero sin `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options` ni `Referrer-Policy`.
+- `GET /api/auth/me` respondió `401`, por lo que el endpoint CMS no concede sesión anónima.
+- `GET /api/search?q=registro` respondió `200` sin evidencia de rate limit.
+- `POST /api/upload` sin método POST respondió `405`; esto no prueba autorización del POST, aunque el código fuente actual sí llama `requireAdmin()`.
+- `GET http://localhost:8082/api/http/routers` respondió `404`; la API no está expuesta en ese puerto, pero `--api.insecure=true` debe eliminarse antes de producción.
+
+### Acción inmediata derivada de la revalidación
+
+La aplicación activa debe reconstruirse y redeployarse para que reciba las correcciones ya presentes en el repositorio. Después deben repetirse estas comprobaciones:
+
+```bash
+docker compose up -d --build
+curl -sS -D - http://localhost:3003/ -o /dev/null
+curl -i http://localhost:3003/api/auth/me
+npm audit --omit=dev --audit-level=high
+```
+
+No se debe marcar S-005 como cerrado hasta que `curl` muestre las cabeceras desde el dominio real.
+
 ## Resumen ejecutivo
 
 Se identificaron varias vulnerabilidades de alto riesgo en la app, especialmente en la capa de autenticación, uploads y manejo de contenido dinámico. La prioridad más alta es corregir los fallbacks de secretos, desaparecer las credenciales por defecto expuestas, bloquear el acceso directo a archivos subidos y reforzar la validación de entrada y sanitización HTML en los puntos donde se renderiza contenido no confiable.
