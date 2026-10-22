@@ -26,15 +26,6 @@ export const NAV_ITEMS = [
   { id: 'acceso', label: 'Registradores', icon: 'Lock' },
 ];
 
-export const QUICK_ACCESS_CARDS = [
-  { title: 'Consultas Públicas', description: 'Busque sociedades, administradores y documentos registrados', icon: 'Search', color: 'bg-[#1A1A1A]', section: 'consultas' },
-  { title: 'Solicitud de Primera Inscripción de un Sujeto', description: 'Solicitud conforme al DL 226/2001', icon: 'Building2', color: 'bg-[#9E3A2E]', section: 'tramites' },
-  { title: 'Modificaciones', description: 'Realice solicitud de inscripción de modificaciones de los datos registrales de su sujeto', icon: 'PenTool', color: 'bg-[#7A2A1E]', section: 'tramites' },
-  { title: 'Estado de Situación', description: 'Deposite y consulte estado de situación de sociedades', icon: 'FileSpreadsheet', color: 'bg-[#1A1A1A]', section: 'tramites' },
-  { title: 'Inversión Extranjera (VUCE)', description: 'Trámites para representaciones y sucursales extranjeras', icon: 'Globe2', color: 'bg-[#9E3A2E]', section: 'tramites' },
-  { title: 'Certificaciones', description: 'Obtenga certificaciones y notas simples registrales', icon: 'Award', color: 'bg-[#7A2A1E]', section: 'consultas' },
-];
-
 export const STATS = [
   { label: 'Sociedades activas', value: 45280, suffix: '+', icon: 'Building2' },
   { label: 'Trámites digitales', value: 128500, suffix: '+', icon: 'FileText' },
@@ -169,23 +160,6 @@ export const LEGAL_FRAMEWORK = [
       'Instrucción No. 03/2024 - Depósito de Estado de Situación',
     ],
   },
-];
-
-export const FEE_SCHEDULE = [
-  { procedure: 'Primera inscripción de sujetos', cost: '1,200 CUP' },
-  { procedure: 'Fusión o escisión de entidades', cost: '1,200 CUP' },
-  { procedure: 'Constitución Cooperativa', cost: '300 CUP' },
-  { procedure: 'Modificación de Capital', cost: '400 CUP' },
-  { procedure: 'Cambio de Domicilio', cost: '200 CUP' },
-  { procedure: 'Cambio de Administradores', cost: '300 CUP' },
-  { procedure: 'Modificación Objeto Social', cost: '180 CUP' },
-  { procedure: 'Fusión de Sociedades', cost: '1,200 CUP' },
-  { procedure: 'Transformación Societaria', cost: '180 CUP' },
-  { procedure: 'Certificación Literal', cost: '900 CUP' },
-  { procedure: 'Nota Simple Informativa', cost: '300 CUP' },
-  { procedure: 'Depósito de Estados Financieros', cost: '600 CUP' },
-  { procedure: 'Oficina Representación (Ext)', cost: '2,000 CUP' },
-  { procedure: 'Sucursal (Ext)', cost: '3,500 CUP' },
 ];
 
 export const FORMS = [
