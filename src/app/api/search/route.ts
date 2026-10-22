@@ -10,35 +10,33 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     const status = searchParams.get('status');
 
-    if (!rawQuery.trim()) {
-      return NextResponse.json({ success: true, data: [] });
-    }
-
     const normalizedQuery = rawQuery
       .toLowerCase()
       .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
 
-    if (!normalizedQuery) {
-      return NextResponse.json({ success: true, data: [] });
-    }
-
     const conditions: Prisma.Sql[] = [
       Prisma.sql`visible = true`,
-      Prisma.sql`(LOWER(REGEXP_REPLACE(name, '[[:punct:]]', '', 'g')) LIKE ${`%${normalizedQuery}%`} OR LOWER(REGEXP_REPLACE(nire, '[[:punct:]]', '', 'g')) LIKE ${`%${normalizedQuery}%`})`,
     ];
+
+    if (normalizedQuery) {
+      conditions.push(Prisma.sql`(LOWER(REGEXP_REPLACE(name, '[[:punct:]]', '', 'g')) LIKE ${`%${normalizedQuery}%`} OR LOWER(REGEXP_REPLACE(nire, '[[:punct:]]', '', 'g')) LIKE ${`%${normalizedQuery}%`)}`);
+    } else if (!province && !type && !status) {
+      return NextResponse.json({ success: true, data: { results: [] } });
+    }
     if (province) conditions.push(Prisma.sql`province = ${province}`);
     if (type) conditions.push(Prisma.sql`type = ${type}`);
     if (status) conditions.push(Prisma.sql`status = ${status}`);
 
+    const whereClause = Prisma.join(conditions, ' AND ');
     const results = await db.$queryRaw<{
       id: string; name: string; nire: string; type: string;
       province: string; status: string; visible: boolean;
     }>(Prisma.sql`
       SELECT id, name, nire, type, province, status, visible
       FROM "SearchableName"
-      WHERE ${Prisma.sql`${conditions.join(Prisma.sql` AND `)}`}
+      WHERE ${whereClause}
       ORDER BY "createdAt" DESC
       LIMIT 50
     `);
