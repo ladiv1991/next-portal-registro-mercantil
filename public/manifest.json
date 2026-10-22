@@ -1,0 +1,19 @@
+{
+  "name": "Registro Mercantil de Cuba",
+  "short_name": "RM Cuba",
+  "description": "Portal oficial del Registro Mercantil de la República de Cuba — Ministerio de Justicia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#005A9C",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

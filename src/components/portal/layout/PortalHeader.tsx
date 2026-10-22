@@ -104,7 +104,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <button onClick={() => handleNavClick('home')} className="flex items-center gap-3 group">
@@ -123,16 +123,17 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
           </button>
 
           {/* Desktop Nav - Matte Dark Style */}
-          <nav className="hidden lg:flex items-center gap-0.5">
+          <nav className="hidden lg:flex items-center gap-0.5" role="navigation" aria-label="Navegación principal">
             {NAV_ITEMS_CONFIG.map((item) => {
+              const IconComponent = ICON_MAP[item.iconName];
               const isActive = activeSection === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className="relative px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-300"
+                  className="relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-current={isActive ? 'page' : undefined}
                 >
-                  {/* Background layer */}
                   <div
                     className={`absolute inset-0 rounded-lg transition-all duration-300 ${
                       isActive ? 'opacity-100' : 'opacity-0 hover:opacity-100'
@@ -146,17 +147,17 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                         : 'none',
                     }}
                   />
-                  {/* Text layer */}
                   <span
-                    className={`relative z-10 flex items-center gap-1.5 transition-colors duration-300 ${
+                    className={`relative z-10 flex items-center gap-2 transition-colors duration-300 ${
                       isActive ? 'text-white' : 'text-gray-300 hover:text-gray-100'
                     }`}
                   >
+                    {IconComponent && <IconComponent className="w-4 h-4 shrink-0" />}
                     {item.label}
                     {isActive && (
                       <motion.div
                         layoutId="activeIndicator"
-                        className="w-1 h-1 rounded-full bg-white/80"
+                        className="w-1 h-1 rounded-full bg-white/80 shrink-0"
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                       />
                     )}

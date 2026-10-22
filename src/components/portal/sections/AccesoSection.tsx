@@ -57,7 +57,7 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
       <section className="bg-[var(--rm-text)] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
           <Badge className="mb-4 bg-white text-[var(--rm-primary)] border-[var(--rm-primary)]/30 shadow-sm">
             <Lock className="w-3 h-3 mr-1" />
             Acceso Registradores
@@ -69,7 +69,7 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Login */}
           <Card className="glass-card overflow-hidden">

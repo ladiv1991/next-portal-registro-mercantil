@@ -70,13 +70,13 @@ export default function EstadisticasSection() {
     return (
       <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
         <section className="bg-[var(--rm-text)] py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
             <Skeleton className="h-6 w-48 mx-auto mb-4 bg-white/20" />
             <Skeleton className="h-10 w-64 mx-auto mb-3 bg-white/20" />
             <Skeleton className="h-5 w-96 mx-auto bg-white/20" />
           </div>
         </section>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="p-4 rounded-xl border border-gray-200">
@@ -103,7 +103,7 @@ export default function EstadisticasSection() {
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
       <section className="bg-[var(--rm-text)] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
           <Badge className="mb-4 bg-white text-[var(--rm-primary)] border-[var(--rm-primary)]/30 shadow-sm">
             <BarChart3 className="w-3 h-3 mr-1" />
             Estadísticas y Datos Abiertos
@@ -115,7 +115,7 @@ export default function EstadisticasSection() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
         {/* Key Indicators */}
         <motion.div
           variants={staggerContainer}

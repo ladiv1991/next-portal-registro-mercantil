@@ -66,14 +66,14 @@ export default function TramitesSection() {
       <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
         {/* Header skeleton */}
         <section className="bg-[var(--rm-text)] py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
             <Skeleton className="h-6 w-40 mx-auto mb-4 bg-white/20" />
             <Skeleton className="h-10 w-64 mx-auto mb-3 bg-white/20" />
             <Skeleton className="h-5 w-96 mx-auto bg-white/20" />
           </div>
         </section>
         {/* Content skeleton */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="p-6 rounded-xl border border-gray-200">
@@ -92,7 +92,7 @@ export default function TramitesSection() {
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
       <section className="bg-[var(--rm-text)] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
           <Badge className="mb-4 bg-white text-[var(--rm-primary)] border-[var(--rm-primary)]/30 shadow-sm">
             <FileText className="w-3 h-3 mr-1" />
             Trámites en Línea
@@ -106,7 +106,7 @@ export default function TramitesSection() {
 
       {/* Login Prompt */}
       <div className="bg-[var(--rm-primary)]/10 border-b border-[var(--rm-primary)]/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-[var(--rm-primary)]" />
@@ -122,7 +122,7 @@ export default function TramitesSection() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
         {/* Main Procedures */}
         {procedures.length > 0 && (
           <motion.div

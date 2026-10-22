@@ -156,7 +156,7 @@ export default function Home() {
       <div className="min-h-screen flex flex-col">
         <PortalHeader activeSection={activeSection} onNavigate={handleNavClick} />
 
-        <main className="flex-1">
+        <main id="main-content" className="flex-1">
           <AnimatePresence mode="wait">
             {activeSection === 'home' && <HomeSection key="home" onNavigate={handleNavClick} />}
             {activeSection === 'consultas' && <ConsultasSection key="consultas" initialQuery={searchQuery} />}

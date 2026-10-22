@@ -106,9 +106,43 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 17px;
+    line-height: 1.7;
   }
   html {
     scroll-behavior: smooth;
+  }
+  /* WCAG 2.1 AA - Focus visible (2.4.7) */
+  :focus-visible {
+    outline: 3px solid var(--c-accent, #9E3A2E);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  /* WCAG 2.1 AA - Text spacing (1.4.12) */
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  p, li, td, th {
+    letter-spacing: 0.01em;
+  }
+  /* Skip link for keyboard users (2.4.1) */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--c-accent, #9E3A2E);
+    color: #FFFFFF;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0 0 8px 8px;
+    z-index: 9999;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.2s;
+  }
+  .skip-link:focus {
+    top: 0;
   }
 }
 

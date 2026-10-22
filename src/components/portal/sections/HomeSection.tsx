@@ -326,7 +326,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                       className="w-full h-full object-cover"
                     />
                   ) : null}
-                  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
+                  <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 h-full flex flex-col justify-center">
                     <AnimatePresence mode="wait">
                       {currentSlide === idx && (
                         <motion.div
@@ -414,7 +414,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
               className="w-full h-full object-cover"
             />
             <div className="hero-overlay absolute inset-0" />
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
+            <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 h-full flex flex-col justify-center">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                 <Badge className="mb-3 sm:mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30 text-xs sm:text-sm px-3 py-0.5 sm:px-4 sm:py-1">
                   <Star className="w-3 h-3 mr-1" />
@@ -560,7 +560,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
 
       {/* ============ SERVICES GRID ============ */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold gradient-text-primary">Servicios Principales</h2>
             <p className="text-muted-foreground mt-2">Acceda rápidamente a los servicios del Registro Mercantil</p>
@@ -684,7 +684,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
         </div>
 
         {/* Section title */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -698,7 +698,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
           </motion.div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
           {loading ? (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
@@ -807,7 +807,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
 
       {/* ============ NEWS GRID ============ */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10">
           <div className="flex items-center justify-between mb-10">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold gradient-text-primary">Noticias y Anuncios</h2>
@@ -885,7 +885,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
 
       {/* ============ BENEFITS SECTION (static) ============ */}
       <section className="py-16 bg-[var(--rm-text)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-white">¿Por qué elegir nuestro portal?</h2>
             <p className="text-gray-300 mt-2">Beneficios de la plataforma digital del Registro Mercantil</p>
