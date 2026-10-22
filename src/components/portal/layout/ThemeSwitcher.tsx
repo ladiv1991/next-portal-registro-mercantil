@@ -204,7 +204,7 @@ export default function ThemeSwitcher() {
                             {preset.name}
                           </span>
                         </div>
-                        <p className="text-xs truncate" style={{ color: '#6B5E50' }}>
+                        <p className="text-xs truncate" style={{ color: 'var(--rm-muted)' }}>
                           {preset.description}
                         </p>
                       </div>
@@ -233,7 +233,7 @@ export default function ThemeSwitcher() {
                   background: theme.colors.navy + '04',
                 }}
               >
-                <p className="text-xs" style={{ color: '#6B5E50' }}>
+                <p className="text-xs" style={{ color: 'var(--rm-muted)' }}>
                   <Palette className="w-3 h-3 inline mr-1" />
                   La selección se guarda automáticamente en su navegador
                 </p>

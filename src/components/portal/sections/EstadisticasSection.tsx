@@ -69,7 +69,7 @@ export default function EstadisticasSection() {
   if (loading) {
     return (
       <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
-        <section className="bg-[#1A1A1A] py-16">
+        <section className="bg-[var(--rm-text)] py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Skeleton className="h-6 w-48 mx-auto mb-4 bg-white/20" />
             <Skeleton className="h-10 w-64 mx-auto mb-3 bg-white/20" />
@@ -102,9 +102,9 @@ export default function EstadisticasSection() {
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
-      <section className="bg-[#1A1A1A] py-16">
+      <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30">
+          <Badge className="mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30">
             <BarChart3 className="w-3 h-3 mr-1" />
             Estadísticas y Datos Abiertos
           </Badge>
@@ -129,12 +129,12 @@ export default function EstadisticasSection() {
               <Card className="glass-card-inner overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <ind.icon className="w-5 h-5 text-[#9E3A2E]" />
+                    <ind.icon className="w-5 h-5 text-[var(--rm-primary)]" />
                     <Badge className={ind.positive ? 'bg-green-100 text-green-800 text-xs' : 'bg-red-100 text-red-800 text-xs'}>
                       {ind.change}
                     </Badge>
                   </div>
-                  <p className="text-2xl font-bold text-[#1A1A1A]">{ind.value}</p>
+                  <p className="text-2xl font-bold text-[var(--rm-text)]">{ind.value}</p>
                   <p className="text-xs text-muted-foreground">{ind.label}</p>
                 </CardContent>
               </Card>
@@ -159,8 +159,8 @@ export default function EstadisticasSection() {
           <Card className="glass-card overflow-hidden">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Download className="w-5 h-5 text-[#9E3A2E]" />
-                <CardTitle className="text-[#1A1A1A]">Informes Descargables</CardTitle>
+                <Download className="w-5 h-5 text-[var(--rm-primary)]" />
+                <CardTitle className="text-[var(--rm-text)]">Informes Descargables</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -172,17 +172,17 @@ export default function EstadisticasSection() {
                   { title: 'Serie Histórica 2015-2024', format: 'XLSX', size: '3.2 MB' },
                   { title: 'Reporte de Inversión Extranjera (VUCE) 2024', format: 'PDF', size: '1.8 MB' },
                 ].map((report) => (
-                  <div key={report.title} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-[#7A2A1E]/30 transition-colors cursor-pointer group">
+                  <div key={report.title} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-[var(--rm-primary)]/30 transition-colors cursor-pointer group">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-[#1A1A1A]/5 flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-[#1A1A1A]" />
+                      <div className="w-8 h-8 rounded bg-[var(--rm-text)]/5 flex items-center justify-center">
+                        <FileText className="w-4 h-4 text-[var(--rm-text)]" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-[#1A1A1A] group-hover:text-[#9E3A2E] transition-colors">{report.title}</p>
+                        <p className="text-sm font-medium text-[var(--rm-text)] group-hover:text-[var(--rm-primary)] transition-colors">{report.title}</p>
                         <p className="text-xs text-muted-foreground">{report.format} • {report.size}</p>
                       </div>
                     </div>
-                    <Download className="w-4 h-4 text-muted-foreground group-hover:text-[#9E3A2E]" />
+                    <Download className="w-4 h-4 text-muted-foreground group-hover:text-[var(--rm-primary)]" />
                   </div>
                 ))}
               </div>
@@ -192,8 +192,8 @@ export default function EstadisticasSection() {
           <Card className="glass-card overflow-hidden">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Activity className="w-5 h-5 text-[#9E3A2E]" />
-                <CardTitle className="text-[#1A1A1A]">Portal de Datos Abiertos</CardTitle>
+                <Activity className="w-5 h-5 text-[var(--rm-primary)]" />
+                <CardTitle className="text-[var(--rm-text)]">Portal de Datos Abiertos</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -210,14 +210,14 @@ export default function EstadisticasSection() {
                   ].map((api) => (
                     <div key={api.title} className="p-3 rounded-lg border border-gray-200">
                       <div className="flex items-center justify-between mb-1">
-                        <h4 className="text-sm font-semibold text-[#1A1A1A]">{api.title}</h4>
+                        <h4 className="text-sm font-semibold text-[var(--rm-text)]">{api.title}</h4>
                         <Badge className="bg-green-100 text-green-800 text-xs">{api.status}</Badge>
                       </div>
                       <p className="text-xs text-muted-foreground">{api.desc}</p>
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A]/5">
+                <Button variant="outline" className="w-full border-[var(--rm-text)] text-[var(--rm-text)] hover:bg-[var(--rm-text)]/5">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Documentación de APIs
                 </Button>

@@ -65,7 +65,7 @@ export default function TramitesSection() {
     return (
       <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
         {/* Header skeleton */}
-        <section className="bg-[#1A1A1A] py-16">
+        <section className="bg-[var(--rm-text)] py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Skeleton className="h-6 w-40 mx-auto mb-4 bg-white/20" />
             <Skeleton className="h-10 w-64 mx-auto mb-3 bg-white/20" />
@@ -91,9 +91,9 @@ export default function TramitesSection() {
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
-      <section className="bg-[#1A1A1A] py-16">
+      <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30">
+          <Badge className="mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30">
             <FileText className="w-3 h-3 mr-1" />
             Trámites en Línea
           </Badge>
@@ -106,17 +106,17 @@ export default function TramitesSection() {
       </section>
 
       {/* Login Prompt */}
-      <div className="bg-[#7A2A1E]/10 border-b border-[#7A2A1E]/20">
+      <div className="bg-[var(--rm-primary)]/10 border-b border-[var(--rm-primary)]/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-[#9E3A2E]" />
-              <span className="text-sm text-[#1A1A1A]">
+              <AlertCircle className="w-5 h-5 text-[var(--rm-primary)]" />
+              <span className="text-sm text-[var(--rm-text)]">
                 Para iniciar un trámite necesita una cuenta de usuario.{' '}
-                <button className="text-[#9E3A2E] font-medium underline">Regístrese aquí</button>
+                <button className="text-[var(--rm-primary)] font-medium underline">Regístrese aquí</button>
               </span>
             </div>
-            <Button size="sm" className="bg-[#9E3A2E] text-[#1A1A1A] hover:bg-[#9E3A2E]-light" onClick={() => setAuthModalOpen(true)}>
+            <Button size="sm" className="bg-[var(--rm-primary)] text-[var(--rm-text)] hover:bg-[var(--rm-primary)]-light" onClick={() => setAuthModalOpen(true)}>
               Iniciar Sesión
             </Button>
           </div>

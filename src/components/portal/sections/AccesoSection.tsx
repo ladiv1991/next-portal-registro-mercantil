@@ -56,9 +56,9 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
-      <section className="bg-[#1A1A1A] py-16">
+      <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30">
+          <Badge className="mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30">
             <Lock className="w-3 h-3 mr-1" />
             Acceso Registradores
           </Badge>
@@ -75,8 +75,8 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
           <Card className="glass-card overflow-hidden">
             <CardHeader className="rounded-t-[28px]">
               <div className="flex items-center gap-2">
-                <Lock className="w-5 h-5 text-[#9E3A2E]" />
-                <CardTitle className="text-[#1A1A1A]">Acceso al Sistema</CardTitle>
+                <Lock className="w-5 h-5 text-[var(--rm-primary)]" />
+                <CardTitle className="text-[var(--rm-text)]">Acceso al Sistema</CardTitle>
               </div>
               <CardDescription>Ingrese sus credenciales para acceder al Sistema de Gestión Registral</CardDescription>
             </CardHeader>
@@ -89,10 +89,10 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="flex items-start gap-2 p-3 rounded-lg bg-[#7A2A1E]/10 border border-[#7A2A1E]/20"
+                      className="flex items-start gap-2 p-3 rounded-lg bg-[var(--rm-primary)]/10 border border-[var(--rm-primary)]/20"
                     >
-                      <AlertCircle className="w-4 h-4 text-[#9E3A2E] mt-0.5 shrink-0" />
-                      <p className="text-sm text-[#9E3A2E]">{displayError}</p>
+                      <AlertCircle className="w-4 h-4 text-[var(--rm-primary)] mt-0.5 shrink-0" />
+                      <p className="text-sm text-[var(--rm-primary)]">{displayError}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -128,11 +128,11 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                     <input type="checkbox" className="rounded border-gray-300" />
                     Recordar sesión
                   </label>
-                  <button type="button" className="text-sm text-[#9E3A2E] hover:underline">¿Olvidó su contraseña?</button>
+                  <button type="button" className="text-sm text-[var(--rm-primary)] hover:underline">¿Olvidó su contraseña?</button>
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]-light text-white h-11"
+                  className="w-full bg-[var(--rm-text)] hover:bg-[var(--rm-text)]-light text-white h-11"
                   disabled={loginLoading}
                 >
                   {loginLoading ? (
@@ -165,8 +165,8 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
             <Card className="glass-card overflow-hidden">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-[#9E3A2E]" />
-                  <CardTitle className="text-[#1A1A1A]">Sistema de Gestión Registral (SGR)</CardTitle>
+                  <Settings className="w-5 h-5 text-[var(--rm-primary)]" />
+                  <CardTitle className="text-[var(--rm-text)]">Sistema de Gestión Registral (SGR)</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -181,9 +181,9 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                     { title: 'Bandeja de Trámites', desc: 'Cola de trámites pendientes y en procesamiento', icon: ClipboardList },
                   ].map((feature) => (
                     <div key={feature.title} className="flex items-start gap-3 p-3 rounded-lg hover:bg-secondary transition-colors">
-                      <feature.icon className="w-5 h-5 text-[#9E3A2E] mt-0.5 shrink-0" />
+                      <feature.icon className="w-5 h-5 text-[var(--rm-primary)] mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-sm font-semibold text-[#1A1A1A]">{feature.title}</p>
+                        <p className="text-sm font-semibold text-[var(--rm-text)]">{feature.title}</p>
                         <p className="text-xs text-muted-foreground">{feature.desc}</p>
                       </div>
                     </div>
@@ -196,8 +196,8 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
               <Card className="glass-card-inner overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <BarChart3 className="w-4 h-4 text-[#9E3A2E]" />
-                    <h4 className="font-semibold text-sm text-[#1A1A1A]">Estadísticas Internas</h4>
+                    <BarChart3 className="w-4 h-4 text-[var(--rm-primary)]" />
+                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Estadísticas Internas</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">Dashboard de métricas de gestión, productividad y carga de trabajo.</p>
                 </CardContent>
@@ -205,8 +205,8 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
               <Card className="glass-card-inner overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <FolderOpen className="w-4 h-4 text-[#9E3A2E]" />
-                    <h4 className="font-semibold text-sm text-[#1A1A1A]">Gestión Documental</h4>
+                    <FolderOpen className="w-4 h-4 text-[var(--rm-primary)]" />
+                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Gestión Documental</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">Archivo digital, búsqueda avanzada y gestión de expedientes.</p>
                 </CardContent>
@@ -214,8 +214,8 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
               <Card className="glass-card-inner overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <MessageCircle className="w-4 h-4 text-[#9E3A2E]" />
-                    <h4 className="font-semibold text-sm text-[#1A1A1A]">Comunicación Interna</h4>
+                    <MessageCircle className="w-4 h-4 text-[var(--rm-primary)]" />
+                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Comunicación Interna</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">Mensajería y notificaciones entre registradores y oficinas.</p>
                 </CardContent>
@@ -223,8 +223,8 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
               <Card className="glass-card-inner overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <UserCog className="w-4 h-4 text-[#9E3A2E]" />
-                    <h4 className="font-semibold text-sm text-[#1A1A1A]">Administración</h4>
+                    <UserCog className="w-4 h-4 text-[var(--rm-primary)]" />
+                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Administración</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">Gestión de usuarios, permisos y configuración del sistema.</p>
                 </CardContent>

@@ -79,8 +79,8 @@ export const PROCEDURES = [
     icon: 'Building2',
     time: '15-30 días hábiles',
     cost: 'Según Res. 51/2021',
-    color: 'text-[#9E3A2E]',
-    bgColor: 'bg-[#7A2A1E]/10',
+    color: 'text-[var(--rm-primary)]',
+    bgColor: 'bg-[var(--rm-primary)]/10',
   },
   {
     title: 'Modificaciones Societarias',
@@ -88,8 +88,8 @@ export const PROCEDURES = [
     icon: 'PenTool',
     time: '5-15 días hábiles',
     cost: '180-300 CUP por acto',
-    color: 'text-[#9E3A2E]',
-    bgColor: 'bg-[#7A2A1E]/10',
+    color: 'text-[var(--rm-primary)]',
+    bgColor: 'bg-[var(--rm-primary)]/10',
   },
   {
     title: 'Depósito de Estado de Situación',
@@ -97,8 +97,8 @@ export const PROCEDURES = [
     icon: 'FileSpreadsheet',
     time: '3-7 días hábiles',
     cost: '150 - 800 CUP',
-    color: 'text-[#1A1A1A]',
-    bgColor: 'bg-[#1A1A1A]/10',
+    color: 'text-[var(--rm-text)]',
+    bgColor: 'bg-[var(--rm-text)]/10',
   },
   {
     title: 'Inversión Extranjera (VUCE) (VUCE)',
@@ -106,8 +106,8 @@ export const PROCEDURES = [
     icon: 'Globe2',
     time: '20-45 días hábiles',
     cost: '1,000 - 5,000 CUP',
-    color: 'text-[#9E3A2E]',
-    bgColor: 'bg-[#7A2A1E]/10',
+    color: 'text-[var(--rm-primary)]',
+    bgColor: 'bg-[var(--rm-primary)]/10',
   },
 ];
 
@@ -230,9 +230,9 @@ export const FAQ_DATA = [
 ];
 
 export const CHART_SOCIEDADES = [
-  { name: 'SRL', value: 18450, color: '#1A1A1A' },
-  { name: 'SA', value: 12040, color: '#EDE0D4' },
-  { name: 'Cooperativa', value: 6780, color: '#9E3A2E' },
+  { name: 'SRL', value: 18450, color: 'var(--rm-text)' },
+  { name: 'SA', value: 12040, color: 'var(--rm-surface)' },
+  { name: 'Cooperativa', value: 6780, color: 'var(--rm-primary)' },
   { name: 'Estatal', value: 4560, color: '#4A90D9' },
   { name: 'Mixta', value: 2350, color: '#2D8B55' },
   { name: 'Natural', value: 1100, color: '#8B5CF6' },

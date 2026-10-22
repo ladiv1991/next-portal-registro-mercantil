@@ -100,7 +100,7 @@ export default function AsistenciaSection() {
   if (loading) {
     return (
       <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
-        <section className="bg-[#1A1A1A] py-16">
+        <section className="bg-[var(--rm-text)] py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Skeleton className="h-6 w-48 mx-auto mb-4 bg-white/20" />
             <Skeleton className="h-10 w-64 mx-auto mb-3 bg-white/20" />
@@ -123,9 +123,9 @@ export default function AsistenciaSection() {
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
-      <section className="bg-[#1A1A1A] py-16">
+      <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30">
+          <Badge className="mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30">
             <GraduationCap className="w-3 h-3 mr-1" />
             Asistencia y Formación
           </Badge>
@@ -189,8 +189,8 @@ export default function AsistenciaSection() {
             <Card className="glass-card">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Phone className="w-5 h-5 text-[#9E3A2E]" />
-                  <CardTitle className="text-[#1A1A1A]">Canales de Contacto</CardTitle>
+                  <Phone className="w-5 h-5 text-[var(--rm-primary)]" />
+                  <CardTitle className="text-[var(--rm-text)]">Canales de Contacto</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -199,9 +199,9 @@ export default function AsistenciaSection() {
                     const IconComp = contactIconMap[ch.type?.toLowerCase()] || Phone;
                     return (
                       <div key={ch.id} className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
-                        <IconComp className="w-5 h-5 text-[#9E3A2E] shrink-0" />
+                        <IconComp className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-[#1A1A1A]">{ch.label}</p>
+                          <p className="text-sm font-semibold text-[var(--rm-text)]">{ch.label}</p>
                           <p className="text-sm text-muted-foreground">{ch.value}</p>
                         </div>
                       </div>
@@ -209,30 +209,30 @@ export default function AsistenciaSection() {
                   }) : (
                     <>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
-                        <Phone className="w-5 h-5 text-[#9E3A2E] shrink-0" />
+                        <Phone className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-[#1A1A1A]">Teléfono</p>
+                          <p className="text-sm font-semibold text-[var(--rm-text)]">Teléfono</p>
                           <p className="text-sm text-muted-foreground">(+53) 7 862-3456 • Lun-Vie 8:30-16:30</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
-                        <Mail className="w-5 h-5 text-[#9E3A2E] shrink-0" />
+                        <Mail className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-[#1A1A1A]">Correo Electrónico</p>
+                          <p className="text-sm font-semibold text-[var(--rm-text)]">Correo Electrónico</p>
                           <p className="text-sm text-muted-foreground">soporte@registromercantil.cu</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
-                        <MessageCircle className="w-5 h-5 text-[#9E3A2E] shrink-0" />
+                        <MessageCircle className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-[#1A1A1A]">Chat en Línea</p>
+                          <p className="text-sm font-semibold text-[var(--rm-text)]">Chat en Línea</p>
                           <p className="text-sm text-muted-foreground">Disponible Lun-Vie 8:30-16:30</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
-                        <MapPin className="w-5 h-5 text-[#9E3A2E] shrink-0" />
+                        <MapPin className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-[#1A1A1A]">Oficina Central</p>
+                          <p className="text-sm font-semibold text-[var(--rm-text)]">Oficina Central</p>
                           <p className="text-sm text-muted-foreground">Calle Obispo No. 154, La Habana Vieja</p>
                         </div>
                       </div>
@@ -245,14 +245,14 @@ export default function AsistenciaSection() {
             {/* Chatbot */}
             <Card className="glass-card overflow-hidden">
               <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-[#7A2A1E]/20 flex items-center justify-center mx-auto mb-4">
-                  <Bot className="w-8 h-8 text-[#9E3A2E]" />
+                <div className="w-16 h-16 rounded-2xl bg-[var(--rm-primary)]/20 flex items-center justify-center mx-auto mb-4">
+                  <Bot className="w-8 h-8 text-[var(--rm-primary)]" />
                 </div>
-                <h3 className="font-bold text-[#1A1A1A] mb-2">Asistente Virtual</h3>
+                <h3 className="font-bold text-[var(--rm-text)] mb-2">Asistente Virtual</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Nuestro asistente virtual está disponible 24/7 para responder sus preguntas frecuentes sobre trámites y servicios del Registro Mercantil.
                 </p>
-                <Button className="bg-[#9E3A2E] text-[#1A1A1A] hover:bg-[#9E3A2E]-light">
+                <Button className="bg-[var(--rm-primary)] text-[var(--rm-text)] hover:bg-[var(--rm-primary)]-light">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Iniciar Chat
                 </Button>

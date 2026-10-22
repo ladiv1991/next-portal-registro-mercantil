@@ -88,7 +88,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
       }`}
       style={{
         background: scrolled
-          ? 'linear-gradient(180deg, #121212 0%, #1A1A1A 100%)'
+          ? 'linear-gradient(180deg, #121212 0%, var(--rm-text) 100%)'
           : 'linear-gradient(180deg, #111111 0%, #1E1E1E 100%)',
       }}
     >
@@ -193,7 +193,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
               size="sm"
               className="hidden sm:flex transition-all duration-300 rounded-lg shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:scale-[1.02]"
               style={{
-                background: 'linear-gradient(135deg, #9E3A2E 0%, #7A2A1E 100%)',
+                background: 'linear-gradient(135deg, var(--rm-primary) 0%, var(--rm-primary) 100%)',
                 color: '#FFFFFF',
                 border: '1px solid rgba(255,255,255,0.1)',
               }}
@@ -218,13 +218,13 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 side="right"
                 className="w-80 p-0 border-l border-white/10"
                 style={{
-                  background: 'linear-gradient(180deg, #111111 0%, #1A1A1A 100%)',
+                  background: 'linear-gradient(180deg, #111111 0%, var(--rm-text) 100%)',
                 }}
               >
                 <SheetHeader className="p-6 border-b border-white/10">
                   <SheetTitle className="text-white text-left">
                     <div className="flex items-center gap-2">
-                      <Shield className="w-5 h-5" style={{ color: 'var(--c-accent, #9E3A2E)' }} />
+                      <Shield className="w-5 h-5" style={{ color: 'var(--c-accent, var(--rm-primary))' }} />
                       <span>Menú de Navegación</span>
                     </div>
                   </SheetTitle>
@@ -253,7 +253,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                           }
                         >
                           {IconComponent && (
-                            <IconComponent className="w-4 h-4" style={isActive ? { color: '#EDE0D4' } : undefined} />
+                            <IconComponent className="w-4 h-4" style={isActive ? { color: 'var(--rm-surface)' } : undefined} />
                           )}
                           {item.label}
                           {isActive && (
@@ -266,7 +266,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                     <Button
                       className="w-full rounded-lg text-white transition-all duration-300 shadow-lg shadow-black/20"
                       style={{
-                        background: 'linear-gradient(135deg, #9E3A2E 0%, #7A2A1E 100%)',
+                        background: 'linear-gradient(135deg, var(--rm-primary) 0%, var(--rm-primary) 100%)',
                         border: '1px solid rgba(255,255,255,0.1)',
                       }}
                       onClick={() => handleNavClick('autenticarse')}

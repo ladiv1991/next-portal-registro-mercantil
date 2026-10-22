@@ -232,9 +232,9 @@ export default function FloatingChatbot() {
           const sectionId = href.startsWith('#') ? href.slice(1) : href.split('#')[1];
           const isInternal = sectionId && sectionMap[`#${sectionId}`];
           if (isInternal) {
-            return `<a href="javascript:void(0)" class="text-[#9E3A2E] hover:underline font-medium" data-nav="${sectionId}">${label}</a>`;
+            return `<a href="javascript:void(0)" class="text-[var(--rm-primary)] hover:underline font-medium" data-nav="${sectionId}">${label}</a>`;
           }
-          return `<a href="${href}" class="text-[#9E3A2E] hover:underline font-medium" target="_blank" rel="noopener">${label}</a>`;
+          return `<a href="${href}" class="text-[var(--rm-primary)] hover:underline font-medium" target="_blank" rel="noopener">${label}</a>`;
         }
       );
 
@@ -242,13 +242,13 @@ export default function FloatingChatbot() {
         const content = processed.replace(/^[-•]\s*/, '');
         elements.push(
           <div key={i} className="flex gap-2 ml-1">
-            <span className="text-[#9E3A2E] mt-0.5 shrink-0">•</span>
+            <span className="text-[var(--rm-primary)] mt-0.5 shrink-0">•</span>
             <span dangerouslySetInnerHTML={{ __html: content }} />
           </div>
         );
       } else if (processed.startsWith('## ')) {
         elements.push(
-          <div key={i} className="font-bold text-[#1A1A1A] mt-2 text-sm" dangerouslySetInnerHTML={{ __html: processed.replace('## ', '') }} />
+          <div key={i} className="font-bold text-[var(--rm-text)] mt-2 text-sm" dangerouslySetInnerHTML={{ __html: processed.replace('## ', '') }} />
         );
       } else if (processed.trim() === '') {
         elements.push(<div key={i} className="h-1" />);
@@ -298,10 +298,10 @@ export default function FloatingChatbot() {
             <div className="bg-gradient-to-r from-navy to-navy-light px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-[#9E3A2E]/20 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-[#9E3A2E]" />
+                  <div className="w-10 h-10 rounded-full bg-[var(--rm-primary)]/20 flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-[var(--rm-primary)]" />
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-[#1A1A1A]" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-[var(--rm-text)]" />
                 </div>
                 <div>
                   <p className="text-white font-semibold text-sm">Asistente Virtual</p>
@@ -324,7 +324,7 @@ export default function FloatingChatbot() {
                   {msg.loading ? (
                     <div className="max-w-[80%] px-4 py-3 rounded-2xl rounded-bl-md bg-white border border-gray-200 shadow-sm">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#9E3A2E]" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--rm-primary)]" />
                         Escribiendo...
                       </div>
                     </div>
@@ -332,7 +332,7 @@ export default function FloatingChatbot() {
                     <div
                       className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                         msg.role === 'user'
-                          ? 'bg-[#1A1A1A] text-white rounded-br-md'
+                          ? 'bg-[var(--rm-text)] text-white rounded-br-md'
                           : 'bg-white border border-gray-200 text-gray-700 rounded-bl-md shadow-sm'
                       }`}
                     >
@@ -354,8 +354,8 @@ export default function FloatingChatbot() {
                       onClick={() => setActiveQuickTab('guides')}
                       className={`flex-1 flex items-center justify-center gap-1.5 text-[11px] font-semibold py-1.5 rounded-md transition-all duration-200 ${
                         activeQuickTab === 'guides'
-                          ? 'bg-white text-[#9E3A2E] shadow-sm'
-                          : 'text-gray-500 hover:text-[#1A1A1A]'
+                          ? 'bg-white text-[var(--rm-primary)] shadow-sm'
+                          : 'text-gray-500 hover:text-[var(--rm-text)]'
                       }`}
                     >
                       <BookOpen className="w-3 h-3" />
@@ -367,8 +367,8 @@ export default function FloatingChatbot() {
                       onClick={() => setActiveQuickTab('faq')}
                       className={`flex-1 flex items-center justify-center gap-1.5 text-[11px] font-semibold py-1.5 rounded-md transition-all duration-200 ${
                         activeQuickTab === 'faq'
-                          ? 'bg-white text-[#9E3A2E] shadow-sm'
-                          : 'text-gray-500 hover:text-[#1A1A1A]'
+                          ? 'bg-white text-[var(--rm-primary)] shadow-sm'
+                          : 'text-gray-500 hover:text-[var(--rm-text)]'
                       }`}
                     >
                       <HelpCircle className="w-3 h-3" />
@@ -386,7 +386,7 @@ export default function FloatingChatbot() {
                       exit={{ opacity: 0, x: 10 }}
                       transition={{ duration: 0.15 }}
                     >
-                      <p className="text-[10px] font-semibold text-[#9E3A2E]/80 mb-1.5 flex items-center gap-1">
+                      <p className="text-[10px] font-semibold text-[var(--rm-primary)]/80 mb-1.5 flex items-center gap-1">
                         <Sparkles className="w-3 h-3" />
                         Guías más solicitadas
                       </p>
@@ -395,7 +395,7 @@ export default function FloatingChatbot() {
                           <button
                             key={idx}
                             onClick={() => send(q.label)}
-                            className="text-[11px] px-2.5 py-1.5 rounded-full bg-[#7A2A1E]/8 text-[#1A1A1A] border border-[#7A2A1E]/20 hover:bg-[#7A2A1E]/15 hover:border-[#7A2A1E]/40 transition-all duration-200 font-medium text-left leading-tight hover:shadow-sm"
+                            className="text-[11px] px-2.5 py-1.5 rounded-full bg-[var(--rm-primary)]/8 text-[var(--rm-text)] border border-[var(--rm-primary)]/20 hover:bg-[var(--rm-primary)]/15 hover:border-[var(--rm-primary)]/40 transition-all duration-200 font-medium text-left leading-tight hover:shadow-sm"
                           >
                             <span className="mr-0.5">{q.icon}</span> {q.label}
                           </button>
@@ -410,7 +410,7 @@ export default function FloatingChatbot() {
                       exit={{ opacity: 0, x: -10 }}
                       transition={{ duration: 0.15 }}
                     >
-                      <p className="text-[10px] font-semibold text-[#9E3A2E]/80 mb-1.5 flex items-center gap-1">
+                      <p className="text-[10px] font-semibold text-[var(--rm-primary)]/80 mb-1.5 flex items-center gap-1">
                         <HelpCircle className="w-3 h-3" />
                         Preguntas frecuentes
                       </p>
@@ -419,9 +419,9 @@ export default function FloatingChatbot() {
                           <button
                             key={idx}
                             onClick={() => send(q)}
-                            className="w-full text-left text-[11px] px-3 py-2 rounded-lg bg-[#7A2A1E]/5 text-[#1A1A1A]/80 border border-[#7A2A1E]/10 hover:bg-[#7A2A1E]/12 hover:border-[#7A2A1E]/25 transition-all duration-200 leading-tight hover:shadow-sm"
+                            className="w-full text-left text-[11px] px-3 py-2 rounded-lg bg-[var(--rm-primary)]/5 text-[var(--rm-text)]/80 border border-[var(--rm-primary)]/10 hover:bg-[var(--rm-primary)]/12 hover:border-[var(--rm-primary)]/25 transition-all duration-200 leading-tight hover:shadow-sm"
                           >
-                            <span className="text-[#9E3A2E] mr-1.5 font-bold">❓</span>
+                            <span className="text-[var(--rm-primary)] mr-1.5 font-bold">❓</span>
                             {q}
                           </button>
                         ))}
@@ -442,7 +442,7 @@ export default function FloatingChatbot() {
                     >
                       {glossaryTags.length > 0 && (
                         <div className="mt-2.5 pt-2.5 border-t border-gray-100">
-                          <p className="text-[10px] font-semibold text-[#1A1A1A]/60 mb-1.5 flex items-center gap-1">
+                          <p className="text-[10px] font-semibold text-[var(--rm-text)]/60 mb-1.5 flex items-center gap-1">
                             <BookText className="w-3 h-3" />
                             Glosario
                           </p>
@@ -451,7 +451,7 @@ export default function FloatingChatbot() {
                               <button
                                 key={idx}
                                 onClick={() => send(tag)}
-                                className="text-[11px] px-2.5 py-1 rounded-full bg-[#1A1A1A]/5 text-[#1A1A1A]/70 border border-[#1A1A1A]/10 hover:bg-[#1A1A1A]/10 hover:border-[#1A1A1A]/20 transition-all duration-200 font-medium"
+                                className="text-[11px] px-2.5 py-1 rounded-full bg-[var(--rm-text)]/5 text-[var(--rm-text)]/70 border border-[var(--rm-text)]/10 hover:bg-[var(--rm-text)]/10 hover:border-[var(--rm-text)]/20 transition-all duration-200 font-medium"
                               >
                                 {tag}
                               </button>
@@ -469,7 +469,7 @@ export default function FloatingChatbot() {
                             <button
                               key={idx}
                               onClick={() => send(tag.replace(/^[^\s]+\s/, ''))}
-                              className="text-[11px] px-2.5 py-1 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-[#1A1A1A] transition-all duration-200"
+                              className="text-[11px] px-2.5 py-1 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-[var(--rm-text)] transition-all duration-200"
                             >
                               {tag}
                             </button>
@@ -482,7 +482,7 @@ export default function FloatingChatbot() {
 
                 <button
                   onClick={() => setShowMoreTags(!showMoreTags)}
-                  className="text-[10px] text-gray-400 hover:text-[#9E3A2E] transition-colors mt-2 text-left w-full flex items-center gap-0.5"
+                  className="text-[10px] text-gray-400 hover:text-[var(--rm-primary)] transition-colors mt-2 text-left w-full flex items-center gap-0.5"
                 >
                   {showMoreTags ? (
                     <><span className="text-[9px]">▴</span> Ver menos opciones</>
@@ -504,13 +504,13 @@ export default function FloatingChatbot() {
                   onKeyDown={handleKeyDown}
                   placeholder="Escriba su consulta..."
                   disabled={isLoading}
-                  className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#7A2A1E] focus:ring-1 focus:ring-cuban-red/20 disabled:opacity-50"
+                  className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[var(--rm-primary)] focus:ring-1 focus:ring-cuban-red/20 disabled:opacity-50"
                   aria-label="Escribir mensaje"
                 />
                 <button
                   onClick={() => send(chatInput)}
                   disabled={isLoading || !chatInput.trim()}
-                  className="w-10 h-10 rounded-xl bg-[#1A1A1A] text-white flex items-center justify-center hover:bg-[#1A1A1A]-light transition-colors shrink-0 disabled:opacity-50"
+                  className="w-10 h-10 rounded-xl bg-[var(--rm-text)] text-white flex items-center justify-center hover:bg-[var(--rm-text)]-light transition-colors shrink-0 disabled:opacity-50"
                   aria-label="Enviar mensaje"
                 >
                   {isLoading ? (
@@ -534,7 +534,7 @@ export default function FloatingChatbot() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setChatOpen(!chatOpen)}
         className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 relative ${
-          chatOpen ? 'bg-gray-700 hover:bg-gray-800' : 'bg-[#7A2A1E] hover:bg-[#7A2A1E]-light'
+          chatOpen ? 'bg-gray-700 hover:bg-gray-800' : 'bg-[var(--rm-primary)] hover:bg-[var(--rm-primary)]-light'
         }`}
         aria-label={chatOpen ? 'Cerrar asistente' : 'Abrir asistente virtual'}
       >

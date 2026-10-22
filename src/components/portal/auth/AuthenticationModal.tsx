@@ -68,7 +68,7 @@ export default function AuthenticationModal({ open, onOpenChange, onAuthSuccess 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2 mb-2">
-            <Lock className="w-5 h-5 text-[#9E3A2E]" />
+            <Lock className="w-5 h-5 text-[var(--rm-primary)]" />
             <DialogTitle>Autenticarse</DialogTitle>
           </div>
           <DialogDescription>
@@ -86,7 +86,7 @@ export default function AuthenticationModal({ open, onOpenChange, onAuthSuccess 
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-sm font-medium text-[#1A1A1A]">
+              <Label htmlFor="username" className="text-sm font-medium text-[var(--rm-text)]">
                 Usuario
               </Label>
               <Input
@@ -96,12 +96,12 @@ export default function AuthenticationModal({ open, onOpenChange, onAuthSuccess 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
-                className="border-gray-300 focus:border-[#7A2A1E] focus:ring-cuban-red/20"
+                className="border-gray-300 focus:border-[var(--rm-primary)] focus:ring-[var(--rm-primary)]/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-[#1A1A1A]">
+              <Label htmlFor="password" className="text-sm font-medium text-[var(--rm-text)]">
                 Contraseña
               </Label>
               <Input
@@ -111,14 +111,14 @@ export default function AuthenticationModal({ open, onOpenChange, onAuthSuccess 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className="border-gray-300 focus:border-[#7A2A1E] focus:ring-cuban-red/20"
+                className="border-gray-300 focus:border-[var(--rm-primary)] focus:ring-[var(--rm-primary)]/20"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1A1A1A] text-white hover:bg-[#1A1A1A]-light transition-all duration-300 rounded-lg font-medium"
+              className="w-full bg-[var(--rm-text)] text-white hover:bg-[var(--rm-text)]-light transition-all duration-300 rounded-lg font-medium"
             >
               {loading ? (
                 <>
@@ -162,7 +162,7 @@ export default function AuthenticationModal({ open, onOpenChange, onAuthSuccess 
                 href="https://www.enzona.net"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#9E3A2E] hover:underline font-medium"
+                className="text-[var(--rm-primary)] hover:underline font-medium"
               >
                 Regístrate aquí
               </a>
