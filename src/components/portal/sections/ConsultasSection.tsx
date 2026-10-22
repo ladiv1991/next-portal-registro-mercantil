@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { usePortalAuth } from '@/hooks/use-portal-auth';
 import CompanyProfile from './consultas/CompanyProfile';
+import TaxCalculator from './normatividad/TaxCalculator';
 import AuthenticationModal from '@/components/portal/auth/AuthenticationModal';
 import PremiumModal from '@/components/portal/PremiumModal';
 
@@ -276,6 +277,9 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
             </Tabs>
           </CardContent>
         </Card>
+
+        {/* Calculadora de Costos de Trámites */}
+        <TaxCalculator />
 
         {/* Results */}
         {hasSearched && (
