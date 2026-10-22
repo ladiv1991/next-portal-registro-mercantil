@@ -72,7 +72,8 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
 
   const handleNavClick = (sectionId: string) => {
     if (sectionId === 'autenticarse') {
-      setAuthModalOpen(true);
+      // Navigate to AccesoSection for CMS admin login (uses /api/auth/login)
+      onNavigate('acceso');
     } else {
       onNavigate(sectionId);
     }
