@@ -57,18 +57,18 @@ export default function FeeSchedule() {
         <div className="glass-card-inner overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#1A1A1A]/5">
-                <TableHead className="font-semibold text-[#1A1A1A] w-16">No.</TableHead>
-                <TableHead className="font-semibold text-[#1A1A1A]">Acto o Circunstancia Inscriptible</TableHead>
-                <TableHead className="font-semibold text-[#1A1A1A] text-right w-40">Tarifa</TableHead>
+              <TableRow className="bg-[var(--rm-text)]/5">
+                <TableHead className="font-semibold text-[var(--rm-text)] w-16">No.</TableHead>
+                <TableHead className="font-semibold text-[var(--rm-text)]">Acto o Circunstancia Inscriptible</TableHead>
+                <TableHead className="font-semibold text-[var(--rm-text)] text-right w-40">Tarifa</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {TARIFAS.map((fee) => (
-                <TableRow key={fee.num} className="hover:bg-[#1A1A1A]/3 transition-colors">
+                <TableRow key={fee.num} className="hover:bg-[var(--rm-text)]/3 transition-colors">
                   <TableCell className="font-mono text-xs text-muted-foreground">{fee.num}</TableCell>
                   <TableCell className="text-sm">{fee.acto}</TableCell>
-                  <TableCell className="text-right font-semibold text-[#1A1A1A]">{fee.tarifa}</TableCell>
+                  <TableCell className="text-right font-semibold text-[var(--rm-text)]">{fee.tarifa}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
