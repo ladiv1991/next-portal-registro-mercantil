@@ -227,7 +227,14 @@ export default function TaxCalculator() {
   };
 
   return (
-    <Card className="glass-card overflow-hidden">
+    <div className="relative rounded-2xl overflow-hidden shadow-lg" style={{
+      background: 'linear-gradient(135deg, rgba(0,90,156,0.06) 0%, rgba(0,116,200,0.03) 100%)',
+      border: '1px solid rgba(0,90,156,0.18)',
+    }}>
+      <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl" style={{
+        background: 'linear-gradient(180deg, var(--rm-primary) 0%, var(--rm-primary-light) 100%)',
+      }} />
+      <Card className="glass-card overflow-visible !rounded-none !border-0 !shadow-none !m-0 bg-transparent">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -436,6 +443,7 @@ export default function TaxCalculator() {
           Restablecer valores
         </Button>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }
