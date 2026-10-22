@@ -125,7 +125,7 @@ export default function AsistenciaSection() {
       {/* Header */}
       <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30">
+          <Badge className="mb-4 bg-white text-[var(--rm-primary)] border-[var(--rm-primary)]/30 shadow-sm">
             <GraduationCap className="w-3 h-3 mr-1" />
             Asistencia y Formación
           </Badge>
