@@ -136,6 +136,7 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 | `writing-for-agents` | Escribir docs para agentes |
 | `prototype` | Prototipos desechables de diseno |
 | `diagnosing-bugs` | Loop de diagnostico para bugs dificiles |
+| `using-superpowers` | Regla de invocación de skills antes de cualquier acción |
 
 
 ---
@@ -145,9 +146,10 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 ### Arquitectura
 - **Framework**: Next.js 16 con App Router (`src/app/`)
 - **Rutas públicas**: `src/app/portal/`
-- **Rutas CMS**: `src/app/cms/` (requieren autenticación)
+- **Portal + CMS unificados en `src/app/page.tsx`**: El login CMS redirige automáticamente a `CmsLayout`; el portal se renderiza cuando no hay sesión activa
 - **API Routes**: `src/app/api/` (auth, cms, chat, public, search, upload, stats, payment, blocks, pages, menus, bot-config)
 - **Path alias**: `@/*` → `./src/*`
+- **Sin middleware.ts**: La autenticación se verifica en cada ruta API con `requireAuth()` / `requireAdmin()` desde `src/lib/api-auth.ts`
 
 ### Componentes
 - Usar `'use client'` solo en componentes con hooks o interactividad
@@ -176,6 +178,24 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 - Singleton de DB: `src/lib/db.ts`
 - Migraciones automáticas antes de dev/build/start vía `scripts/run-migrations.js`
 - Seed: `prisma/seed.ts` + `prisma/seed-guides.ts`
+- URL de conexión: `postgresql://portal_rmc:PortalRMC2026!Secure@localhost:5433/registro_mercantil`
+- JWT_SECRET: variable de entorno requerida (min 32 chars), configurada en `.env.local`
+
+### Credenciales de prueba (seed)
+| Email | Contraseña | Rol | Acceso |
+|-------|-----------|-----|--------|
+| `admin@registromercantil.cu` | `Admin2026!` | admin | CMS completo |
+| `editor@registromercantil.cu` | `Editor2026!` | editor | CMS limitado |
+
+- Login: POST a `/api/auth/login` con body `{email, password}` → setea cookie `rmc-token` (JWT, 8h)
+- Todas las rutas CMS (`/api/cms/*`) validan la cookie con `requireAuth()` / `requireAdmin()`
+- El portal público lee de `/api/public/content` (sin auth, datos en tiempo real desde DB)
+
+### Sync CMS → Portal
+- **Mecanismo**: CMS edita → Prisma escribe a PostgreSQL → Portal lee de `/api/public/content` en cada request
+- **Tiempo de propagación**: Inmediato (no hay caché, cada request del portal consulta la DB directamente)
+- **Flujo**: Usuario admin → login → CmsLayout → CRUD en `/api/cms/*` → cambios visibles en portal al recargar
+- **Sin cache invalidation**: No se requiere ningún mecanismo de limpieza de caché
 
 ### Fetching en cliente
 - Usar `fetch` con `credentials: 'include'` para cookies
@@ -233,6 +253,19 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 - `FEE_SCHEDULE` y `QUICK_ACCESS_CARDS` eran código muerto exportado desde `portal-data.ts` pero nunca consumido por ningún componente JSX. Eliminados sin impacto.
 - `ProcedureCard.tsx` tiene su propio array `PROCEDURES` hardcodeado (duplicado de `portal-data.ts`); ambos deben actualizarse manualmente en paralelo.
 - El search API acepta ahora params `province`, `type`, `status` para filtrado avanzado desde la base de datos.
+
+### CMS ↔ Portal unificado
+- **Sin ruta separada `/cms`**: El CMS se accede desde la misma URL raíz (`/`) tras autenticarse. `page.tsx` detecta `cmsUser` y renderiza `CmsLayout`; de lo contrario muestra el portal público.
+- **Auth flow**: Login → cookie `rmc-token` → `CmsLayout` con sidebar de módulos. Logout limpia cookie y restaura portal.
+- **Sync en tiempo real**: `/api/public/content` consulta PostgreSQL directamente sin caché. Cualquier cambio hecho desde el CMS es visible inmediatamente al recargar el portal.
+- **PowerShell prueba**: Usar `-WebSession` para mantener la cookie entre requests; `-Headers @{Cookie=...}` falla porque PowerShell no maneja cookies de sesión correctamente.
+- **TaxCalculator mueve**: Desde `NormatividadSection` a `ConsultasSection` (debajo del buscador). El import en Normatividad fue eliminado.
+
+### Enzona desactivado visualmente
+- La integración con ENZONA.net (pasarela de pago) está **desactivada visualmente** hasta nuevo aviso.
+- Código Enzona intacto en `src/app/auth/enzona/`, `src/app/api/auth/enzona/callback/`, `src/components/cms/cms-enzona-config.tsx` (solo admin puede configuarlo).
+- En `AuthenticationModal.tsx` el botón "Autenticarse con ENZONA" y sección están presentes pero el usuario puede ignorarlos — usar login normal con email/contraseña.
+- En `PortalDashboard.tsx` las rutas de fallback aún apuntan a `/auth/enzona` si no hay sesión de portal; esto se corregirá cuando Enzona esté operativo.
 
 ---
 
