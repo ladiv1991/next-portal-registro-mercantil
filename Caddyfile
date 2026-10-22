@@ -1,3 +1,9 @@
+{
+    # dominios configurados
+    http_port 80
+    https_port 443
+}
+
 :81 {
 	@transform_port_query {
 		query XTransformPort=*
@@ -19,5 +25,15 @@
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Real-IP {remote_host}
 		}
+	}
+}
+
+# Dominios de producción — HTTPS automático con Let's Encrypt
+registro-mercantil.xetid.cu, portal-registromercantil.test.xutil.cu, portal-registromercantil.egob.dev.xetid.cu {
+	reverse_proxy localhost:3000 {
+		header_up Host {host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Real-IP {remote_host}
 	}
 }

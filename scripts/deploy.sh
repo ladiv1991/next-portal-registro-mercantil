@@ -108,13 +108,21 @@ cd "$PROJECT_DIR"
 configure_docker_registry
 
 if [[ -n "${1:-}" ]]; then
-    PORTAL_DOMAIN="$1"
+    PORTAL_DOMAINS_STR="$1"
 else
-    read -r -p "🌐 DNS del portal (ej. portal.registromercantil.cu): " PORTAL_DOMAIN
+    read -r -p "🌐 Dominios del portal (separados por coma, ej. portal.registromercantil.cu,registro-mercantil.xetid.cu): " PORTAL_DOMAINS_STR
 fi
 
-[[ "$PORTAL_DOMAIN" =~ ^[A-Za-z0-9.-]+$ ]] || die "El DNS contiene caracteres no válidos"
-[[ "$PORTAL_DOMAIN" != .* && "$PORTAL_DOMAIN" != *..* ]] || die "El DNS no es válido: $PORTAL_DOMAIN"
+# Convertir a array y validar
+IFS=',' read -ra DOMAIN_ARRAY <<< "$PORTAL_DOMAINS_STR"
+for dom in "${DOMAIN_ARRAY[@]}"; do
+    [[ "$dom" =~ ^[A-Za-z0-9.-]+$ ]] || die "El DNS '$dom' contiene caracteres no válidos"
+    [[ "$dom" != .* && "$dom" != *..* ]] || die "El DNS no es válido: $dom"
+done
+
+# Unir para variable de entorno
+PORTAL_DOMAINS="$(IFS=','; echo "${DOMAIN_ARRAY[*]}")"
+PORTAL_DOMAIN="${DOMAIN_ARRAY[0]}"  # primer dominio como primario
 
 PORTAL_SCHEME="${PORTAL_SCHEME:-http}"
 [[ "$PORTAL_SCHEME" == "http" || "$PORTAL_SCHEME" == "https" ]] || die "PORTAL_SCHEME debe ser http o https"
@@ -128,6 +136,7 @@ read -r -p "¿Continuar con el despliegue? [s/N]: " confirmation
 echo ""
 echo "🔧 Guardando configuración para Compose y Next.js..."
 upsert_env "PORTAL_DOMAIN" "$PORTAL_DOMAIN"
+upsert_env "PORTAL_DOMAINS" "$PORTAL_DOMAINS"
 upsert_env "PORTAL_SCHEME" "$PORTAL_SCHEME"
 upsert_env "NEXT_PUBLIC_APP_URL" "${PORTAL_SCHEME}://${PORTAL_DOMAIN}"
 echo "✅ $ENV_FILE actualizado"

@@ -169,10 +169,11 @@ Toda API Route devuelve JSON con esta estructura consistente:
 
 ## Artículo VI: Despliegue y Docker
 
-### 6.1 Entornos
-- **Desarrollo local**: `npm run dev` en puerto 3008. Logs en `dev.log`.
+### 6.7 Configuración de entornos
+- **Desarrollo local**: `npm run dev` en puerto 3008. Logs en `$env:TEMP\rmc-dev.log`.
 - **Docker local**: `docker compose up -d --build` en puerto 3003.
 - **Producción**: Build standalone con Docker + Traefik o Caddy como proxy inverso.
+- **Dominios de despliegue**: `registro-mercantil.xetid.cu`, `portal-registromercantil.test.xutil.cu`, `portal-registromercantil.egob.dev.xetid.cu`. Ver `Constitución Art. 6.7`.
 
 ### 6.2 Docker Compose
 - El stack incluye: aplicación (app), PostgreSQL (postgres) y Traefik (traefik).
@@ -201,6 +202,18 @@ Toda API Route devuelve JSON con esta estructura consistente:
   docker compose logs -f app postgres traefik
   npm run auth:check
   ```
+
+### 6.7 Dominios soportados
+- **Producción**: `registro-mercantil.xetid.cu`
+- **Staging**: `https://portal-registromercantil.test.xutil.cu/`
+- **Dev**: `https://portal-registromercantil.egob.dev.xetid.cu/`
+- Configuración multi-dominio:
+  - `.env.local`: `PORTAL_DOMAINS=comma-separated list`, `NEXT_PUBLIC_APP_URL` apunta al dominio principal
+  - `docker-compose.yml`: Traefik rule con `${PORTAL_DOMAINS}` soporta múltiples hosts; SSL automático si `PORTAL_SCHEME=https`
+  - `Caddyfile`: Sección separada para los 3 dominios con HTTPS automático vía Let's Encrypt
+  - `scripts/deploy.sh`: Acepta lista de dominios separados por coma
+- **Desarrollo local**: `PORTAL_DOMAINS` puede estar comentado; la app responde a cualquier Host header (ideal para proxies de desarrollo).
+- **Hosts permitido en dev**: `localhost`, `127.0.0.1`, `*.local`
 
 ---
 

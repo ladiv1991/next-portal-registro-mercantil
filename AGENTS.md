@@ -267,6 +267,17 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 - En `AuthenticationModal.tsx` el botón "Autenticarse con ENZONA" y sección están presentes pero el usuario puede ignorarlos — usar login normal con email/contraseña.
 - En `PortalDashboard.tsx` las rutas de fallback aún apuntan a `/auth/enzona` si no hay sesión de portal; esto se corregirá cuando Enzona esté operativo.
 
+### Multi-dominio para despliegue
+- El sitio responde en: `registro-mercantil.xetid.cu`, `https://portal-registromercantil.test.xutil.cu/`, `https://portal-registromercantil.egob.dev.xetid.cu/`
+- Configuración en: `.env.local` (`PORTAL_DOMAINS`), `docker-compose.yml` (Traefik `Host()` rule), `Caddyfile`, `scripts/deploy.sh`
+- `NEXT_PUBLIC_APP_URL` apunta al dominio principal; Traefik/Caddy manejan routing multi-host
+- En desarrollo local: `PORTAL_DOMAINS` comentado, la app responde a cualquier Host header
+
+### Fix botón "Autenticarse" (Oct 2026)
+- **Problema**: El botón del header abría `AuthenticationModal` (endpoint `/api/portal/auth/login` para usuarios registradores) en vez de navegar a `#acceso` (login CMS `/api/auth/login`).
+- **Fix**: `PortalHeader.tsx` → `handleNavClick('autenticarse')` ahora llama `onNavigate('acceso')` en vez de `setAuthModalOpen(true)`.
+- **Commit**: `8e3523c`
+
 ---
 
 ## Archivos de referencia

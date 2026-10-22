@@ -1,4 +1,5 @@
 node_modules
+.next/
 .next/app-path-routes-manifest.json
 .next/BUILD_ID
 .next/build-manifest.json
