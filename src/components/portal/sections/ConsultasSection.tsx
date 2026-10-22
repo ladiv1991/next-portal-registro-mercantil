@@ -64,7 +64,32 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Filter state
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [filterOptions, setFilterOptions] = useState<{ provinces: string[]; types: string[]; statuses: string[] }>({
+    provinces: [], types: [], statuses: [],
+  });
+
   const { hasActiveSubscription, showPremiumModal } = usePortalAuth();
+
+  // Fetch distinct filter values from DB
+  useEffect(() => {
+    fetch('/api/search/distinct')
+      .then(r => r.ok ? r.json() : null)
+      .then(json => json?.success && setFilterOptions(json.data))
+      .catch(() => {});
+  }, []);
+
+  // Reset advanced filters when switching tabs
+  useEffect(() => {
+    if (searchType !== 'avanzada') {
+      setSelectedProvince('');
+      setSelectedType('');
+      setSelectedStatus('');
+    }
+  }, [searchType]);
 
   const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -75,7 +100,11 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
     setSearching(true);
     setHasSearched(true);
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const params = new URLSearchParams({ q: query });
+      if (selectedProvince) params.set('province', selectedProvince);
+      if (selectedType) params.set('type', selectedType);
+      if (selectedStatus) params.set('status', selectedStatus);
+      const res = await fetch(`/api/search?${params}`);
       if (res.ok) {
         const json = await res.json();
         setSearchResults(json.success ? (json.data?.results || []) : []);
@@ -85,7 +114,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
     } finally {
       setSearching(false);
     }
-  }, []);
+  }, [selectedProvince, selectedType, selectedStatus]);
 
   // Execute search automatically if initialQuery is provided
   useEffect(() => {
@@ -126,14 +155,14 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
-      <section className="bg-[#1A1A1A] py-16">
+      <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30">
+          <Badge className="mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30">
             <Search className="w-3 h-3 mr-1" />
             Consultas Públicas
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Búsqueda de Sujetos</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-[var(--rm-muted)] max-w-2xl mx-auto">
             
           </p>
         </div>
@@ -145,10 +174,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
           <CardContent className="p-6">
             <Tabs value={searchType} onValueChange={setSearchType}>
               <TabsList className="mb-6 bg-secondary">
-                <TabsTrigger value="denominacion" className="data-[state=active]:bg-[#1A1A1A] data-[state=active]:text-white">
+                <TabsTrigger value="denominacion" className="data-[state=active]:bg-[var(--rm-text)] data-[state=active]:text-white">
                   Por Denominación
                 </TabsTrigger>
-<TabsTrigger value="avanzada" className="data-[state=active]:bg-[#1A1A1A] data-[state=active]:text-white">
+<TabsTrigger value="avanzada" className="data-[state=active]:bg-[var(--rm-text)] data-[state=active]:text-white">
                   Búsqueda Avanzada
                 </TabsTrigger>
               </TabsList>
@@ -163,7 +192,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     onKeyDown={handleKeyDown}
                   />
                   <Button
-                    className="bg-[#1A1A1A] hover:bg-[#1A1A1A]-light h-12 px-8"
+                    className="bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 h-12 px-8"
                     onClick={handleSearchClick}
                     disabled={searching}
                   >
@@ -176,10 +205,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div>
                     <Label className="text-sm text-muted-foreground mb-1">Provincia</Label>
-                    <Select>
+                    <Select value={selectedProvince} onValueChange={setSelectedProvince}>
                       <SelectTrigger><SelectValue placeholder="Todas" /></SelectTrigger>
                       <SelectContent>
-                        {['La Habana', 'Villa Clara', 'Santiago de Cuba', 'Matanzas', 'Holguín', 'Camagüey'].map(p => (
+                        {filterOptions.provinces.map(p => (
                           <SelectItem key={p} value={p}>{p}</SelectItem>
                         ))}
                       </SelectContent>
@@ -187,10 +216,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                   </div>
                   <div>
                     <Label className="text-sm text-muted-foreground mb-1">Tipo de Sujeto</Label>
-                    <Select>
+                    <Select value={selectedType} onValueChange={setSelectedType}>
                       <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
                       <SelectContent>
-                        {['SRL', 'SA', 'Cooperativa', 'Estatal', 'Mixta'].map(t => (
+                        {filterOptions.types.map(t => (
                           <SelectItem key={t} value={t}>{t}</SelectItem>
                         ))}
                       </SelectContent>
@@ -198,10 +227,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                   </div>
                   <div>
                     <Label className="text-sm text-muted-foreground mb-1">Estado</Label>
-                    <Select>
+                    <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                       <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
                       <SelectContent>
-                        {['Vigente', 'Extinta', 'Cancelada', 'Suspendida'].map(s => (
+                        {filterOptions.statuses.map(s => (
                           <SelectItem key={s} value={s}>{s}</SelectItem>
                         ))}
                       </SelectContent>
@@ -217,7 +246,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     onKeyDown={handleKeyDown}
                   />
                   <Button
-                    className="bg-[#1A1A1A] hover:bg-[#1A1A1A]-light h-12 px-8"
+                    className="bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 h-12 px-8"
                     onClick={handleSearchClick}
                     disabled={searching}
                   >
@@ -243,7 +272,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
               <Card className="glass-card overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-center gap-3 py-8">
-                    <Loader2 className="w-5 h-5 text-[#9E3A2E] animate-spin" />
+                    <Loader2 className="w-5 h-5 text-[var(--rm-primary)] animate-spin" />
                     <span className="text-muted-foreground">Buscando sociedades...</span>
                   </div>
                 </CardContent>
@@ -254,25 +283,25 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                   <div className="overflow-x-auto rounded-lg border border-gray-200">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-[#1A1A1A]/5 hover:bg-[#1A1A1A]/5">
-                          <TableHead className="font-semibold text-[#1A1A1A]">NIRE</TableHead>
-                          <TableHead className="font-semibold text-[#1A1A1A]">Denominación</TableHead>
-                          <TableHead className="font-semibold text-[#1A1A1A] hidden md:table-cell">Tipo</TableHead>
-                          <TableHead className="font-semibold text-[#1A1A1A] hidden lg:table-cell">Provincia</TableHead>
-                          <TableHead className="font-semibold text-[#1A1A1A] hidden lg:table-cell">Actividad</TableHead>
-                          <TableHead className="font-semibold text-[#1A1A1A]">Estado</TableHead>
-                          <TableHead className="font-semibold text-[#1A1A1A] w-10"></TableHead>
+                        <TableRow className="bg-[var(--rm-primary)]/5 hover:bg-[var(--rm-primary)]/5">
+                          <TableHead className="font-semibold text-[var(--rm-text)]">NIRE</TableHead>
+                          <TableHead className="font-semibold text-[var(--rm-text)]">Denominación</TableHead>
+                          <TableHead className="font-semibold text-[var(--rm-text)] hidden md:table-cell">Tipo</TableHead>
+                          <TableHead className="font-semibold text-[var(--rm-text)] hidden lg:table-cell">Provincia</TableHead>
+                          <TableHead className="font-semibold text-[var(--rm-text)] hidden lg:table-cell">Actividad</TableHead>
+                          <TableHead className="font-semibold text-[var(--rm-text)]">Estado</TableHead>
+                          <TableHead className="font-semibold text-[var(--rm-text)] w-10"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {searchResults.map((company) => (
                           <React.Fragment key={company.id}>
                             <TableRow
-                              className="cursor-pointer hover:bg-[#7A2A1E]/5"
+                              className="cursor-pointer hover:bg-[var(--rm-primary)]/10"
                               onClick={() => setExpandedCompany(expandedCompany === company.id ? null : company.id)}
                             >
                               <TableCell className="font-mono text-sm">{company.nire}</TableCell>
-                              <TableCell className="font-medium text-[#1A1A1A]">{company.name}</TableCell>
+                              <TableCell className="font-medium text-[var(--rm-text)]">{company.name}</TableCell>
                               {company.type && (
                                 <TableCell className="hidden md:table-cell">
                                   <Badge variant="outline">{company.type}</Badge>
@@ -335,8 +364,8 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
           <Card className="glass-card overflow-hidden">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-[#9E3A2E]" />
-                <CardTitle className="text-[#1A1A1A]">Nota Simple</CardTitle>
+                <FileText className="w-5 h-5 text-[var(--rm-primary)]" />
+                <CardTitle className="text-[var(--rm-text)]">Nota Simple</CardTitle>
               </div>
               <CardDescription>Obtenga un resumen de la información pública registral de cualquier sociedad</CardDescription>
             </CardHeader>
@@ -346,7 +375,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
               </p>
               <div className="flex gap-2">
                 <Input placeholder="NIRE o Denominación" className="flex-1" />
-                <Button className="bg-[#9E3A2E] text-[#1A1A1A] hover:bg-[#9E3A2E]-light" onClick={handleSolicitarClick}>
+                <Button className="bg-[var(--rm-primary)] text-white hover:bg-[var(--rm-primary)]/90" onClick={handleSolicitarClick}>
                   Solicitar
                 </Button>
               </div>
@@ -357,8 +386,8 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
           <Card className="glass-card overflow-hidden">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-[#1A1A1A]" />
-                <CardTitle className="text-[#1A1A1A]">Verificador de Documentos</CardTitle>
+                <Shield className="w-5 h-5 text-[var(--rm-text)]" />
+                <CardTitle className="text-[var(--rm-text)]">Verificador de Documentos</CardTitle>
               </div>
               <CardDescription>Verifique la autenticidad de documentos emitidos por el Registro Mercantil</CardDescription>
             </CardHeader>
@@ -370,7 +399,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                   value={csvInput}
                   onChange={(e) => { setCsvInput(e.target.value); setCsvResult(null); }}
                 />
-                <Button className="bg-[#1A1A1A] hover:bg-[#1A1A1A]-light text-white" onClick={handleVerificarClick}>
+                <Button className="bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 text-white" onClick={handleVerificarClick}>
                   Verificar
                 </Button>
               </div>
@@ -402,8 +431,8 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
         <Card className="glass-card overflow-hidden">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-[#9E3A2E]" />
-              <CardTitle className="text-[#1A1A1A]">Tipos de Certificación</CardTitle>
+              <Award className="w-5 h-5 text-[var(--rm-primary)]" />
+              <CardTitle className="text-[var(--rm-text)]">Tipos de Certificación</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -421,10 +450,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                 { title: 'Nota Simple Informativa', desc: 'Resumen de datos públicos sin valor probatorio', cost: '300 CUP' },
               ].map((cert) => (
                 <motion.div key={cert.title} variants={fadeInUp}>
-                  <div className="glass-card-inner p-4 hover:border-[#7A2A1E]/30">
-                    <h4 className="font-semibold text-[#1A1A1A] text-sm">{cert.title}</h4>
+                  <div className="glass-card-inner p-4 hover:border-[var(--rm-primary)]/30">
+                    <h4 className="font-semibold text-[var(--rm-text)] text-sm">{cert.title}</h4>
                     <p className="text-xs text-muted-foreground mt-1">{cert.desc}</p>
-                    <p className="text-sm font-bold text-[#9E3A2E] mt-2">{cert.cost}</p>
+                    <p className="text-sm font-bold text-[var(--rm-primary)] mt-2">{cert.cost}</p>
                   </div>
                 </motion.div>
               ))}
