@@ -213,6 +213,13 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 - Decreto-Ley 226 "Del Registro Mercantil" concordado (GOC-2021-690-ES4) es la norma base.
 - Nuevas normas: Decreto Ley 133 y 120 del 2026 — agregar anuncio resumen explicando qué es nuevo, qué se elimina/modifica.
 
+### Paleta MINJUS vs legacy
+- La paleta legacy (negro `#1A1A1A`, terracota `#9E3A2E`, beige `#EDE0D4`) fue reemplazada por variables CSS MINJUS (`--rm-primary`, `--rm-text`, etc.) definidas en `globals.css`.
+- Todos los componentes portal deben usar `var(--rm-*)` exclusivamente; ningún color hex legacy debe persistir en `src/components/portal/`.
+- `FEE_SCHEDULE` y `QUICK_ACCESS_CARDS` eran código muerto exportado desde `portal-data.ts` pero nunca consumido por ningún componente JSX. Eliminados sin impacto.
+- `ProcedureCard.tsx` tiene su propio array `PROCEDURES` hardcodeado (duplicado de `portal-data.ts`); ambos deben actualizarse manualmente en paralelo.
+- El search API acepta ahora params `province`, `type`, `status` para filtrado avanzado desde la base de datos.
+
 ---
 
 ## Archivos de referencia

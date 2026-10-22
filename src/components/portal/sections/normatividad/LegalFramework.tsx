@@ -15,7 +15,11 @@ interface RegulationItem {
 }
 
 const FALLBACK_FRAMEWORK = [
-  { category: 'Marco legal', items: ['Decreto-Ley No. 226/2001 — Del Registro Mercantil'] },
+  { category: 'Marco legal', items: [
+    'Decreto-Ley No. 226/2001 — Del Registro Mercantil (GOC-2021-690-ES4)',
+    'Decreto-Ley No. 133/2026 — Modifica DL 88 (MIPYMES), DL 89 (CNA) y DL 90 (TCP). Gaceta Oficial No. 71 Ordinaria de 2026.',
+    'Decreto-Ley No. 120/2026 — Pendiente de publicación completa.',
+  ]},
   { category: 'Reglamento', items: ['Resolución No. 230/2002 — Reglamento del Registro Mercantil'] },
   { category: 'Tarifas', items: ['Resolución No. 51/2021 — Tarifas del Registro Mercantil'] },
   { category: 'Estadísticas', items: ['Extracto estadístico SIEC — Granma, febrero-marzo 2026'] },
@@ -41,24 +45,24 @@ export default function LegalFramework({ regulations }: { regulations: Regulatio
     <Card className="glass-card overflow-hidden">
       <CardHeader className="p-6">
         <div className="flex items-center gap-2">
-          <Gavel className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Marco Legal</CardTitle>
+          <Gavel className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Marco Legal</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="px-6 pb-6">
         <Accordion type="multiple" className="w-full">
           {Object.entries(grouped).map(([category, items]) => (
             <AccordionItem key={category} value={category}>
-              <AccordionTrigger className="text-[#1A1A1A] font-semibold hover:no-underline">
+              <AccordionTrigger className="text-[var(--rm-text)] font-semibold hover:no-underline">
                 {category}
               </AccordionTrigger>
               <AccordionContent>
                 <ul className="space-y-2">
                   {items.map((item) => (
-                    <li key={item.id} className="rounded-lg border border-[#D6C9BA] p-3 text-sm text-muted-foreground transition-colors hover:border-[#9E3A2E]">
-                      <FileText className="w-4 h-4 text-[#9E3A2E] shrink-0" />
+                    <li key={item.id} className="rounded-lg border border-[var(--rm-muted)]/30 p-3 text-sm text-muted-foreground transition-colors hover:border-[var(--rm-primary)]">
+                      <FileText className="w-4 h-4 text-[var(--rm-primary)] shrink-0" />
                       <div className="mt-2">
-                        <p className="font-semibold text-[#1A1A1A]">{item.title}</p>
+                        <p className="font-semibold text-[var(--rm-text)]">{item.title}</p>
                         {item.description && <p className="mt-1 leading-relaxed">{item.description}</p>}
                         {item.effectiveDate && (
                           <p className="mt-2 flex items-center gap-1 text-xs"><CalendarDays className="h-3 w-3" /> Vigencia/publicación: {item.effectiveDate}</p>

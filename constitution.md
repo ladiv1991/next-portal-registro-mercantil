@@ -3,7 +3,7 @@
 > Este documento define los principios inmutables que rigen todo desarrollo, modificación y despliegue del Portal del Registro Mercantil de Cuba. Ningún cambio de código, arquitectura o infraestructura puede violar estos principios sin una revisión explícita y documentada de esta constitución.
 
 **Alcance**: Portal público + CMS administrativo (core del sistema).  
-**Versión**: 1.0.0 — Octubre 2026
+**Versión**: 1.1.0 — Octubre 2026
 
 ---
 
@@ -39,12 +39,14 @@
 - Esto no es opcional ni aspiracional; es un requisito de aceptación para cualquier PR.
 
 ### 2.2 Contraste de colores
-- La paleta oficial del proyecto es mate/elegante y fue diseñada para cumplir contraste AA:
-  - Beige Sólido `#EDE0D4` → solo sobre fondos oscuros (ratio 11.6:1 ✅)
-  - Terracota `#9E3A2E` → sobre fondos claros (ratio 4.6:1 ✅)
-  - Terracota Oscuro `#7A2A1E` → texto importante (ratio 8.5:1 ✅)
-  - Gris Cálido `#6B5E50` → texto secundario (ratio 5.5:1 ✅)
-- **Prohibido**: Usar beige/gold sobre fondos claros (falla con ratio 1.4:1). Esta regla se verificó históricamente y corrigió en más de 50 archivos.
+- La paleta oficial del proyecto es la MINJUS, diseñada para cumplir contraste AA:
+  - Primario `#005A9C` → texto e iconos sobre fondos claros (ratio >4.5:1 ✅)
+  - Primario claro `#0074C8` → acentos y enlaces
+  - Fondo `#FFFFFF` → fondos de secciones claras
+  - Superficie `#F2F4F7` → cards y áreas elevadas
+  - Texto secundario `#6B7280` → descripciones y metadatos (ratio 4.68:1 ✅)
+  - Texto principal `#1F2937` → títulos y texto cuerpo (ratio 13.5:1 ✅)
+- Las variables CSS `--rm-primary`, `--rm-primary-light`, `--rm-bg`, `--rm-surface`, `--rm-muted`, `--rm-text` se definen en `globals.css` y son el único medio para usar estos colores en componentes.
 
 ### 2.3 Navegación por teclado
 - Toda funcionalidad interactiva debe ser operable mediante teclado (Tab, Enter, Escape, flechas).
