@@ -171,8 +171,8 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
             Consultas Públicas
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Búsqueda de Sujetos</h1>
-          <p className="text-[var(--rm-muted)] max-w-2xl mx-auto">
-            
+          <p className="text-gray-300 max-w-2xl mx-auto">
+            Consulte sociedades, documentos y estado registral de manera pública.
           </p>
         </div>
       </section>

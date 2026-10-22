@@ -83,7 +83,7 @@ export default function NormatividadSection() {
             Normatividad y Recursos
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Marco Legal y Documentos</h1>
-          <p className="text-[var(--rm-muted)] max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Consulte leyes, decretos, resoluciones, formularios y aranceles del Registro Mercantil.
           </p>
         </div>
