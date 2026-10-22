@@ -44,16 +44,16 @@ export default function FAQAccordion() {
     <Card className="glass-card overflow-hidden">
       <CardHeader className="p-6">
         <div className="flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Preguntas Frecuentes</CardTitle>
+          <HelpCircle className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Preguntas Frecuentes</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="px-6 pb-6">
         <div className="space-y-6">
           {FAQ_DATA.map((category) => (
             <div key={category.category}>
-              <h3 className="font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
-                <Badge variant="outline" className="text-[#9E3A2E] border-[#7A2A1E]/30">{category.category}</Badge>
+              <h3 className="font-semibold text-[var(--rm-text)] mb-3 flex items-center gap-2">
+                <Badge variant="outline" className="text-[var(--rm-primary)] border-[var(--rm-primary)]/30">{category.category}</Badge>
               </h3>
               <Accordion type="multiple" className="mb-4">
                 {category.questions.map((faq, i) => (

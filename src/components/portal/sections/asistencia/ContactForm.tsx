@@ -13,8 +13,8 @@ export default function ContactForm() {
     <Card className="glass-card">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Headphones className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Mesa de Ayuda</CardTitle>
+          <Headphones className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Mesa de Ayuda</CardTitle>
         </div>
         <CardDescription>Envíe su consulta y nuestro equipo le responderá a la brevedad</CardDescription>
       </CardHeader>
@@ -50,7 +50,7 @@ export default function ContactForm() {
             <Label>Mensaje</Label>
             <Textarea placeholder="Describa su consulta..." className="mt-1 min-h-[100px]" />
           </div>
-          <Button className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]-light text-white">
+          <Button className="w-full bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 text-white">
             <Send className="w-4 h-4 mr-2" />
             Enviar Consulta
           </Button>

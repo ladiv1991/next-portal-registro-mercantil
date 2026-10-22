@@ -21,8 +21,8 @@ export default function ConstitutionsBarChart() {
     <Card className="glass-card overflow-hidden">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Constituciones vs Cancelaciones</CardTitle>
+          <BarChart3 className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Constituciones vs Cancelaciones</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
@@ -33,8 +33,8 @@ export default function ConstitutionsBarChart() {
             <YAxis tick={{ fontSize: 12 }} />
             <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid #E2E6EA' }} />
             <Legend />
-            <Bar dataKey="constituciones" name="Constituciones" fill="#1A1A1A" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="cancelaciones" name="Cancelaciones" fill="#9E3A2E" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="constituciones" name="Constituciones" fill="var(--rm-text)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="cancelaciones" name="Cancelaciones" fill="var(--rm-primary)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

@@ -107,6 +107,26 @@ export default function NormatividadSection() {
         </motion.div>
       </div>
 
+      {/* Banner DL 120/2026 */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex items-start gap-3 p-4 rounded-lg border bg-[var(--rm-primary)]/5 border-[var(--rm-primary)]/30"
+        >
+          <AlertTriangle className="w-5 h-5 text-[var(--rm-primary)] flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-[var(--rm-primary)]">
+              Nueva Norma: Decreto-Ley 120/2026 — Actualización del Marco Normativo Registral
+            </p>
+            <p className="text-sm text-[var(--rm-muted)] mt-1">
+              En desarrollo. Información complementaria disponible próximamente en la Gaceta Oficial.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         {/* 1. Marco Legal */}
         {regulations.length > 0 && (

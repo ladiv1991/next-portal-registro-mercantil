@@ -7,9 +7,9 @@ import {
 } from 'recharts';
 
 const CHART_SOCIEDADES = [
-  { name: 'SRL', value: 18450, color: '#1A1A1A' },
-  { name: 'SA', value: 12040, color: '#EDE0D4' },
-  { name: 'Cooperativa', value: 6780, color: '#9E3A2E' },
+  { name: 'SRL', value: 18450, color: 'var(--rm-text)' },
+  { name: 'SA', value: 12040, color: 'var(--rm-muted)' },
+  { name: 'Cooperativa', value: 6780, color: 'var(--rm-primary)' },
   { name: 'Estatal', value: 4560, color: '#4A90D9' },
   { name: 'Mixta', value: 2350, color: '#2D8B55' },
   { name: 'Natural', value: 1100, color: '#8B5CF6' },
@@ -20,8 +20,8 @@ export default function SocietiesPieChart() {
     <Card className="glass-card overflow-hidden">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <PieChartIcon className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Sociedades Activas por Tipo</CardTitle>
+          <PieChartIcon className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Sociedades Activas por Tipo</CardTitle>
         </div>
       </CardHeader>
       <CardContent>

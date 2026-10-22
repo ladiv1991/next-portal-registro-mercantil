@@ -25,8 +25,8 @@ export default function SectorsHorizontalChart() {
     <Card className="glass-card overflow-hidden">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Activity className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Sectores Económicos más Dinámicos</CardTitle>
+          <Activity className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Sectores Económicos más Dinámicos</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
@@ -36,7 +36,7 @@ export default function SectorsHorizontalChart() {
             <XAxis type="number" tick={{ fontSize: 11 }} unit="%" />
             <YAxis type="category" dataKey="sector" tick={{ fontSize: 10 }} width={120} />
             <RechartsTooltip contentStyle={{ borderRadius: '8px', border: '1px solid #E2E6EA' }} formatter={(v: number) => `${v}%`} />
-            <Bar dataKey="valor" fill="#EDE0D4" radius={[0, 4, 4, 0]} name="Dinamismo" />
+            <Bar dataKey="valor" fill="var(--rm-primary-light)" radius={[0, 4, 4, 0]} name="Dinamismo" />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

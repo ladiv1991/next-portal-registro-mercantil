@@ -27,8 +27,8 @@ export default function ProvinceDistribution() {
     <Card className="glass-card overflow-hidden">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <MapIcon className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Distribución Territorial por Provincia</CardTitle>
+          <MapIcon className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Distribución Territorial por Provincia</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
@@ -39,7 +39,7 @@ export default function ProvinceDistribution() {
             return (
               <div key={prov.province}>
                 <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="text-[#1A1A1A] font-medium">{prov.province}</span>
+                  <span className="text-[var(--rm-text)] font-medium">{prov.province}</span>
                   <span className="text-muted-foreground">{prov.count.toLocaleString('es-ES')}</span>
                 </div>
                 <Progress value={width} className="h-2" />

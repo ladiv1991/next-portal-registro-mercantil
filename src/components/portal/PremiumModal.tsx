@@ -102,7 +102,7 @@ export default function PremiumModal({
           >
             {/* Top accent line */}
             <div className="h-[2px] w-full" style={{
-              background: 'linear-gradient(90deg, transparent 0%, var(--c-accent, #9E3A2E) 25%, var(--c-warm, #C07030) 50%, var(--c-accent, #9E3A2E) 75%, transparent 100%)',
+              background: 'linear-gradient(90deg, transparent 0%, var(--c-accent, var(--rm-primary)) 25%, var(--c-warm, var(--rm-primary-light)) 50%, var(--c-accent, var(--rm-primary)) 75%, transparent 100%)',
             }} />
 
             {/* Header */}
@@ -111,19 +111,19 @@ export default function PremiumModal({
                 <div
                   className="w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center shrink-0"
                   style={{
-                    background: 'linear-gradient(135deg, var(--c-accent, #9E3A2E), var(--c-warm, #C07030))',
+                    background: 'linear-gradient(135deg, var(--c-accent, var(--rm-primary)), var(--c-warm, var(--rm-primary-light)))',
                     boxShadow: '0 4px 15px rgba(158,58,46,0.3)',
                   }}
                 >
                   <Crown className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-base sm:text-lg lg:text-2xl font-bold truncate" style={{ color: 'var(--c-navy, #121212)' }}>
+                  <h2 className="text-base sm:text-lg lg:text-2xl font-bold truncate" style={{ color: 'var(--c-navy, var(--rm-text))' }}>
                     Desbloquea Funciones Premium
                   </h2>
                   <p className="text-[11px] sm:text-xs lg:text-sm text-gray-500 mt-0.5 leading-snug">
                     Accede a todas las herramientas avanzadas del Registro Mercantil.
-                    {requiredFeature && <> Para utilizar <span className="font-medium" style={{ color: 'var(--c-accent, #9E3A2E)' }}>"{requiredFeature}"</span>, necesitas activar un plan.</>}
+                    {requiredFeature && <> Para utilizar <span className="font-medium" style={{ color: 'var(--rm-primary)' }}>"{requiredFeature}"</span>, necesitas activar un plan.</>}
                   </p>
                 </div>
               </div>
@@ -183,7 +183,7 @@ export default function PremiumModal({
                             <span
                               className="text-white text-[10px] sm:text-xs font-semibold px-3 sm:px-4 py-0.5 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1 whitespace-nowrap"
                               style={{
-                                background: 'linear-gradient(135deg, var(--c-accent, #9E3A2E), var(--c-warm, #C07030))',
+                                background: 'linear-gradient(135deg, var(--rm-primary), var(--rm-primary-light))',
                                 boxShadow: '0 4px 15px rgba(158,58,46,0.35)',
                               }}
                             >
@@ -199,9 +199,9 @@ export default function PremiumModal({
                             className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                             style={{
                               background: isRecommended
-                                ? 'linear-gradient(135deg, var(--c-accent, #9E3A2E), var(--c-warm, #C07030))'
+                                ? 'linear-gradient(135deg, var(--rm-primary), var(--rm-primary-light))'
                                 : 'rgba(15,27,45,0.06)',
-                              color: isRecommended ? '#fff' : 'var(--c-navy, #121212)',
+                              color: isRecommended ? '#fff' : 'var(--c-navy, var(--rm-text))',
                             }}
                           >
                             {PlanIcon}
@@ -209,7 +209,7 @@ export default function PremiumModal({
                         </div>
 
                         {/* Plan Name */}
-                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-center mb-0.5 sm:mb-1 break-words leading-tight" style={{ color: 'var(--c-navy, #121212)' }}>
+                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-center mb-0.5 sm:mb-1 break-words leading-tight" style={{ color: 'var(--c-navy, var(--rm-text))' }}>
                           {plan.name}
                         </h3>
                         <p className="text-[11px] sm:text-xs text-gray-500 text-center mb-2.5 sm:mb-3 lg:mb-4 break-words leading-snug">{plan.description}</p>
@@ -217,7 +217,7 @@ export default function PremiumModal({
                         {/* Price */}
                         <div className="text-center py-2 sm:py-3 mb-2.5 sm:mb-3 lg:mb-4 rounded-lg sm:rounded-xl" style={{ background: 'rgba(0,0,0,0.02)' }}>
                           <div className="flex items-baseline justify-center gap-0.5 sm:gap-1">
-                            <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold" style={{ color: 'var(--c-navy, #121212)' }}>
+                            <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold" style={{ color: 'var(--c-navy, var(--rm-text))' }}>
                               {plan.price.toLocaleString('es-ES')}
                             </span>
                             <span className="text-xs sm:text-sm text-gray-500">{plan.currency}</span>
@@ -232,8 +232,8 @@ export default function PremiumModal({
                           {plan.features.map((feature, i) => (
                             <li key={i} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs lg:text-sm text-gray-600 min-w-0">
                               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="none">
-                                <circle cx="10" cy="10" r="10" fill="var(--c-accent, #9E3A2E)" fillOpacity="0.1" />
-                                <path d="M6 10l3 3 5-6" stroke="var(--c-accent, #9E3A2E)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <circle cx="10" cy="10" r="10" fill="var(--c-accent, var(--rm-primary))" fillOpacity="0.1" />
+                                <path d="M6 10l3 3 5-6" stroke="var(--c-accent, var(--rm-primary))" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                               <span className="break-words leading-snug">{feature}</span>
                             </li>
@@ -247,8 +247,8 @@ export default function PremiumModal({
                           className="w-full py-2 sm:py-2.5 lg:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm lg:text-base font-semibold transition-all duration-300 disabled:opacity-50"
                           style={{
                             background: isRecommended
-                              ? 'linear-gradient(135deg, var(--c-accent, #9E3A2E), var(--c-warm, #C07030))'
-                              : 'var(--c-navy, #121212)',
+                              ? 'linear-gradient(135deg, var(--c-accent, var(--rm-primary)), var(--c-warm, var(--rm-primary-light)))'
+                              : 'var(--c-navy, var(--rm-text))',
                             color: '#fff',
                             boxShadow: isRecommended ? '0 3px 12px rgba(158,58,46,0.2)' : 'none',
                           }}
@@ -288,7 +288,7 @@ export default function PremiumModal({
                   >
                     <span className="text-base sm:text-lg lg:text-xl shrink-0">{item.icon}</span>
                     <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-semibold truncate" style={{ color: 'var(--c-navy, #121212)' }}>{item.title}</p>
+                      <p className="text-xs sm:text-sm font-semibold truncate" style={{ color: 'var(--c-navy, var(--rm-text))' }}>{item.title}</p>
                       <p className="text-[10px] sm:text-xs text-gray-500 leading-snug break-words">{item.desc}</p>
                     </div>
                   </motion.div>

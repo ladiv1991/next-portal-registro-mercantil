@@ -84,6 +84,7 @@ export default function ForeignInvestment() {
                 a través de su sistema de ventanilla única.
               </p>
               <ul className="text-sm text-[var(--rm-muted)] space-y-1 mb-4">
+                <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[var(--rm-primary)]" /> Zona Especial de Desarrollo Mariel, Cuba</li>
                 <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-[var(--rm-primary)]" /> ventanillaunica@zedmariel.co.cu</li>
               </ul>
               <a

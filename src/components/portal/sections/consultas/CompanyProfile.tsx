@@ -31,8 +31,8 @@ export default function CompanyProfile({ company }: CompanyProfileProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="glass-card-inner">
-        <h3 className="font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-[#9E3A2E]" />
+        <h3 className="font-bold text-[var(--rm-text)] mb-3 flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-[var(--rm-primary)]" />
           Nota Simple Informativa
         </h3>
         <div className="space-y-2 text-sm">
@@ -102,8 +102,8 @@ export default function CompanyProfile({ company }: CompanyProfileProps) {
 
       {/* Panel de Representantes - Premium */}
       <div className="glass-card-inner">
-        <h3 className="font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
-          <Users className="w-4 h-4 text-[#9E3A2E]" />
+        <h3 className="font-bold text-[var(--rm-text)] mb-3 flex items-center gap-2">
+          <Users className="w-4 h-4 text-[var(--rm-primary)]" />
           Representantes
           {!hasPremium && <Crown className="w-4 h-4 text-yellow-500" />}
         </h3>
@@ -125,11 +125,11 @@ export default function CompanyProfile({ company }: CompanyProfileProps) {
               </div>
             </div>
             <div className="mt-4 flex gap-2">
-              <Button size="sm" className="bg-[#9E3A2E] text-[#1A1A1A] hover:bg-[#9E3A2E]-light">
+              <Button size="sm" className="bg-[var(--rm-primary)] text-white hover:bg-[var(--rm-primary)]/90">
                 <FileText className="w-3 h-3 mr-1" />
                 Nota Simple
               </Button>
-              <Button size="sm" variant="outline" className="border-[#1A1A1A] text-[#1A1A1A]">
+              <Button size="sm" variant="outline" className="border-[var(--rm-text)] text-[var(--rm-text)]">
                 <Award className="w-3 h-3 mr-1" />
                 Certificación
               </Button>

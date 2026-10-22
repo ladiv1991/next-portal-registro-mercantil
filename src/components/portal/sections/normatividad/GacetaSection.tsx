@@ -15,8 +15,8 @@ export default function GacetaSection() {
     <Card className="glass-card overflow-hidden">
       <CardHeader className="p-6">
         <div className="flex items-center gap-2">
-          <BookMarked className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Gaceta Oficial</CardTitle>
+          <BookMarked className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Gaceta Oficial</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="px-6 pb-6">
@@ -25,7 +25,7 @@ export default function GacetaSection() {
             <div key={i} className="p-4 glass-card-inner hover:border-[#7A2A1E]/30 transition-colors cursor-pointer">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-semibold text-sm text-[#1A1A1A]">{item.title}</p>
+                  <p className="font-semibold text-sm text-[var(--rm-text)]">{item.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">{item.number} • {item.date}</p>
                 </div>
                 <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />

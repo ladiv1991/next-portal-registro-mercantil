@@ -125,12 +125,12 @@ export default function GuidesSection() {
           className="glass-card-inner p-5 flex gap-4 items-start"
         >
           <div className="shrink-0">
-            <div className="w-10 h-10 rounded-full bg-[#7A2A1E] text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-cuban-red/20">
+            <div className="w-10 h-10 rounded-full bg-[var(--rm-primary)] text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-cuban-red/20">
               {idx + 1}
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-[#1A1A1A] mb-1">{step.title || `Paso ${idx + 1}`}</h4>
+            <h4 className="font-semibold text-[var(--rm-text)] mb-1">{step.title || `Paso ${idx + 1}`}</h4>
             {step.description && (
               <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
             )}
@@ -159,8 +159,8 @@ export default function GuidesSection() {
 
   return (
     <section className="mb-12">
-      <h2 className="text-xl font-bold text-[#1A1A1A] mb-6 flex items-center gap-2">
-        <BookOpen className="w-5 h-5 text-[#9E3A2E]" />
+      <h2 className="text-xl font-bold text-[var(--rm-text)] mb-6 flex items-center gap-2">
+        <BookOpen className="w-5 h-5 text-[var(--rm-primary)]" />
         Guías Paso a Paso
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -173,13 +173,13 @@ export default function GuidesSection() {
             <motion.div key={guide.id} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
               <Card className="glass-card-inner cursor-pointer overflow-hidden group" onClick={() => openGuide(guide)}>
                 <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-[#7A2A1E]/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#7A2A1E]/20 transition-colors">
-                    <IconComponent className="w-8 h-8 text-[#9E3A2E]" />
+                  <div className="w-16 h-16 rounded-2xl bg-[var(--rm-primary)]/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-[var(--rm-primary)]/20 transition-colors">
+                    <IconComponent className="w-8 h-8 text-[var(--rm-primary)]" />
                   </div>
-                  <h3 className="font-bold text-[#1A1A1A] mb-2">{guide.title}</h3>
+                  <h3 className="font-bold text-[var(--rm-text)] mb-2">{guide.title}</h3>
                   <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{guide.description}</p>
-                  <Badge variant="outline" className="text-[#9E3A2E] border-[#7A2A1E]/30">{stepsCount} pasos</Badge>
-                  <div className="mt-3 text-xs text-[#9E3A2E] font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                  <Badge variant="outline" className="text-[var(--rm-primary)] border-[var(--rm-primary)]/30">{stepsCount} pasos</Badge>
+                  <div className="mt-3 text-xs text-[var(--rm-primary)] font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
                     Ver guía completa <ChevronRight className="w-3 h-3" />
                   </div>
                 </CardContent>
@@ -195,9 +195,9 @@ export default function GuidesSection() {
           {/* Fixed Header */}
           <div className="bg-gradient-to-r from-cuban-red/10 via-gold/10 to-cuban-red/5 px-6 py-6 shrink-0">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-[#1A1A1A] flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-[#7A2A1E]/15 flex items-center justify-center shrink-0">
-                  <GuideIcon className="w-6 h-6 text-[#9E3A2E]" />
+              <DialogTitle className="text-2xl font-bold text-[var(--rm-text)] flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-[var(--rm-primary)]/15 flex items-center justify-center shrink-0">
+                  <GuideIcon className="w-6 h-6 text-[var(--rm-primary)]" />
                 </div>
                 <span>{selectedGuide?.title}</span>
               </DialogTitle>

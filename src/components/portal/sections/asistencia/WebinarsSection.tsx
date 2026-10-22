@@ -14,8 +14,8 @@ const WEBINARS = [
 export default function WebinarsSection() {
   return (
     <section className="mb-12">
-      <h2 className="text-xl font-bold text-[#1A1A1A] mb-6 flex items-center gap-2">
-        <Radio className="w-5 h-5 text-[#9E3A2E]" />
+      <h2 className="text-xl font-bold text-[var(--rm-text)] mb-6 flex items-center gap-2">
+        <Radio className="w-5 h-5 text-[var(--rm-primary)]" />
         Webinars y Eventos
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -23,18 +23,18 @@ export default function WebinarsSection() {
           <Card key={webinar.title} className="glass-card-inner overflow-hidden">
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-xl bg-[#1A1A1A]/5 flex flex-col items-center justify-center shrink-0">
-                  <span className="text-lg font-bold text-[#1A1A1A]">{webinar.date.split(' ')[0]}</span>
+                <div className="w-14 h-14 rounded-xl bg-[var(--rm-primary)]/10 flex flex-col items-center justify-center shrink-0">
+                  <span className="text-lg font-bold text-[var(--rm-text)]">{webinar.date.split(' ')[0]}</span>
                   <span className="text-xs text-muted-foreground">{webinar.date.split(' ')[1]}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-[#1A1A1A] text-sm">{webinar.title}</h3>
+                  <h3 className="font-semibold text-[var(--rm-text)] text-sm">{webinar.title}</h3>
                   <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{webinar.time}</span>
                     <span className="flex items-center gap-1"><Users className="w-3 h-3" />{webinar.attendees}</span>
                   </div>
                   <Badge className={`mt-2 text-xs ${
-                    webinar.status === 'Próximo' ? 'bg-[#7A2A1E]/10 text-[#9E3A2E]' : 'bg-gray-100 text-gray-500'
+                    webinar.status === 'Próximo' ? 'bg-[var(--rm-primary)]/10 text-[var(--rm-primary)]' : 'bg-gray-100 text-gray-500'
                   }`}>
                     {webinar.status}
                   </Badge>

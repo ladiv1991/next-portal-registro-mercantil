@@ -23,15 +23,15 @@ export default function Glossary() {
     <Card className="glass-card overflow-hidden">
       <CardHeader className="p-6">
         <div className="flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Glosario</CardTitle>
+          <BookOpen className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Glosario</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="px-6 pb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {GLOSSARY.map((item) => (
             <div key={item.term} className="p-4 glass-card-inner hover:border-[#7A2A1E]/30 transition-colors">
-              <p className="text-sm font-semibold text-[#1A1A1A]">{item.term}</p>
+              <p className="text-sm font-semibold text-[var(--rm-text)]">{item.term}</p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{item.definition}</p>
             </div>
           ))}

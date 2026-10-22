@@ -15,10 +15,10 @@ const CONSTITUTION_STEPS = [
 export default function ConstitutionSteps() {
   return (
     <Card className="glass-card mb-10 overflow-hidden">
-      <CardHeader className="bg-[#1A1A1A]/5 rounded-t-xl">
+      <CardHeader className="bg-[var(--rm-primary)]/5 rounded-t-xl">
         <div className="flex items-center gap-2">
-          <ClipboardList className="w-5 h-5 text-[#9E3A2E]" />
-          <CardTitle className="text-[#1A1A1A]">Proceso de Solicitud de Primera Inscripción de un Sujeto - 6 Pasos</CardTitle>
+          <ClipboardList className="w-5 h-5 text-[var(--rm-primary)]" />
+          <CardTitle className="text-[var(--rm-text)]">Proceso de Solicitud de Primera Inscripción de un Sujeto - 6 Pasos</CardTitle>
         </div>
         <CardDescription>Proceso de Solicitud de Primera Inscripción (próximamente disponible)</CardDescription>
       </CardHeader>
@@ -26,14 +26,14 @@ export default function ConstitutionSteps() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {CONSTITUTION_STEPS.map((step) => (
             <div key={step.step} className="glass-card-inner relative p-4">
-              <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-[#9E3A2E] text-[#1A1A1A] flex items-center justify-center text-sm font-bold">
+              <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-[var(--rm-primary)] text-white flex items-center justify-center text-sm font-bold">
                 {step.step}
               </div>
               <div className="mt-2">
-                <step.icon className="w-6 h-6 text-[#1A1A1A] mb-2" />
-                <h4 className="font-semibold text-[#1A1A1A]">{step.title}</h4>
+                <step.icon className="w-6 h-6 text-[var(--rm-text)] mb-2" />
+                <h4 className="font-semibold text-[var(--rm-text)]">{step.title}</h4>
                 <p className="text-sm text-muted-foreground mt-1">{step.description}</p>
-                <p className="text-xs text-[#9E3A2E] mt-2 flex items-center gap-1">
+                <p className="text-xs text-[var(--rm-primary)] mt-2 flex items-center gap-1">
                   <Clock className="w-3 h-3" /> {step.time}
                 </p>
               </div>
