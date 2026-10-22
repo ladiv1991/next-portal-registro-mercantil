@@ -90,6 +90,14 @@
   --sidebar-accent-foreground: #FFFFFF;
   --sidebar-border: #2D2D2D;
   --sidebar-ring: #EDE0D4;
+
+  /* MINJUS official palette */
+  --rm-primary: #005A9C;
+  --rm-primary-light: #0074C8;
+  --rm-bg: #FFFFFF;
+  --rm-surface: #F2F4F7;
+  --rm-muted: #6B7280;
+  --rm-text: #1F2937;
 }
 
 @layer base {
