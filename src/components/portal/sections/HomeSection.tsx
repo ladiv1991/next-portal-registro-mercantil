@@ -143,7 +143,7 @@ function AnimatedCounter({ value, suffix = '', delay = 0 }: { value: number; suf
       className="text-center"
     >
       <span className="text-3xl md:text-5xl font-extrabold tabular-nums bg-clip-text text-transparent" style={{
-        backgroundImage: 'linear-gradient(135deg, var(--c-accent, #9E3A2E) 0%, var(--c-accent-light, #B55A4A) 100%)',
+        backgroundImage: 'linear-gradient(135deg, var(--c-accent, var(--rm-primary)) 0%, var(--c-accent-light, var(--rm-primary-light)) 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
       }}>
@@ -163,7 +163,7 @@ function FloatingParticle({ delay, x, size, color }: { delay: number; x: number;
         bottom: '-10px',
         width: size,
         height: size,
-        background: `radial-gradient(circle, ${color || 'var(--c-accent, #9E3A2E)'}, transparent)`,
+        background: `radial-gradient(circle, ${color || 'var(--c-accent, var(--rm-primary))'}, transparent)`,
         opacity: 0.06,
       }}
       animate={{
@@ -310,7 +310,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
       <section className="relative h-[420px] sm:h-[480px] md:h-[540px] overflow-hidden">
         {loading ? (
           /* Loading skeleton for hero */
-          <div className="absolute inset-0 bg-[#1A1A1A]">
+          <div className="absolute inset-0 bg-[var(--rm-text)]">
             <Skeleton className="w-full h-full" />
           </div>
         ) : sliders.length > 0 ? (
@@ -337,7 +337,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                           transition={{ duration: 0.6 }}
                         >
                           {slide.subtitle && (
-                            <Badge className="mb-3 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30 text-xs sm:text-sm px-3 py-0.5 sm:px-4 sm:py-1">
+                            <Badge className="mb-3 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30 text-xs sm:text-sm px-3 py-0.5 sm:px-4 sm:py-1">
                               <Star className="w-3 h-3 mr-1" />
                               {slide.subtitle}
                             </Badge>
@@ -353,7 +353,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                           {slide.linkLabel && (
                             <Button
                               size="lg"
-                              className="bg-[#9E3A2E] text-[#1A1A1A] hover:bg-[#9E3A2E]-light font-semibold text-sm sm:text-base"
+                              className="bg-[var(--rm-primary)] text-[var(--rm-text)] hover:bg-[var(--rm-primary)]-light font-semibold text-sm sm:text-base"
                               onClick={() => slide.link && window.open(slide.link, '_blank')}
                             >
                               {slide.linkLabel} <ArrowRight className="w-4 h-4 ml-2" />
@@ -396,7 +396,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                     onClick={() => emblaApi?.scrollTo(idx)}
                     className={`w-2.5 h-2.5 rounded-full transition-all ${
                       idx === currentSlide
-                        ? 'bg-[#9E3A2E] w-7'
+                        ? 'bg-[var(--rm-primary)] w-7'
                         : 'bg-white/40 hover:bg-white/60'
                     }`}
                     aria-label={`Slide ${idx + 1}`}
@@ -416,7 +416,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
             <div className="hero-overlay absolute inset-0" />
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                <Badge className="mb-3 sm:mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30 text-xs sm:text-sm px-3 py-0.5 sm:px-4 sm:py-1">
+                <Badge className="mb-3 sm:mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30 text-xs sm:text-sm px-3 py-0.5 sm:px-4 sm:py-1">
                   <Star className="w-3 h-3 mr-1" />
                   Portal Digital Oficial
                 </Badge>
@@ -433,7 +433,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                 <div className="flex flex-wrap gap-2 sm:gap-3">
                   <Button
                     size="lg"
-                    className="bg-[#9E3A2E] text-[#1A1A1A] hover:bg-[#9E3A2E]-light font-semibold text-xs sm:text-sm"
+                    className="bg-[var(--rm-primary)] text-[var(--rm-text)] hover:bg-[var(--rm-primary)]-light font-semibold text-xs sm:text-sm"
                     onClick={() => onNavigate('consultas')}
                   >
                     <Search className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
@@ -442,7 +442,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                   </Button>
                   <Button
                     size="lg"
-                    className="bg-white text-[#1A1A1A] hover:bg-gray-100 font-semibold shadow-lg shadow-black/20 text-xs sm:text-sm"
+                    className="bg-white text-[var(--rm-text)] hover:bg-gray-100 font-semibold shadow-lg shadow-black/20 text-xs sm:text-sm"
                     onClick={() => onNavigate('tramites')}
                   >
                     <FileText className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
@@ -460,7 +460,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
       <section className="relative -mt-10 sm:-mt-14 md:-mt-16 z-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto glass-card shadow-xl shadow-navy/15 p-6 sm:p-8">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-2 bg-[#7A2A1E]/10 text-[#9E3A2E] px-4 py-1.5 rounded-full text-sm font-medium mb-3">
+            <div className="inline-flex items-center gap-2 bg-[var(--rm-primary)]/10 text-[var(--rm-primary)] px-4 py-1.5 rounded-full text-sm font-medium mb-3">
               <Search className="w-4 h-4" />
               Servicio más utilizado
             </div>
@@ -473,7 +473,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   placeholder="Ingrese denominación ..."
-                  className="pl-10 h-12 text-base border-gray-300 focus:border-[#7A2A1E] focus:ring-cuban-red/20 rounded-xl"
+                  className="pl-10 h-12 text-base border-gray-300 focus:border-[var(--rm-primary)] focus:ring-cuban-red/20 rounded-xl"
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   onFocus={() => searchQuery.trim() && setShowSearchDropdown(true)}
@@ -483,7 +483,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                 )}
               </div>
               <Button
-                className="h-12 px-6 bg-[#1A1A1A] text-white hover:bg-[#1A1A1A]-light rounded-xl font-semibold text-base shadow-md"
+                className="h-12 px-6 bg-[var(--rm-text)] text-white hover:bg-[var(--rm-text)]-light rounded-xl font-semibold text-base shadow-md"
                 onClick={() => searchQuery.trim() ? onNavigate('consultas', searchQuery) : onNavigate('consultas')}
               >
                 Buscar
@@ -495,7 +495,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
               <>
                 {searchLoading && searchResults.length === 0 ? (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50 flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-[#1A1A1A]" />
+                    <Loader2 className="w-4 h-4 animate-spin text-[var(--rm-text)]" />
                     <p className="text-sm text-muted-foreground">Buscando resultados...</p>
                   </div>
                 ) : searchResults.length > 0 ? (
@@ -503,7 +503,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                     {searchResults.map((result) => (
                       <button
                         key={result.id}
-                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#7A2A1E]/5 transition-colors text-left border-b border-gray-50 last:border-0"
+                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-[var(--rm-primary)]/5 transition-colors text-left border-b border-gray-50 last:border-0"
                         onClick={() => {
                           setShowSearchDropdown(false);
                           setSearchQuery(result.name);
@@ -512,7 +512,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                         }}
                       >
                         <div>
-                          <p className="text-sm font-medium text-[#1A1A1A]">{result.name}</p>
+                          <p className="text-sm font-medium text-[var(--rm-text)]">{result.name}</p>
                           <p className="text-xs text-muted-foreground">
                             {result.nire}
                             {result.type ? ` • ${result.type}` : ''}
@@ -542,16 +542,16 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
             )}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-5 pt-5 border-t border-gray-100">
-            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[#9E3A2E] transition-colors">
+            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[var(--rm-primary)] transition-colors">
               <Building2 className="w-4 h-4" /> Búsqueda por nombre
             </button>
-            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[#9E3A2E] transition-colors">
+            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[var(--rm-primary)] transition-colors">
               <FileCheck className="w-4 h-4" /> Consultar NIRE
             </button>
-            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[#9E3A2E] transition-colors">
+            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[var(--rm-primary)] transition-colors">
               <Award className="w-4 h-4" /> Verificar certificación
             </button>
-            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[#9E3A2E] transition-colors">
+            <button onClick={() => onNavigate('consultas')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[var(--rm-primary)] transition-colors">
               <FileText className="w-4 h-4" /> Nota simple
             </button>
           </div>
@@ -586,12 +586,12 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {(services.length > 0 ? services : [
-                { title: 'Consultas Públicas', description: 'Busque sociedades, representantes y documentos registrados', icon: 'Search', color: 'bg-[#1A1A1A]', sectionId: 'consultas' },
-                { title: 'Solicitud de Primera Inscripción de un Sujeto', description: 'Inicie el proceso de constitución de forma digital', icon: 'Building2', color: 'bg-[#9E3A2E]', sectionId: 'tramites' },
-                { title: 'Modificaciones', description: 'Realice solicitud de inscripción de modificaciones de los datos registrales de su sujeto', icon: 'PenTool', color: 'bg-[#7A2A1E]', sectionId: 'tramites' },
-                { title: 'Estado de Situación', description: 'Deposite y consulte estado de situación de sociedades', icon: 'FileText', color: 'bg-[#1A1A1A]', sectionId: 'tramites' },
-                { title: 'Inversión Extranjera (VUCE)', description: 'Trámites para representaciones y sucursales extranjeras', icon: 'Globe2', color: 'bg-[#9E3A2E]', sectionId: 'tramites' },
-                { title: 'Certificaciones', description: 'Obtenga certificaciones y notas simples registrales', icon: 'Award', color: 'bg-[#7A2A1E]', sectionId: 'consultas' },
+                { title: 'Consultas Públicas', description: 'Busque sociedades, representantes y documentos registrados', icon: 'Search', color: 'bg-[var(--rm-text)]', sectionId: 'consultas' },
+                { title: 'Solicitud de Primera Inscripción de un Sujeto', description: 'Inicie el proceso de constitución de forma digital', icon: 'Building2', color: 'bg-[var(--rm-primary)]', sectionId: 'tramites' },
+                { title: 'Modificaciones', description: 'Realice solicitud de inscripción de modificaciones de los datos registrales de su sujeto', icon: 'PenTool', color: 'bg-[var(--rm-primary)]', sectionId: 'tramites' },
+                { title: 'Estado de Situación', description: 'Deposite y consulte estado de situación de sociedades', icon: 'FileText', color: 'bg-[var(--rm-text)]', sectionId: 'tramites' },
+                { title: 'Inversión Extranjera (VUCE)', description: 'Trámites para representaciones y sucursales extranjeras', icon: 'Globe2', color: 'bg-[var(--rm-primary)]', sectionId: 'tramites' },
+                { title: 'Certificaciones', description: 'Obtenga certificaciones y notas simples registrales', icon: 'Award', color: 'bg-[var(--rm-primary)]', sectionId: 'consultas' },
               ]).map((card: ServiceItem | { title: string; description: string; icon: string; color: string; sectionId: string }, idx) => {
                 const cardData = card as ServiceItem & { color?: string; sectionId?: string };
                 const IconComp = iconMap[cardData.icon || ''] || FileText;
@@ -602,12 +602,12 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
 
                 // Map old class names to theme CSS variables
                 const colorFallbacks: Record<string, string> = {
-                  'bg-[#7A2A1E]': 'var(--c-accent, #9E3A2E)',
-                  'bg-[#1A1A1A]': 'var(--c-navy, #1A1A1A)',
-                  'bg-[#9E3A2E]': 'var(--c-warm, #C07030)',
+                  'bg-[var(--rm-primary)]': 'var(--c-accent, var(--rm-primary))',
+                  'bg-[var(--rm-text)]': 'var(--c-navy, var(--rm-text))',
+                  'bg-[var(--rm-primary)]': 'var(--c-warm, var(--rm-primary))',
                 };
 
-                const iconBoxBg = isHexColor ? rawColor : (colorFallbacks[rawColor] || 'var(--c-accent, #9E3A2E)');
+                const iconBoxBg = isHexColor ? rawColor : (colorFallbacks[rawColor] || 'var(--c-accent, var(--rm-primary))');
 
                 return (
                   <motion.div key={cardData.id || idx} variants={fadeInUp}>
@@ -630,13 +630,13 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                         <CardTitle
                           className="text-lg transition-colors duration-200"
                           style={{
-                            color: 'var(--c-navy, #1A1A1A)',
+                            color: 'var(--c-navy, var(--rm-text))',
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.color = 'var(--c-accent-dark, #7A2A1E)';
+                            e.currentTarget.style.color = 'var(--c-accent-dark, var(--rm-primary))';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.color = 'var(--c-navy, #1A1A1A)';
+                            e.currentTarget.style.color = 'var(--c-navy, var(--rm-text))';
                           }}
                         >
                           {cardData.title}
@@ -649,14 +649,14 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                         <span
                           className="text-sm font-semibold flex items-center gap-1 transition-all duration-200"
                           style={{
-                            color: 'var(--c-accent, #9E3A2E)',
+                            color: 'var(--c-accent, var(--rm-primary))',
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.color = 'var(--c-accent-dark, #7A2A1E)';
+                            e.currentTarget.style.color = 'var(--c-accent-dark, var(--rm-primary))';
                             e.currentTarget.style.gap = '0.5rem';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.color = 'var(--c-accent, #9E3A2E)';
+                            e.currentTarget.style.color = 'var(--c-accent, var(--rm-primary))';
                             e.currentTarget.style.gap = '0.25rem';
                           }}
                         >
@@ -676,11 +676,11 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
       <section className="relative py-20 overflow-hidden multicolor-glow">
         {/* Floating particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <FloatingParticle delay={0} x={10} size={120} color="#9E3A2E" />
-          <FloatingParticle delay={1.5} x={30} size={80} color="#C07030" />
-          <FloatingParticle delay={3} x={55} size={100} color="#3D7A4A" />
-          <FloatingParticle delay={4.5} x={75} size={60} color="#2563EB" />
-          <FloatingParticle delay={2} x={90} size={90} color="#7C3A6E" />
+          <FloatingParticle delay={0} x={10} size={120} color="var(--rm-primary)" />
+          <FloatingParticle delay={1.5} x={30} size={80} color="var(--rm-primary)" />
+          <FloatingParticle delay={3} x={55} size={100} color="var(--rm-primary)" />
+          <FloatingParticle delay={4.5} x={75} size={60} color="var(--rm-primary-light)" />
+          <FloatingParticle delay={2} x={90} size={90} color="var(--rm-primary)" />
         </div>
 
         {/* Section title */}
@@ -736,7 +736,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                     <div
                       className="absolute top-0 right-0 w-24 h-24 opacity-[0.04] rounded-bl-[60px] group-hover:opacity-[0.08] transition-opacity duration-500"
                       style={{
-                        background: 'linear-gradient(135deg, var(--c-accent, #9E3A2E) 0%, var(--c-accent-light, #B55A4A) 100%)',
+                        background: 'linear-gradient(135deg, var(--c-accent, var(--rm-primary)) 0%, var(--c-accent-light, var(--rm-primary-light)) 100%)',
                       }}
                     />
 
@@ -744,7 +744,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                     <div className="relative inline-flex mb-5">
                       <motion.div
                         className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto relative"
-                        style={{ backgroundColor: 'var(--c-accent, #9E3A2E)' }}
+                        style={{ backgroundColor: 'var(--c-accent, var(--rm-primary))' }}
                         initial={{ rotate: -10, scale: 0 }}
                         whileInView={{ rotate: 0, scale: 1 }}
                         viewport={{ once: true }}
@@ -754,7 +754,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                         {/* Pulse ring */}
                         <motion.div
                           className="absolute inset-0 rounded-2xl"
-                          style={{ border: '2px solid var(--c-accent, #9E3A2E)' }}
+                          style={{ border: '2px solid var(--c-accent, var(--rm-primary))' }}
                           initial={{ scale: 1, opacity: 0.5 }}
                           whileInView={{ scale: 1.5, opacity: 0 }}
                           viewport={{ once: true }}
@@ -769,7 +769,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                     {/* Label */}
                     <motion.p
                       className="text-sm font-medium mt-2"
-                      style={{ color: '#6B5E50' }}
+                      style={{ color: 'var(--rm-muted)' }}
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
@@ -782,7 +782,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                     <motion.div
                       className="h-[2px] rounded-full mt-4 mx-auto"
                       style={{
-                        background: 'linear-gradient(90deg, transparent, var(--c-accent, #9E3A2E), transparent)',
+                        background: 'linear-gradient(90deg, transparent, var(--c-accent, var(--rm-primary)), transparent)',
                       }}
                       initial={{ width: 0 }}
                       whileInView={{ width: '40px' }}
@@ -813,7 +813,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
               <h2 className="text-2xl md:text-3xl font-bold gradient-text-primary">Noticias y Anuncios</h2>
               <p className="text-muted-foreground mt-1">Últimas novedades del Registro Mercantil</p>
             </div>
-            <Button variant="outline" className="hidden sm:flex border-[#7A2A1E] text-[#9E3A2E] hover:bg-[#7A2A1E]/10">
+            <Button variant="outline" className="hidden sm:flex border-[var(--rm-primary)] text-[var(--rm-primary)] hover:bg-[var(--rm-primary)]/10">
               Ver todas <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
@@ -841,8 +841,8 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                 { title: 'Plan de modernización del Registro Mercantil 2025-2027', summary: 'El Ministerio de Justicia aprueba el plan de modernización que incluye digitalización total, interoperabilidad con otros registros y mejora de servicios al ciudadano.', category: 'Institucional', publishedAt: '2025-01-02' },
               ]).map((item, i) => {
                 const news = item as NewsItem;
-                const categoryColor = news.category === 'Innovación' ? 'bg-[#9E3A2E]' : news.category === 'Normativa' ? 'bg-[#7A2A1E]' : 'bg-[#1A1A1A]';
-                const categoryBg = news.category === 'Innovación' ? 'bg-[#7A2A1E]/10 text-[#9E3A2E]' : news.category === 'Normativa' ? 'bg-[#7A2A1E]/10 text-[#9E3A2E]' : 'bg-[#1A1A1A]/10 text-[#1A1A1A]';
+                const categoryColor = news.category === 'Innovación' ? 'bg-[var(--rm-primary)]' : news.category === 'Normativa' ? 'bg-[var(--rm-primary)]' : 'bg-[var(--rm-text)]';
+                const categoryBg = news.category === 'Innovación' ? 'bg-[var(--rm-primary)]/10 text-[var(--rm-primary)]' : news.category === 'Normativa' ? 'bg-[var(--rm-primary)]/10 text-[var(--rm-primary)]' : 'bg-[var(--rm-text)]/10 text-[var(--rm-text)]';
                 const dateStr = news.publishedAt
                   ? new Date(news.publishedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
                   : '';
@@ -861,14 +861,14 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                             <span className="text-xs text-muted-foreground">{dateStr}</span>
                           )}
                         </div>
-                        <CardTitle className="text-lg text-[#1A1A1A] leading-snug">{news.title}</CardTitle>
+                        <CardTitle className="text-lg text-[var(--rm-text)] leading-snug">{news.title}</CardTitle>
                       </CardHeader>
                       <CardContent className="flex-1">
                         <p className="text-sm text-muted-foreground leading-relaxed">{news.summary}</p>
                       </CardContent>
                       <CardFooter>
                         <button
-                          className="text-sm text-[#9E3A2E] font-medium flex items-center gap-1 hover:gap-2 transition-all"
+                          className="text-sm text-[var(--rm-primary)] font-medium flex items-center gap-1 hover:gap-2 transition-all"
                           onClick={() => setSelectedNews(news)}
                         >
                           Leer más <ArrowRight className="w-4 h-4" />
@@ -884,7 +884,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
       </section>
 
       {/* ============ BENEFITS SECTION (static) ============ */}
-      <section className="py-16 bg-[#1A1A1A]">
+      <section className="py-16 bg-[var(--rm-text)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-white">¿Por qué elegir nuestro portal?</h2>
@@ -907,7 +907,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
             ].map((benefit) => (
               <motion.div key={benefit.title} variants={fadeInUp}>
                 <div className="p-6 glass-card-dark multicolor-shimmer">
-                  <benefit.icon className="w-8 h-8 text-[#9E3A2E] mb-4" />
+                  <benefit.icon className="w-8 h-8 text-[var(--rm-primary)] mb-4" />
                   <h3 className="text-white font-semibold mb-2">{benefit.title}</h3>
                   <p className="text-sm text-gray-400">{benefit.description}</p>
                 </div>
@@ -918,7 +918,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
       </section>
 
       {/* ============ CTA SECTION (static) ============ */}
-      <section className="py-16 bg-[#7A2A1E]/10">
+      <section className="py-16 bg-[var(--rm-primary)]/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold gradient-text-primary mb-4">¿Necesita ayuda con un trámite?</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -926,11 +926,11 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
             en cada paso del proceso registral.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-[#1A1A1A] text-white hover:bg-[#1A1A1A]-light" onClick={() => onNavigate('asistencia')}>
+            <Button size="lg" className="bg-[var(--rm-text)] text-white hover:bg-[var(--rm-text)]-light" onClick={() => onNavigate('asistencia')}>
               <Headphones className="w-4 h-4 mr-2" />
               Centro de Asistencia
             </Button>
-            <Button size="lg" variant="outline" className="border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A]/5" onClick={() => onNavigate('normatividad')}>
+            <Button size="lg" variant="outline" className="border-[var(--rm-text)] text-[var(--rm-text)] hover:bg-[var(--rm-text)]/5" onClick={() => onNavigate('normatividad')}>
               <BookOpen className="w-4 h-4 mr-2" />
               Consultar Normativa
             </Button>
@@ -942,7 +942,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
       <Dialog open={!!selectedService} onOpenChange={(open) => !open && setSelectedService(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-[#1A1A1A]">{selectedService?.title}</DialogTitle>
+            <DialogTitle className="text-[var(--rm-text)]">{selectedService?.title}</DialogTitle>
             <DialogDescription>{selectedService?.description}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -951,11 +951,11 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
               Para más información, consulte la sección de trámites o contacte con nuestro equipo de asistencia.
             </p>
             <div className="flex gap-3">
-              <Button className="flex-1 bg-[#1A1A1A] hover:bg-[#1A1A1A]-light text-white" onClick={() => { setSelectedService(null); onNavigate('tramites'); }}>
+              <Button className="flex-1 bg-[var(--rm-text)] hover:bg-[var(--rm-text)]-light text-white" onClick={() => { setSelectedService(null); onNavigate('tramites'); }}>
                 <FileText className="w-4 h-4 mr-2" />
                 Iniciar Trámite
               </Button>
-              <Button variant="outline" className="flex-1 border-[#1A1A1A] text-[#1A1A1A]" onClick={() => { setSelectedService(null); onNavigate('asistencia'); }}>
+              <Button variant="outline" className="flex-1 border-[var(--rm-text)] text-[var(--rm-text)]" onClick={() => { setSelectedService(null); onNavigate('asistencia'); }}>
                 <Headphones className="w-4 h-4 mr-2" />
                 Asistencia
               </Button>
@@ -971,8 +971,8 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
             <div className="flex items-center gap-2 mb-2">
               {selectedNews?.category && (
                 <Badge variant="secondary" className={
-                  selectedNews.category === 'Innovación' ? 'bg-[#7A2A1E]/10 text-[#9E3A2E]' :
-                  selectedNews.category === 'Normativa' ? 'bg-[#7A2A1E]/10 text-[#9E3A2E]' : 'bg-[#1A1A1A]/10 text-[#1A1A1A]'
+                  selectedNews.category === 'Innovación' ? 'bg-[var(--rm-primary)]/10 text-[var(--rm-primary)]' :
+                  selectedNews.category === 'Normativa' ? 'bg-[var(--rm-primary)]/10 text-[var(--rm-primary)]' : 'bg-[var(--rm-text)]/10 text-[var(--rm-text)]'
                 }>
                   {selectedNews.category}
                 </Badge>
@@ -983,7 +983,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                 </span>
               )}
             </div>
-            <DialogTitle className="text-[#1A1A1A] text-xl leading-snug">{selectedNews?.title}</DialogTitle>
+            <DialogTitle className="text-[var(--rm-text)] text-xl leading-snug">{selectedNews?.title}</DialogTitle>
             {selectedNews?.source && (
               <DialogDescription>Fuente: {selectedNews.source}</DialogDescription>
             )}
