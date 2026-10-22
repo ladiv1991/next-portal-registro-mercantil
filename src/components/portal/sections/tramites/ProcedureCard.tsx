@@ -12,8 +12,8 @@ const PROCEDURES = [
     icon: Stamp,
     time: '15-30 días hábiles',
     cost: 'Según Res. 51/2021',
-    color: 'text-[#9E3A2E]',
-    bgColor: 'bg-[#7A2A1E]/10',
+    color: 'text-[var(--rm-primary)]',
+    bgColor: 'bg-[var(--rm-primary)]/10',
   },
   {
     title: 'Modificaciones Societarias',
@@ -21,26 +21,26 @@ const PROCEDURES = [
     icon: Upload,
     time: '5-15 días hábiles',
     cost: '180-300 CUP por acto',
-    color: 'text-[#9E3A2E]',
-    bgColor: 'bg-[#7A2A1E]/10',
+    color: 'text-[var(--rm-primary)]',
+    bgColor: 'bg-[var(--rm-primary)]/10',
   },
   {
     title: 'Depósito de Estado de Situación',
-    description: 'Deposite las estado de situación de su sociedad conforme a la normativa vigente',
+    description: 'Deposite el estado de situación de su sociedad conforme a la normativa vigente',
     icon: FileCheck,
     time: '3-7 días hábiles',
     cost: '150 - 800 CUP',
-    color: 'text-[#1A1A1A]',
-    bgColor: 'bg-[#1A1A1A]/10',
+    color: 'text-[var(--rm-text)]',
+    bgColor: 'bg-[var(--rm-text)]/10',
   },
   {
     title: 'Inversión Extranjera (VUCE)',
-    description: 'Trámites para Oficinas de Representación, Sucursales y Contratos de Agencia',
+    description: 'Trámites para sucursales, filiales y empresas mixtas de capital extranjero',
     icon: CreditCard,
     time: '20-45 días hábiles',
     cost: '1,000 - 5,000 CUP',
-    color: 'text-[#9E3A2E]',
-    bgColor: 'bg-[#7A2A1E]/10',
+    color: 'text-[var(--rm-primary)]',
+    bgColor: 'bg-[var(--rm-primary)]/10',
   },
 ];
 
@@ -53,14 +53,14 @@ export default function ProcedureCard({ onIniciarTramite }: ProcedureCardProps) 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
       {PROCEDURES.map((proc) => (
         <Card key={proc.title} className="glass-card-inner overflow-hidden">
-          <div className="h-1 bg-[#7A2A1E]" />
+          <div className="h-1 bg-[var(--rm-primary)]" />
           <CardHeader>
             <div className="flex items-start gap-4">
               <div className={`w-14 h-14 rounded-xl ${proc.bgColor} flex items-center justify-center shrink-0`}>
                 <proc.icon className={`w-7 h-7 ${proc.color}`} />
               </div>
               <div>
-                <CardTitle className="text-xl text-[#1A1A1A]">{proc.title}</CardTitle>
+                <CardTitle className="text-xl text-[var(--rm-text)]">{proc.title}</CardTitle>
               </div>
             </div>
           </CardHeader>
@@ -75,7 +75,7 @@ export default function ProcedureCard({ onIniciarTramite }: ProcedureCardProps) 
           </CardContent>
           <div className="px-6 pb-6">
             <Button
-              className="bg-[#1A1A1A] hover:bg-[#1A1A1A]-light text-white"
+              className="bg-[var(--rm-primary)] hover:bg-[var(--rm-primary-light)] text-white"
               onClick={onIniciarTramite}
             >
               Iniciar Trámite
