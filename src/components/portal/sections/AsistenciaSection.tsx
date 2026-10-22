@@ -130,7 +130,7 @@ export default function AsistenciaSection() {
             Asistencia y Formación
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Centro de Ayuda</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Guías paso a paso, tutoriales, webinars y asistencia personalizada para todos los usuarios.
           </p>
         </div>

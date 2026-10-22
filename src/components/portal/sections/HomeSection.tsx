@@ -888,7 +888,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-white">¿Por qué elegir nuestro portal?</h2>
-            <p className="text-gray-400 mt-2">Beneficios de la plataforma digital del Registro Mercantil</p>
+            <p className="text-gray-300 mt-2">Beneficios de la plataforma digital del Registro Mercantil</p>
           </div>
           <motion.div
             variants={staggerContainer}
@@ -909,7 +909,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                 <div className="p-6 glass-card-dark multicolor-shimmer">
                   <benefit.icon className="w-8 h-8 text-[var(--rm-primary)] mb-4" />
                   <h3 className="text-white font-semibold mb-2">{benefit.title}</h3>
-                  <p className="text-sm text-gray-400">{benefit.description}</p>
+                  <p className="text-sm text-gray-600">{benefit.description}</p>
                 </div>
               </motion.div>
             ))}

@@ -117,7 +117,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
             </div>
             <div className="hidden sm:block">
               <div className="text-white font-bold text-sm leading-tight tracking-wide">Registro Mercantil</div>
-              <div className="text-xs text-gray-400 font-medium">República de Cuba</div>
+              <div className="text-xs text-gray-300 font-medium">República de Cuba</div>
             </div>
           </button>
 
@@ -148,7 +148,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                   {/* Text layer */}
                   <span
                     className={`relative z-10 flex items-center gap-1.5 transition-colors duration-300 ${
-                      isActive ? 'text-white' : 'text-gray-400 hover:text-gray-100'
+                      isActive ? 'text-white' : 'text-gray-300 hover:text-gray-100'
                     }`}
                   >
                     {item.label}
@@ -172,7 +172,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg"
+                  className="text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg"
                 >
                   <Bell className="w-4 h-4" />
                 </Button>
@@ -183,7 +183,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-400 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg"
+              className="text-gray-300 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg"
               onClick={() => handleNavClick('consultas')}
             >
               <Search className="w-4 h-4" />
@@ -241,7 +241,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-300 ${
                             isActive
                               ? 'text-white shadow-lg'
-                              : 'text-gray-400 hover:bg-white/5 hover:text-gray-100'
+                              : 'text-gray-300 hover:bg-white/5 hover:text-gray-100'
                           }`}
                           style={
                             isActive

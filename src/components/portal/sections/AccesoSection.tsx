@@ -63,7 +63,7 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
             Acceso Registradores
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Portal de Registradores</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Acceso exclusivo para funcionarios del Registro Mercantil. Sistema de Gestión Registral.
           </p>
         </div>

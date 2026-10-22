@@ -129,7 +129,7 @@ export default function PremiumModal({
               </div>
               <button
                 onClick={onClose}
-                className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0 ml-2"
+                className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors shrink-0 ml-2"
                 aria-label="Cerrar"
               >
                 <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
@@ -222,7 +222,7 @@ export default function PremiumModal({
                             </span>
                             <span className="text-xs sm:text-sm text-gray-500">{plan.currency}</span>
                           </div>
-                          <p className="text-[10px] sm:text-xs text-gray-400 mt-0.5 sm:mt-1">
+                          <p className="text-[10px] sm:text-xs text-gray-600 mt-0.5 sm:mt-1">
                             por {plan.duration} {plan.duration === 1 ? 'día' : 'días'}
                           </p>
                         </div>

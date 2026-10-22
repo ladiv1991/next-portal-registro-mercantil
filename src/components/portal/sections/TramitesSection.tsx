@@ -98,7 +98,7 @@ export default function TramitesSection() {
             Trámites en Línea
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Gestión de Trámites</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Realice todos sus trámites mercantiles de forma digital. Constitución, modificaciones, estado de situación e inversión extranjera.
           </p>
         </div>

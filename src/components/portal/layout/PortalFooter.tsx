@@ -143,7 +143,7 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
           style={{ backgroundColor: theme.colors.accent + '20' }}
         />
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-300">
           <p>© 2026 Registro Mercantil de Cuba — Ministerio de Justicia. Todos los derechos reservados.</p>
           <div className="flex items-center w-40 h-20">
             
