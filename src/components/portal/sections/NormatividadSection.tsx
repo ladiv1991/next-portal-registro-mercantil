@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { fadeInUp, staggerContainer } from '@/data/portal-data';
 import LegalFramework from './normatividad/LegalFramework';
 import FeeSchedule from './normatividad/FeeSchedule';
+import TaxCalculator from './normatividad/TaxCalculator';
 import DownloadableForms from './normatividad/DownloadableForms';
 import GacetaSection from './normatividad/GacetaSection';
 import Glossary from './normatividad/Glossary';
@@ -141,10 +142,13 @@ export default function NormatividadSection() {
         )}
         {regulations.length === 0 && <LegalFramework regulations={[]} />}
 
-        {/* 2. Tarifa de Derechos */}
+        {/* 2. Calculadora de Costos */}
+        <TaxCalculator />
+
+        {/* 3. Tarifa de Derechos */}
         <FeeSchedule />
 
-        {/* 3. Formularios y Plantillas */}
+        {/* 4. Formularios y Plantillas */}
         <DownloadableForms />
 
         {/* 4. Gaceta Oficial */}

@@ -101,7 +101,7 @@ export const PROCEDURES = [
     bgColor: 'bg-[var(--rm-text)]/10',
   },
   {
-    title: 'Inversión Extranjera (VUCE) (VUCE)',
+    title: 'Inversión Extranjera (VUCE)',
     description: 'Trámites para Oficinas de Representación, Sucursales y Contratos de Agencia',
     icon: 'Globe2',
     time: '20-45 días hábiles',
@@ -134,7 +134,7 @@ export const LEGAL_FRAMEWORK = [
     category: 'Leyes',
     items: [
       'Ley No. 48/84 - Ley de las Sociedades Mercantiles',
-      'Ley No. 118/2013 - Ley de la Inversión Extranjera (VUCE) (VUCE)',
+      'Ley No. 118/2013 - Ley de la Inversión Extranjera',
       'Decreto-Ley No. 226/2001 - Del Registro Mercantil',
       'Código de Comercio de Cuba',
     ],
@@ -200,7 +200,7 @@ export const FAQ_DATA = [
     category: 'General',
     questions: [
       { q: '¿Qué es el Registro Mercantil?', a: 'El Registro Mercantil es un registro público de carácter administrativo, dependiente del Ministerio de Justicia, donde se inscriben las sociedades mercantiles, sus modificaciones, los actos y documentos sujetos a inscripción, proporcionando publicidad formal y seguridad jurídica al tráfico mercantil.' },
-      { q: '¿Quién puede constituir una sociedad mercantil en Cuba?', a: 'Pueden constituir sociedades mercantiles las personas naturales cubanas, las personas jurídicas cubanas, los inversionistas extranjeros mediante las modalidades previstas en la Ley de Inversión Extranjera (VUCE) (VUCE), y las cooperativas conforme a la legislación específica.' },
+      { q: '¿Quién puede constituir una sociedad mercantil en Cuba?', a: 'Pueden constituir sociedades mercantiles las personas naturales cubanas, las personas jurídicas cubanas, los inversionistas extranjeros mediante las modalidades previstas en la Ley de Inversión Extranjera, y las cooperativas conforme a la legislación específica.' },
       { q: '¿Cuántos tipos de sociedades existen en Cuba?', a: 'Las principales formas societarias son: Sociedad de Responsabilidad Limitada (SRL), Sociedad Anónima (SA), Sociedad Cooperativa, Empresa Estatal, Empresa Mixta y Empresa de Capital 100% Extranjero.' },
     ],
   },
@@ -282,7 +282,7 @@ export const GUIDES = [
   { title: 'Guía de Constitución de SRL', steps: 12, icon: 'Building2', description: 'Paso a paso para constituir una Sociedad de Responsabilidad Limitada' },
   { title: 'Guía de Modificaciones', steps: 8, icon: 'PenTool', description: 'Cómo realizar modificaciones en los datos de su sociedad' },
   { title: 'Guía de Estado de Situación', steps: 6, icon: 'FileSpreadsheet', description: 'Proceso de preparación y depósito de estado de situación' },
-  { title: 'Guía de Inversión Extranjera (VUCE) (VUCE)', steps: 15, icon: 'Globe2', description: 'Requisitos y proceso para inversión extranjera en Cuba' },
+  { title: 'Guía de Inversión Extranjera (VUCE)', steps: 15, icon: 'Globe2', description: 'Requisitos y proceso para inversión extranjera en Cuba' },
 ];
 
 export const VIDEO_TUTORIALS = [

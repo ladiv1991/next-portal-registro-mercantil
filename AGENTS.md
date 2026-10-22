@@ -194,6 +194,20 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 
 ---
 
+## Regla de verificación triple (obligatoria)
+
+**NUNCA** declares un cambio como terminado sin verificarlo en estas tres capas, en este orden:
+
+| Capa | Qué hacer | Cómo |
+|------|-----------|------|
+| **1. Código** | Validar que el código compila y no tiene errores de tipo | `curl` a la ruta afectada + revisar logs de dev server (`Get-Content $env:TEMP\rmc-dev.log \| Select-String "error|Error|Compiled"`) |
+| **2. Tests unitarios** | Ejecutar tests relevantes y confirmar 0 fails | `bun test <ruta-del-test>` — 0 fails es requisito mínimo |
+| **3. Navegador** | Abrir la página en el browser y verificar visualmente | `tools.browser.navigate` al URL afectado; si hay sección nueva, navegar a esa sección desde el menú |
+
+Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, incluso si el cambio parece trivial.
+
+---
+
 ## Lecciones aprendidas
 
 ### CSP + Next.js App Router (crítico)

@@ -167,7 +167,7 @@ async function main() {
     { title: 'Portal Digital del Registro Mercantil', subtitle: 'República de Cuba — Ministerio de Justicia', message: 'Plataforma digital integral para la inscripción, consulta y gestión de sociedades mercantiles. Acceda a todos los servicios del Registro Mercantil de forma electrónica.', imageUrl: '/uploads/sliders/slider-portal-digital.png', link: '/tramites', linkLabel: 'Iniciar Trámite', active: true, order: 0 },
     { title: 'Solicitud de Primera Inscripción de un Sujeto en Línea', subtitle: 'Trámites Digitales', message: 'Constituya su sociedad mercantil de forma digital en sencillos pasos. Todo el proceso desde la reserva de denominación hasta la certificación registral.', imageUrl: '/uploads/sliders/slider-constitucion.png', link: '/tramites', linkLabel: 'Constituir Ahora', active: true, order: 1 },
     { title: 'Certificaciones Registrales', subtitle: 'Servicios de Certificación', message: 'Obtenga certificaciones y notas simples registrales de forma rápida y segura. Documentos con firma electrónica y código de verificación.', imageUrl: '/uploads/sliders/slider-certificaciones.png', link: '/consultas', linkLabel: 'Solicitar Certificación', active: true, order: 2 },
-    { title: 'Inversión Extranjera (VUCE) (VUCE) en Cuba', subtitle: 'Oportunidades de Negocio', message: 'Información sobre inversiones extranjeras, oficinas de representación, sucursales y contratos de agencia comercial en Cuba.', imageUrl: '/uploads/sliders/slider-inversion.png', link: '/tramites', linkLabel: 'Más Información', active: true, order: 3 },
+    { title: 'Inversión Extranjera (VUCE) en Cuba', subtitle: 'Oportunidades de Negocio', message: 'Información sobre inversiones extranjeras, oficinas de representación, sucursales y contratos de agencia comercial en Cuba.', imageUrl: '/uploads/sliders/slider-inversion.png', link: '/tramites', linkLabel: 'Más Información', active: true, order: 3 },
   ];
   for (const s of sliders) {
     await db.slider.create({ data: s });
@@ -328,13 +328,13 @@ async function main() {
       order: 2,
     },
     {
-      title: 'Guía de Inversión Extranjera (VUCE) (VUCE)',
+      title: 'Guía de Inversión Extranjera (VUCE)',
       description: 'Guía paso a paso para establecer inversiones extranjeras en Cuba: oficinas de representación, sucursales y contratos de agencia comercial.',
       icon: 'Globe2',
       steps: JSON.stringify([
         { title: 'Modalidad de Inversión', description: 'Determine la modalidad: Oficina de Representación, Sucursal, Empresa Mixta (EM) o Contrato de Asociación.' },
-        { title: 'Autorización del MIP', description: 'Obtenga la autorización del Ministerio de Inversión Extranjera (VUCE) (VUCE) y Colaboración (MIP).' },
-        { title: 'Registro ante el MIC', description: 'Registre la inversión ante el Ministerio de Comercio Exterior y la Inversión Extranjera (VUCE) (VUCE) (MIC).' },
+        { title: 'Autorización del MIP', description: 'Obtenga la autorización del Ministerio de Inversión Extranjera y Colaboración (MIP).' },
+        { title: 'Registro ante el MIC', description: 'Registre la inversión ante el Ministerio de Comercio Exterior y la Inversión Extranjera (MIC).' },
         { title: 'Documentación Legal', description: 'Prepare los documentos constitutivos, poderes, certificados de buena conducta y estados financieros auditados.' },
         { title: 'Inscripción Registral', description: 'Insriba la entidad en el Registro Mercantil. Se le asignará un NIRE como entidad extranjera.' },
         { title: 'Activación Operativa', description: 'Complete los trámites fiscales, laborales y operativos para iniciar actividades en Cuba.' },
@@ -354,7 +354,7 @@ async function main() {
   console.log('📋 Creating FAQs...');
   const faqs = [
     { question: '¿Qué es el Registro Mercantil de Cuba?', answer: 'El Registro Mercantil es un registro público de carácter administrativo, dependiente del Ministerio de Justicia, donde se inscriben las sociedades mercantiles, sus modificaciones y actos sujetos a inscripción, proporcionando publicidad formal y seguridad jurídica al tráfico mercantil.', category: 'General', order: 0 },
-    { question: '¿Quién puede constituir una sociedad mercantil en Cuba?', answer: 'Pueden constituir sociedades las personas naturales cubanas, las personas jurídicas cubanas, los inversionistas extranjeros mediante las modalidades previstas en la Ley de Inversión Extranjera (VUCE) (VUCE), y las cooperativas conforme a la legislación específica.', category: 'General', order: 1 },
+    { question: '¿Quién puede constituir una sociedad mercantil en Cuba?', answer: 'Pueden constituir sociedades las personas naturales cubanas, las personas jurídicas cubanas, los inversionistas extranjeros mediante las modalidades previstas en la Ley de Inversión Extranjera, y las cooperativas conforme a la legislación específica.', category: 'General', order: 1 },
     { question: '¿Cuánto tiempo toma constituir una sociedad?', answer: 'El proceso puede tomar entre 15 y 30 días hábiles dependiendo del tipo societario. Las constituciones digitales tienen un tiempo promedio menor gracias a la plataforma digital.', category: 'Trámites', order: 2 },
     { question: '¿Qué documentos necesito para constituir una SRL?', answer: 'Se requiere: solicitud formal, estatutos sociales (mínimo 2 socios), documento de reserva de denominación, acreditación de capital social inicial (mínimo 5,000 CUP), documento de designación de administrador y comprobante de pago del arancel.', category: 'Trámites', order: 3 },
     { question: '¿Puedo realizar trámites en línea?', answer: 'Sí, la plataforma digital permite realizar la totalidad de los trámites registrales de forma electrónica, incluyendo constitución, modificaciones, depósito de cuentas y solicitud de certificaciones.', category: 'Trámites', order: 4 },
@@ -612,7 +612,7 @@ async function main() {
       order: 5,
     },
     {
-      name: 'Plan Inversión Extranjera (VUCE) (VUCE)',
+      name: 'Plan Inversión Extranjera (VUCE)',
       description: 'Soporte completo para inversiones extranjeras',
       price: 5000,
       currency: 'CUP',

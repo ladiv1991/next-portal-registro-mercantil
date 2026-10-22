@@ -21,7 +21,11 @@ export async function GET(request: NextRequest) {
     ];
 
     if (normalizedQuery) {
-      conditions.push(Prisma.sql`(LOWER(REGEXP_REPLACE(name, '[[:punct:]]', '', 'g')) LIKE ${`%${normalizedQuery}%`} OR LOWER(REGEXP_REPLACE(nire, '[[:punct:]]', '', 'g')) LIKE ${`%${normalizedQuery}%`)}`);
+      // Build LIKE patterns as Prisma params to avoid nested backtick parsing issues
+      const likePattern = `%${normalizedQuery}%`;
+      conditions.push(
+        Prisma.sql`(LOWER(REGEXP_REPLACE(name, '[[:punct:]]', '', 'g')) LIKE ${likePattern} OR LOWER(REGEXP_REPLACE(nire, '[[:punct:]]', '', 'g')) LIKE ${likePattern})`
+      );
     } else if (!province && !type && !status) {
       return NextResponse.json({ success: true, data: { results: [] } });
     }

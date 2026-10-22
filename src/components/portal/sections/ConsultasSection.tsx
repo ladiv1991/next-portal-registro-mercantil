@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search, FileText, Shield, Award, ChevronDown,
-  CheckCircle2, AlertCircle, Loader2,
+  CheckCircle2, AlertCircle, Loader2, RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -127,6 +127,15 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
     performSearch(searchQuery);
   };
 
+  const handleResetFilters = () => {
+    setSelectedProvince('');
+    setSelectedType('');
+    setSelectedStatus('');
+    setSearchQuery('');
+    setSearchResults([]);
+    setHasSearched(false);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       performSearch(searchQuery);
@@ -237,10 +246,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     </Select>
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   <Input
                     placeholder="Actividad económica, palabras clave..."
-                    className="flex-1 h-12"
+                    className="flex-1 min-w-0 h-12"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -252,6 +261,15 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                   >
                     {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                     {searching ? 'Buscando...' : 'Buscar'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-12 gap-2 border-muted-foreground/30"
+                    onClick={handleResetFilters}
+                    disabled={searching}
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Limpiar
                   </Button>
                 </div>
               </TabsContent>
