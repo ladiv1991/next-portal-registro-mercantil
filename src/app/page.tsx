@@ -19,7 +19,7 @@ import { PortalHeader, PortalFooter, ScrollToTop } from '@/components/portal/lay
 
 const HomeSection = dynamic(
   () => import('@/components/portal/sections').then((m) => m.HomeSection),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { ssr: true, loading: () => <SectionSkeleton /> }
 );
 
 const ConsultasSection = dynamic(

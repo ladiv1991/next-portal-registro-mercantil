@@ -1,24 +1,47 @@
 ARG DOCKER_REGISTRY
-# ARG HTTP_PROXY= ${HTTP_PROXY:-}
-# ARG HTTPS_PROXY= ${HTTP_PROXY:-}
-# ARG NO_PROXY=localhost,127.0.0.1,::1,*.local,deb.debian.org,security.debian.org
 
-FROM ${DOCKER_REGISTRY}node:20
-
+# ===== DEPS STAGE =====
+FROM ${DOCKER_REGISTRY}node:20-alpine AS deps
 WORKDIR /app
-
-# Install dependencies needed to build the Next.js app.
+RUN npm install -g bun
 COPY package*.json ./
-COPY prisma ./prisma/
-RUN npm ci
+RUN bun install --frozen-lockfile || bun install
 
-# Copy source and build the production artifact inside the image.
+# ===== BUILD STAGE =====
+FROM ${DOCKER_REGISTRY}node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate
-RUN npm run build --ignore-scripts
+ENV NODE_ENV=production
+RUN npx next build
 
+# ===== RUNTIME STAGE =====
+FROM ${DOCKER_REGISTRY}node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production PORT=3000
+
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+RUN npm install -g bun
+
+# Standalone output
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# All node_modules for client-side deps
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+# Prisma schema + seed files
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+# tsconfig + src/lib needed for seed to resolve @/ path aliases
+COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
+COPY --from=builder --chown=nextjs:nodejs /app/src/lib ./src/lib
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+
+USER nextjs
 EXPOSE 3000
 
-ENV PORT=3000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD wget -qO- http://localhost:3000/api/health || exit 1
 
-CMD ["node", ".next/standalone/server.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss --skip-generate; bun run prisma/seed.ts; node server.js"]

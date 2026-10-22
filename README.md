@@ -452,11 +452,65 @@ Luego, inicia sesión en el CMS con:
 - Email: admin@registromercantil.cu
 - Contraseña: Admin2026!
 
+## 🧠 Grafo de Conocimiento (Graphify)
+
+Este repositorio está indexado con [Graphify](https://docs.graphify.com), un grafo de conocimiento sobre la estructura de llamadas, dependencias y archivos del código fuente.
+
+### Instalación
+
+```bash
+# Instalar Graphify con soporte MCP
+uv tool install "graphifyy[mcp]"
+
+# Registrar en el proyecto (genera AGENTS.md, .opencode/skills/, plugin hook)
+graphify install --project --platform opencode
+
+# Generar el grafo inicial (extracción AST pura, sin backend LLM)
+$env:GRAPHIFY_BACKEND="none"; graphify .
+```
+
+### Uso
+
+```bash
+# Consultar el grafo
+graphify query "¿quién llama a requireAuth?"
+
+# Ver relaciones entre componentes
+graphify path "src/lib/auth.ts" "src/app/api/cms/sliders/route.ts"
+
+# Explicar un concepto
+graphify explain "cms-handler"
+
+# Actualizar tras modificar código
+graphify update .
+```
+
+El grafo genera 1500+ nodos y 5400+ aristas organizados en ~73 comunidades. Los archivos sensibles (`.env.local`) se excluyen automáticamente.
+
+**Regla para agentes de IA**: Antes de usar `grep` o leer archivos directamente, consultar el grafo con Graphify. Solo recurrir a búsqueda textual para lo que el grafo no modela (strings literales, comentarios, archivos no indexados).
+
+---
+
+## 🛠️ Herramientas de Desarrollo (MCP)
+
+Este proyecto utiliza servidores MCP (Model Context Protocol) integrados con OpenCode para potenciar el desarrollo asistido por IA:
+
+| Servidor | Propósito | Configuración |
+|----------|-----------|---------------|
+| **Graphify** | Grafo de conocimiento del código (dependencias, llamadas, impacto) | `uv tool install "graphifyy[mcp]"` + `graphify install --project` |
+| **Context7** | Documentación actualizada de librerías (Next.js, Prisma, Tailwind, etc.) | Integrado vía OpenCode |
+| **Engram** | Memoria persistente entre sesiones de desarrollo | Integrado vía OpenCode |
+| **gh-grep** | Búsqueda de patrones de código en repositorios públicos de GitHub | Integrado vía OpenCode |
+
+Las reglas completas para agentes están documentadas en [`AGENTS.md`](./AGENTS.md) y los principios inmutables del proyecto en [`constitution.md`](./constitution.md).
+
+---
+
 ## 🤝 Contribución
 
 1. Crear una rama.
 2. Hacer los cambios.
-3. Ejecutar validaciones relevantes.
+3. Ejecutar validaciones relevantes (`npm run lint`, `graphify update .`).
 4. Abrir un Pull Request con descripción clara.
 
 ## 📄 Licencia

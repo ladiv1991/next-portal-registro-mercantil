@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Scale } from 'lucide-react';
+import { AlertTriangle, Scale } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fadeInUp, staggerContainer } from '@/data/portal-data';
@@ -52,7 +52,7 @@ export default function NormatividadSection() {
   if (loading) {
     return (
       <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
-        <section className="bg-[#1A1A1A] py-16">
+        <section className="bg-[var(--rm-text)] py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Skeleton className="h-6 w-48 mx-auto mb-4 bg-white/20" />
             <Skeleton className="h-10 w-72 mx-auto mb-3 bg-white/20" />
@@ -75,18 +75,37 @@ export default function NormatividadSection() {
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
       {/* Header */}
-      <section className="bg-[#1A1A1A] py-16">
+      <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Badge className="mb-4 bg-[#9E3A2E]/20 text-[#9E3A2E] border-[#9E3A2E]/30">
+          <Badge className="mb-4 bg-[var(--rm-primary)]/20 text-[var(--rm-primary)] border-[var(--rm-primary)]/30">
             <Scale className="w-3 h-3 mr-1" />
             Normatividad y Recursos
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Marco Legal y Documentos</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-[var(--rm-muted)] max-w-2xl mx-auto">
             Consulte leyes, decretos, resoluciones, formularios y aranceles del Registro Mercantil.
           </p>
         </div>
       </section>
+
+      {/* Banner DL 133/2026 */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-start gap-3 p-4 rounded-lg border bg-[var(--rm-primary)]/5 border-[var(--rm-primary)]/30"
+        >
+          <AlertTriangle className="w-5 h-5 text-[var(--rm-primary)] flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-[var(--rm-primary)]">
+              Nueva Norma: Decreto-Ley 133/2026 — Modifica DL 88, 89 y 90 sobre Inversión Extranjera
+            </p>
+            <p className="text-sm text-[var(--rm-muted)] mt-1">
+              Publicado en Gaceta Oficial No. 71 Ordinaria de 2026. Revisa los cambios en el marco legal de inversión extranjera.
+            </p>
+          </div>
+        </motion.div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         {/* 1. Marco Legal */}
