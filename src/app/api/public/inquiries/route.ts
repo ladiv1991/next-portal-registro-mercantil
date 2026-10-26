@@ -12,8 +12,8 @@ const inquirySchema = z.object({
   message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
   // Anti-bot fields (not stored, consumed server-side)
   [HONEYPOT_FIELD]: z.string().optional(),
-  captchaId: z.string().optional(),
-  captchaAnswer: z.string().optional(),
+  captchaId: z.string().min(1, 'CAPTCHA requerido'),
+  captchaAnswer: z.string().min(1, 'CAPTCHA requerido'),
   submittedAt: z.string().optional(),
 });
 
@@ -36,15 +36,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: antiBotReason }, { status: 400 });
     }
 
-    // CAPTCHA verification (required if a captchaId was provided)
-    if (body.captchaId && body.captchaAnswer) {
-      const captchaValid = verifyCaptcha(body.captchaId, body.captchaAnswer);
-      if (!captchaValid) {
-        return NextResponse.json(
-          { success: false, error: 'La verificación de seguridad no es correcta. Por favor, intentelo de nuevo.' },
-          { status: 400 },
-        );
-      }
+    // CAPTCHA verification (mandatory — zod enforces min length above)
+    const captchaValid = verifyCaptcha(body.captchaId ?? '', body.captchaAnswer ?? '');
+    if (!captchaValid) {
+      return NextResponse.json(
+        { success: false, error: 'La verificación de seguridad no es correcta. Por favor, intentelo de nuevo.' },
+        { status: 400 },
+      );
     }
 
     const validation = inquirySchema.safeParse(body);
@@ -67,7 +65,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: inquiry }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: 'Error al procesar la solicitud' },
+      { status: 500 },
+    );
   }
 }

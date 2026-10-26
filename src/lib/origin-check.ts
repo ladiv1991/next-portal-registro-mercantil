@@ -47,7 +47,7 @@ const ALLOWED_ORIGINS = getAllowedOrigins();
 
 export function checkOrigin(request: Request | NextRequest): boolean {
   const origin = request.headers.get('origin');
-  if (!origin) return true; // Allow requests without Origin (e.g., curl, internal tools)
+  if (!origin) return false; // Reject requests without Origin — browsers always send it; scripts that omit it are external
 
   return ALLOWED_ORIGINS.has(origin);
 }
