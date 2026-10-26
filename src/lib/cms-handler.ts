@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/api-auth';
 import { forceRebuildIndex, buildKnowledgeIndex } from '@/lib/chat-knowledge';
+import { CMS_SCHEMAS } from '@/lib/cms-schemas';
 
 // Rebuild chatbot knowledge index after content changes
 async function rebuildChatIndex() {
@@ -65,6 +66,28 @@ export function parseModelFromPath(pathname: string): string {
   return match ? match[1] : '';
 }
 
+/**
+ * Validate request body against the model's Zod schema.
+ * Returns { success: true, data } or { success: false, error }.
+ */
+function validateBody(modelPath: string, body: unknown, isUpdate: boolean): { success: true; data: any } | { success: false; error: string } {
+  const schemas = CMS_SCHEMAS[modelPath];
+  if (!schemas) return { success: true, data: body }; // no schema → passthrough
+
+  const schema = isUpdate ? schemas.update : schemas.create;
+  const result = schema.safeParse(body);
+
+  if (result.success) {
+    return { success: true, data: result.data };
+  }
+
+  // Flatten first validation error into a readable message
+  const first = result.error.errors[0];
+  const field = first?.path?.[0] as string | undefined;
+  const msg = first?.message ?? 'Campo inválido';
+  return { success: false, error: field ? `${field}: ${msg}` : msg };
+}
+
 export async function handleCMSGet(request: NextRequest, modelPath: string) {
   try {
     await requireAdmin();
@@ -87,7 +110,14 @@ export async function handleCMSPost(request: NextRequest, modelPath: string) {
     await requireAdmin();
     const model = getModel(modelPath);
     const modelDb = getModelDb(model);
-    const body = await request.json();
+    let body: any = await request.json();
+
+    // Validate against schema
+    const validation = validateBody(modelPath, body, false);
+    if (!validation.success) {
+      return NextResponse.json({ success: false, error: validation.error }, { status: 400 });
+    }
+    body = validation.data;
 
     // For bot-config, use upsert with a fixed ID
     if (model === 'botConfig') {
@@ -142,7 +172,14 @@ export async function handleCMSPut(request: NextRequest, modelPath: string, id: 
     await requireAdmin();
     const model = getModel(modelPath);
     const modelDb = getModelDb(model);
-    const body = await request.json();
+    let body: any = await request.json();
+
+    // Validate against schema
+    const validation = validateBody(modelPath, body, true);
+    if (!validation.success) {
+      return NextResponse.json({ success: false, error: validation.error }, { status: 400 });
+    }
+    body = validation.data;
 
     const existing = await modelDb.findUnique({ where: { id } });
     if (!existing) {

@@ -71,6 +71,25 @@ Este proyecto está configurado con los siguientes servidores MCP (Model Context
 - **Propósito**: Abrir URLs, previsualizar archivos, automatizar navegador
 - **Herramientas**: `browser.preview`, `browser.tabs.open`
 
+### 7. Chrome DevTools MCP (Browser Testing & Security Audit)
+- **Propósito**: Inspección en tiempo real del DOM, console errors, network requests, y auditoría de seguridad (CSP headers, mixed content, XSS vectors). Reemplaza `browser.preview` para debugging interactivo.
+- **Instalación**: `npm install -g @modelcontextprotocol/server-chrome-devtools` + agregar al `opencode.jsonc`:
+  ```jsonc
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-chrome-devtools"]
+    }
+  }
+  ```
+- **Cuándo usar**: Verificación de capa 3 (browser), debugging de CSS/layout, auditoría de seguridad en producción, detección de CSP violations, console errors.
+- **Herramientas**: `browser_navigate`, `browser_snapshot`, `browser_console`, `browser_network`, `browser_security_audit`, `browser_csp_audit`
+
+### 8. Cloudflare Security Audit
+- **Propósito**: Auditoría de seguridad basada en reglas de Cloudflare (WAF, headers, SSL/TLS, DNS, rate limiting). Complementa el checklist de seguridad del AGENTS.md.
+- **Instalación**: `npm install -g @cloudflare/security-audit-mcp` (o usar la skill local `security-audit-skill` desde `~/.agents/skills/`)
+- **Cuándo usar**: Pre-lanzamiento, tras cambiar `next.config.ts` headers, después de deploy.
+
 ---
 
 ## Skills instaladas globalmente
@@ -99,12 +118,20 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 - **Skills clave**: `ask-matt`, `chief-of-staff`, `grill-me`, `grill-with-docs`, `handoff`, `implement`, `implement-spec`, `improve-codebase-architecture`, `init`, `loop-me`, `retro`, `setup-ts-deep-modules`, `teach`, `to-questionnaire`, `to-spec`, `to-tickets`, `triage`, `wait-what`, `wayfinder`, `writing-beats`, `writing-fragments`, `writing-shape`
 - **Uso**: Skills de ingenieria real -- planificacion, specs, tickets, refactoring, deep modules TypeScript, handoffs entre agentes.
 
-### 6. Anthropic Skills (19 skills)
-- **Fuente**: `anthropics/skills` (clonado manualmente a `~/.agents/skills/`)
+### 6. Anthropic Skills (19+ skills)
+- **Fuente**: `anthropics/skills` (clonado a `~/.agents/vendor/cybersecurity-skills/` como vendor dir con lazy-loading)
 - **Skills**: `academy-guide`, `algorithmic-art`, `brand-guidelines`, `canvas-design`, `claude-api`, `discernment-nudge`, `doc-coauthoring`, `docx`, `frontend-design`, `internal-comms`, `mcp-builder`, `pdf`, `pptx`, `skill-creator`, `slack-gif-creator`, `theme-factory`, `web-artifacts-builder`, `webapp-testing`, `xlsx`
-- **Uso**: Suite oficial de Anthropic -- documentos Word/PDF/PPTX/Excel, artefactos web, testing, diseno de marca, creacion de MCP servers.
+- **Uso**: Suite oficial de Anthropic -- documentos Word/PDF/PPTX/Excel, artefactos web, testing, diseño de marca, creación de MCP servers.
 
-### 7. Ponytail (6 skills + plugin)
+### 7. Skills de Seguridad Globales (30+ skills)
+- **Fuente**: Instaladas globalmente en `~/.agents/skills/` desde opencodeskills.dev y repositorios oficiales
+- **Lista de skills disponibles**:
+  - `security-hardening`, `insecure-defaults`, `timing-analysis`, `differential-review`, `smart-contract-security`, `pentest-methodology`, `secrets-management`, `supply-chain-security`, `api-security`, `container-security`, `oauth-oidc`, `audit-logging`, `ssrf-prevention`, `password-security`, `xss-prevention`, `prompt-injection`, `encryption`, `dast-zap`, `csrf-protection`, `sql-injection`, `two-factor-auth`, `passkeys-webauthn`, `rbac-authorization`, `cors-configuration`, `content-security-policy`, `owasp-top-10`, `threat-modeling`, `jwt-handling`
+  - `cloudflare-security-audit` (skill local en `~/.agents/skills/`)
+  - `nvidia-skill-spector` (skill local en `~/.agents/skills/`)
+- **Uso**: Skills de seguridad para auditorías, hardening, prevención de vulnerabilidades y cumplimiento de estándares como OWASP Top 10, CSP, RBAC, etc.
+
+### 8. Ponytail (6 skills + plugin)
 - **Fuente**: Plugin `ponytail@git+https://github.com/DietrichGebert/ponytail.git` en opencode.jsonc + skills copiadas a `~/.agents/skills/`
 - **Skills**: `ponytail`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help`, `ponytail-review`
 - **Uso**: Modo senior perezoso -- minimo codigo que resuelve el problema completo. Niveles: lite, full, ultra. Audit de repo, tracking de deuda tecnica, review de calidad.
@@ -178,7 +205,7 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 - Singleton de DB: `src/lib/db.ts`
 - Migraciones automáticas antes de dev/build/start vía `scripts/run-migrations.js`
 - Seed: `prisma/seed.ts` + `prisma/seed-guides.ts`
-- URL de conexión: `postgresql://portal_rmc:PortalRMC2026!Secure@localhost:5433/registro_mercantil`
+- URL de conexión: `postgresql://portal_rmc:PortalRMC2026!Secure@127.0.0.1:5433/registro_mercantil` (usar `127.0.0.1`, no `localhost`, para evitar resolución IPv6 en Windows → Prisma conecta por TCPv4 al contenedor Docker)
 - JWT_SECRET: variable de entorno requerida (min 32 chars), configurada en `.env.local`
 
 ### Credenciales de prueba (seed)
@@ -200,6 +227,150 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 ### Fetching en cliente
 - Usar `fetch` con `credentials: 'include'` para cookies
 - TanStack Query para caché y fetching en portal
+
+---
+
+## OpenSpec — Especificaciones (OBLIGATORIO)
+
+**Regla de oro**: Cualquier cambio en una especificación ( crear, actualizar, eliminar, archivar) DEBE gestionarse con OpenSpec. No hay excepciones.
+
+### Comandos básicos
+
+| Comando | Cuándo usar |
+|---------|-------------|
+| `openspec new change "<nombre>"` | Crear un nuevo cambio de especificación (nombre en kebab-case) |
+| `openspec status --change "<nombre>"` | Ver estado de los artefactos del cambio |
+| `openspec instructions <artifact> --change "<nombre>" --json` | Obtener instrucciones para crear un artefacto |
+| `openspec archive --change "<nombre>"` | Archivar un cambio completado y fusionarlo a las especificaciones principales |
+| `openspec list --specs` | Listar todas las especificaciones existentes |
+| `openspec validate --change "<nombre>"` | Validar que un cambio cumple con el schema |
+
+### Flujo obligatorio
+
+1. **Antes de cambiar una especificación**: `openspec new change "<kebab-case-name>"` → crear proposal → design → specs → tasks
+2. **Durante el trabajo**: `openspec status` para verificar progreso
+3. **Al terminar la implementación**: Ejecutar `openspec archive --change "<nombre>"` para fusionar las especificaciones
+4. **Siempre**: Usar OpenSpec como se usa git para commits — cada cambio de especificación es un "commit" de especificación
+
+### Artefactos requeridos (spec-driven schema)
+
+- `proposal.md` — Qué y por qué
+- `design.md` — Cómo (si aplica a arquitectura/patrones cross-cutting)
+- `specs/<capability>/spec.md` — Requisitos con scenarios WHEN/THEN
+- `tasks.md` — Lista de tareas con checkboxes `- [ ]`
+
+### Instalación
+
+```bash
+npm install -g openspec-extensions
+openspec init
+```
+
+---
+
+## Seguridad — Next.js + Node.js + PostgreSQL (2026)
+
+### 1. Versiones y CVEs (CRÍTICO)
+- **PRIO #1 — URGENTE**: Proyecto tiene **5 Critical CVEs**. Ejecutar inmediatamente:
+  ```bash
+  bun upgrade next@16.4.1 next-auth@4.24.15 sharp@0.35.5
+  ```
+  Vulnerabilidades críticas actuales:
+  - `next@16.1.3`: RCE vía SVG/AVIF en Image Optimization (CVE-2026-96889, GHSA-2xp9-vwfh-vxw4), RCE en `use cache` typed arrays (GHSA-673q-mjm6-r5xr), RCE Windows-hosted (GHSA-p293-qw3h-jr36)
+  - `next-auth@4.24.13`: Homoglyph @ bypass en normalizador de email (GHSA-7rqj-j65f-68wh)
+- **Next.js**: Mantener >= 16.4.1 (o 15.5.28 en línea 15.x). Revisar mensualmente el blog oficial de Next.js por releases de seguridad.
+- **React/ReactDOM**: Si se actualiza Next.js, actualizar también ambas dependencias.
+- **Sharp/libheif**: Actualizar a >= 0.35.5; CVE-2026-94545 permite RCE vía SVG malicioso en image optimization.
+- **Comando de verificación**: `bun audit --prod` (o `pnpm audit --prod`). Revisar antes de cada deploy.
+- **Rotación de secretos**: Tras cualquier RCE no parcheado en producción, rotar `JWT_SECRET`, credenciales de DB y claves de proveedores.
+
+### 2. Autenticación y Autorización
+- **No usar proxy.ts como única capa de auth**: Es solo para redirecciones optimistas. Verificar sesión en cada Route Handler y Server Action.
+- **Patrón DAL (Data Access Layer)**: Módulos marcados con `import "server-only"` que ejecutan autorización antes de acceder a datos. Devolver DTOs, no filas crudas.
+- **JWT**: `rmc-token` en cookie `httpOnly`, secure en producción, sameSite lax, maxAge 8h. Rotar `JWT_SECRET` periódicamente (mínimo 32 chars aleatorios).
+- **Rate limiting**: Implementar en endpoints sensibles (login, búsqueda masiva) con memoria compartida para serverless.
+
+### 3. Validación de Entrada
+- **Zod en TODA la entrada**: Route Handlers, Server Actions, params, searchParams. Nunca confiar en tipos TypeScript como validación.
+- **Esquemas centralizados**: `src/lib/cms-schemas.ts` → mapa `CMS_SCHEMAS` usado por `src/lib/cms-handler.ts`.
+- **Sanitización XSS**: Usar `dangerouslySetInnerHTML` solo con DOMPurify (o similar) en contenido generado por usuario.
+- **HTML seguro en portal**: Todo el contenido CMS se renderiza como markdown/HTML desde el editor; sanitizar antes de mostrar.
+
+### 4. Content Security Policy (CSP)
+- **Nonce dinámico**: Generar en `proxy.ts` con `crypto.randomUUID()` y pasar vía header `x-nonce`. Aplicar a `script-src` y `style-src`.
+- **'unsafe-inline' solo en dev**: En producción, usar nonces o hashes SRI (experimental).
+- **Modo report-only inicial**: Activar `Content-Security-Policy-Report-Only` en despliegue inicial para detectar bloqueos sin romper la app.
+- **Headers adicionales** (en `next.config.ts`):
+  - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
+  - `X-Content-Type-Options: nosniff`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+  - `X-Frame-Options: DENY`
+
+### 5. PostgreSQL
+- **Prisma parametrizado**: Siempre usar consultas parametrizadas (ya lo hace Prisma por defecto). Nunca interpolación SQL directa.
+- **RLS (Row-Level Security)**: Habilitar en tablas multi-tenant cuando aplique. Definir políticas por rol (`admin`, `editor`).
+- **Roles separados**: Crear roles DB para lectura, escritura y admin. No usar el superusuario para la app.
+- **TLS en producción**: Forzar `sslmode=require` en la string de conexión.
+
+### 6. Image Optimizer y SSRF
+- **`remotePatterns` estricto**: Solo hosts que controlamos. Evitar wildcards amplios.
+- **`dangerouslyAllowLocalIP: off`** (default en Next.js 16)
+- **`dangerouslyAllowSVG: off`** a menos que se tenga CSP estable y contenido sanitizado.
+- **Rewrites/redirects nunca desde input del request**: Usar valores estáticos o de configuración.
+
+### 7. Dependencias y Supply Chain
+- **Lockfile**: Commit `package-lock.json` o `bun.lockb`. Instalación con `--frozen-lockfile` en CI.
+- **Automatizar**: Renovate o Dependabot para PRs de parche. Auto-merge de `next`, `react`, `react-dom` cuando tests pasen.
+- **Audit en CI**: `bun audit --prod` con fallback a `pnpm audit`. Fail on high/critical.
+- **Monitorear**: CVEs de dependencias transitivas (libheif, satori, sharp son vectores conocidos 2025-2026).
+
+### 8. Checklist pre-lanzamiento
+1. `pnpm why next` muestra versión parcheada contra CVEs conocidos.
+2. Ningún secreto tiene prefijo `NEXT_PUBLIC_`.
+3. Secrets de producción en el host, no en `.env` comprometido.
+4. Grep por `"use server"` y `route.ts`: cada acción/handler valida input y verifica sesión.
+5. Eliminación mental de `proxy.ts` → ninguna ruta quedaría accesible sin login.
+6. `trustedOrigins`, `allowedOrigins` y `redirectTo` solo permiten hosts propios.
+7. `curl -I https://tu-dominio.com` muestra HSTS, nosniff, Referrer-Policy y CSP.
+8. `remotePatterns` es estrecho, uploads con límites de contenido-tipo y tamaño, webhooks verifican firma.
+
+### 9. Limitaciones conocidas del entorno actual
+- **Browser automation**: La herramienta `browser.fill` requiere refs de snapshot, no selects CSS. React controlled components no responden a cambios directos de DOM; usar `browser.evaluate` con scripts que modifiquen `element.value` directamente.
+- **Screenshots**: Requieren ventana del desktop visible; si falla, usar `browser.preview` en su lugar.
+- **proxy.ts vs middleware.ts**: Next.js 16 renombró el archivo; verificar convención en uso antes de agregar nueva lógica.
+
+---
+
+## Estado de Seguridad — Actualizado 2026-10-23
+
+### Fixes aplicados en esta sesión
+| Fix | Antes | Después | Impacto |
+|-----|-------|---------|---------|
+| `X-XSS-Protection` header | Presente (deprecated) | Eliminado | Bajo — MDN lo desaconseja, CSP lo reemplaza |
+| `Strict-Transport-Security` | Ausente | `max-age=63072000; includeSubDomains; preload` | Alto — fuerza HTTPS |
+| `dangerouslyAllowSVG` en images | No configurado | `false` | Alto — bloquea RCE CVE-2026-96889 vía SVG |
+| `poweredByHeader` | `true` (default) | `false` | Bajo — evita fuiteo de versión Next.js |
+| `serverActions.allowedOrigins` | No configurado | Lista de origins permitidos | Medio — restricción CSRF Server Actions |
+| Rate limiting en login CMS | No existente | 5 intentos/60s por IP | Alto — previene brute force |
+| Rate limiting en login Portal | No existente | 5 intentos/60s por IP | Alto — previene brute force |
+| Upgrade `next` | 16.1.3 | **16.4.1** | Crítico — 5 CVEs RCE eliminados |
+| Upgrade `next-auth` | 4.24.13 | **4.24.15** | Crítico — homoglyph bypass eliminado |
+| Upgrade `sharp` | 0.34.5 | **0.35.5** | Alto — CVEs libheif/libvips eliminados |
+
+### Pendientes para futura implementación
+- **CSP con nonces**: Requiere `proxy.ts` + pasar nonce a componentes. Compatible con App Router.
+- **DOMPurify en chatbot**: El contenido del LLM se renderiza con `dangerouslySetInnerHTML` sin sanitización. Agregar `isomorphic-dompurify` si se habilita contenido generado por usuarios.
+- **Rate limiter con Redis**: Actual actualmente en-memoria (no compartido entre instancias). Migrar a Redis o usar el rate limiter del host en producción escalada.
+- **HSTS preload**: Solo aplicar cuando el dominio tenga SSL activo y todos los subdominios respondan HTTPS.
+
+### Resumen de vulnerabilidades post-audit
+```
+Antes: 76 vulnerabilidades (5 critical, 34 high, 32 moderate, 5 low)
+Después: 21 vulnerabilidades (0 critical, 10 high, 10 moderate, 1 low)
+```
+
+Todas las restantes son de dependencias transitivas/de desarrollo (eslint, prismjs, picomatch, postcss) que no afectan la superficie de ataque en producción.
 
 ---
 
@@ -278,6 +449,15 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 - **Fix**: `PortalHeader.tsx` → `handleNavClick('autenticarse')` ahora llama `onNavigate('acceso')` en vez de `setAuthModalOpen(true)`.
 - **Commit**: `8e3523c`
 
+### CMS Form Validation (Oct 2026)
+- **Estructura**: `src/lib/cms-schemas.ts` → esquemas Zod por modelo + mapa `CMS_SCHEMAS`. `src/lib/cms-handler.ts` → `validateBody()` aplica esquema antes de DB. `src/lib/cms-helpers.ts` → `formatCmsToast()` y `getCharCount()`.
+- **Límites**: Títulos/nombres → 255 caracteres. Descripciones/contenido → abiertos (String/TEXT sin límite). Otros campos: 50, 100, 300, 500 según modelo.
+- **RichTextEditor**: `src/components/cms/RichTextEditor.tsx` usa `@mdxeditor/editor` (ya en package.json). Toolbar: headings, lists, links, quotes, bold/italic/underline, undo/redo. Reemplaza Textarea en: servicios, noticias (contenido), trámites (descripción+requisitos), normativas (descripción+contenido), FAQs (respuestas), tutoriales (descripción), webinars (descripción), páginas (contenido), guías (descripción), bloques (contenido), guías pasos.
+- **Toasts**: `formatCmsToast(model, name, action)` → `Slider 'Bienvenida' creado correctamente`. Nunca usar messages genéricos.
+- **Validación server-side**: Las rutas custom (user-roles, portal-users) importan y aplican sus esquemas directamente.
+- **MDXEditor plugins**: `headingsPlugin({headingLevels: [2,3,4]})`, `listsPlugin()`, `linkPlugin()`, `quotePlugin()`, `toolbarPlugin()` con `UndoRedo`, `BoldItalicUnderlineToggles`, `BlockTypeSelect`. No usar `boldItalicPlugin` (no existe en v3.39.1).
+- **OpenSpec**: Instalado `openspec-extensions` globalmente. Cambio `cms-validation-improvements` en `openspec/changes/`. Comandos: `openspec new change`, `openspec status`, `openspec instructions <artifact>`, `openspec archive`.
+
 ---
 
 ## Archivos de referencia
@@ -293,3 +473,13 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 | `prisma/schema.prisma` | Esquema de base de datos (20 modelos) |
 
 </content>
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

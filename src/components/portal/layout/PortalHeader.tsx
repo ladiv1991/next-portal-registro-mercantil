@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Landmark,
   Search,
@@ -13,6 +14,7 @@ import {
   Menu,
   Shield,
   ChevronDown,
+  Building2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -191,6 +193,16 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
               <Search className="w-4 h-4" />
             </Button>
 
+            <Link href="/sgr" passHref>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden sm:flex transition-all duration-300 rounded-lg text-gray-300 hover:text-white hover:bg-white/5"
+              >
+                <Building2 className="w-4 h-4 mr-1" />
+                Acceder al SGR
+              </Button>
+            </Link>
             <Button
               size="sm"
               className="hidden sm:flex transition-all duration-300 rounded-lg shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:scale-[1.02]"

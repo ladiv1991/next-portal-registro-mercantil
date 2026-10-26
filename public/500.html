@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>500 — Error del servidor | Registro Mercantil de Cuba</title>
+  <style>
+    :root {
+      --azul: #0b3d6e;
+      --azul-oscuro: #082f56;
+      --azul-claro: #eaf1f8;
+      --gris: #5a6776;
+      --gris-oscuro: #1f2937;
+      --blanco: #ffffff;
+      --borde: #e3e9f0;
+      --fondo: #f6f9fc;
+      --fuente: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: var(--fuente);
+      color: var(--gris);
+      background:
+        radial-gradient(1200px 600px at 100% 0%, rgba(11, 61, 110, 0.10), transparent 60%),
+        radial-gradient(900px 500px at 0% 100%, rgba(11, 61, 110, 0.06), transparent 60%),
+        var(--fondo);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      padding: 22px 24px;
+    }
+
+    .barra {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--azul);
+      color: var(--blanco);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      box-shadow: 0 6px 16px rgba(11, 61, 110, 0.25);
+      flex: 0 0 auto;
+    }
+
+    .marca {
+      font-weight: 700;
+      color: var(--azul);
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    .marca small {
+      display: block;
+      font-weight: 500;
+      color: var(--gris);
+      font-size: 0.75rem;
+      margin-top: 2px;
+    }
+
+    main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 32px 20px 56px;
+    }
+
+    .tarjeta {
+      width: 100%;
+      max-width: 520px;
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: 20px;
+      padding: 44px 32px 36px;
+      text-align: center;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 20px 50px -20px rgba(11, 61, 110, 0.25);
+    }
+
+    /* Código de error destacado */
+    .codigo-error {
+      font-size: 7rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      background: linear-gradient(160deg, var(--azul) 0%, var(--azul-oscuro) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 4px;
+    }
+
+    .codigo-titulo {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gris);
+      margin-bottom: 24px;
+    }
+
+    .icono {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 22px;
+      border-radius: 22px;
+      background: linear-gradient(160deg, var(--azul-claro), #ffffff);
+      border: 1px solid var(--borde);
+      display: grid;
+      place-items: center;
+      color: var(--azul);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      color: var(--gris-oscuro);
+      font-size: clamp(1.3rem, 2.4vw, 1.55rem);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin: 0 auto;
+      max-width: 420px;
+      color: var(--gris);
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    .acciones {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .boton {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .boton:active { transform: translateY(1px); }
+
+    .boton-primario {
+      background: var(--azul);
+      color: var(--blanco);
+      border: 1px solid var(--azul);
+      box-shadow: 0 8px 20px -8px rgba(11, 61, 110, 0.55);
+    }
+
+    .boton-primario:hover { background: var(--azul-oscuro); border-color: var(--azul-oscuro); }
+
+    .boton-secundario {
+      background: transparent;
+      color: var(--azul);
+      border: 1px solid var(--borde);
+    }
+
+    .boton-secundario:hover { background: var(--azul-claro); border-color: #cfdcea; }
+
+    /* Bloque de info técnica */
+    .info-tecnica {
+      margin-top: 28px;
+      padding: 14px 16px;
+      background: var(--fondo);
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      text-align: left;
+      font-size: 0.78rem;
+      color: var(--gris);
+      line-height: 1.6;
+    }
+
+    .info-tecnica summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--azul);
+      user-select: none;
+    }
+
+    .info-tecnica summary::-webkit-details-marker { display: none; }
+    .info-tecnica summary::before {
+      content: '▸ ';
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+    .info-tecnica[open] summary::before { transform: rotate(90deg); }
+
+    footer {
+      padding: 18px 20px 26px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: #8a96a3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="barra">
+      <div class="logo" aria-hidden="true">RM</div>
+      <div class="marca">
+        Registro Mercantil de Cuba
+        <small>Ministerio de Justicia</small>
+      </div>
+    </div>
+  </header>
+
+  <main role="main">
+    <section class="tarjeta" aria-labelledby="titulo">
+      <!-- Código de error prominente -->
+      <div class="codigo-error" aria-label="Código de error 500">500</div>
+      <div class="codigo-titulo">Error interno del servidor</div>
+
+      <div class="icono" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3 3 21h18L12 3z"/>
+          <line x1="12" y1="10" x2="12" y2="14"/>
+          <line x1="12" y1="17.5" x2="12.01" y2="17.5"/>
+        </svg>
+      </div>
+
+      <h1 id="titulo">Servicio no disponible</h1>
+      <p>Estamos realizando tareas de mantenimiento. Por favor, intenta de nuevo en unos minutos.</p>
+
+      <div class="acciones">
+        <button type="button" class="boton boton-primario" onclick="location.reload()">
+          Reintentar
+        </button>
+        <a class="boton boton-secundario" href="/">
+          Volver al inicio
+        </a>
+      </div>
+
+      <!-- Info técnica colapsable -->
+      <details class="info-tecnica">
+        <summary>Información técnica para soporte</summary>
+        <div>
+          <strong>Código:</strong> 500 Internal Server Error<br>
+          <strong>Protocolo:</strong> HTTP/1.1<br>
+          <strong>Server:</strong> Registro Mercantil de Cuba<br>
+          <strong>Fecha:</strong> <span id="fecha-carga"></span><br>
+          <strong>Recurso:</strong> <span id="recurso"></span><br>
+          <strong>Referencia:</strong> contacte a soporte@registromercantil.cu
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    &copy; <span id="anio"></span> Registro Mercantil de Cuba — Ministerio de Justicia
+  </footer>
+
+  <script>
+    document.getElementById('fecha-carga').textContent = new Date().toLocaleString('es-CU', { timeZone: 'America/Havana' });
+    document.getElementById('recurso').textContent = location.pathname + location.search;
+    document.getElementById('anio').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
