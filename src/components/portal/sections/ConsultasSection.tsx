@@ -278,9 +278,6 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
           </CardContent>
         </Card>
 
-        {/* Calculadora de Costos de Trámites */}
-        <TaxCalculator />
-
         {/* Results */}
         {hasSearched && (
           <div className="mb-8">
@@ -379,6 +376,9 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
             )}
           </div>
         )}
+
+        {/* Calculadora de Costos Registrales */}
+        <TaxCalculator />
 
         {/* Certificaciones y Verificación */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

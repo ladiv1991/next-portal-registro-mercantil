@@ -46,44 +46,49 @@ const PROCEDURES = [
 
 interface ProcedureCardProps {
   onIniciarTramite?: () => void;
+  onNavigateToVUCE?: () => void;
 }
 
-export default function ProcedureCard({ onIniciarTramite }: ProcedureCardProps) {
+export default function ProcedureCard({ onIniciarTramite, onNavigateToVUCE }: ProcedureCardProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-      {PROCEDURES.map((proc) => (
-        <Card key={proc.title} className="glass-card-inner overflow-hidden">
-          <div className="h-1 bg-[var(--rm-primary)]" />
-          <CardHeader>
-            <div className="flex items-start gap-4">
-              <div className={`w-14 h-14 rounded-xl ${proc.bgColor} flex items-center justify-center shrink-0`}>
-                <proc.icon className={`w-7 h-7 ${proc.color}`} />
+      {PROCEDURES.map((proc) => {
+        const isVUCE = proc.title.includes('Inversión Extranjera');
+        const handler = isVUCE ? onNavigateToVUCE : onIniciarTramite;
+        return (
+          <Card key={proc.title} className="glass-card-inner overflow-hidden">
+            <div className="h-1 bg-[var(--rm-primary)]" />
+            <CardHeader>
+              <div className="flex items-start gap-4">
+                <div className={`w-14 h-14 rounded-xl ${proc.bgColor} flex items-center justify-center shrink-0`}>
+                  <proc.icon className={`w-7 h-7 ${proc.color}`} />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-[var(--rm-text)]">{proc.title}</CardTitle>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-xl text-[var(--rm-text)]">{proc.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">{proc.description}</p>
+              <div className="flex gap-4 mb-4">
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Clock className="w-4 h-4" />
+                  {proc.time}
+                </div>
               </div>
+            </CardContent>
+            <div className="px-6 pb-6">
+              <Button
+                className="bg-[var(--rm-primary)] hover:bg-[var(--rm-primary-light)] text-white"
+                onClick={handler}
+              >
+                {isVUCE ? 'Ver Ventanillas' : 'Iniciar Trámite'}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
             </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">{proc.description}</p>
-            <div className="flex gap-4 mb-4">
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Clock className="w-4 h-4" />
-                {proc.time}
-              </div>
-            </div>
-          </CardContent>
-          <div className="px-6 pb-6">
-            <Button
-              className="bg-[var(--rm-primary)] hover:bg-[var(--rm-primary-light)] text-white"
-              onClick={onIniciarTramite}
-            >
-              Iniciar Trámite
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        );
+      })}
     </div>
   );
 }

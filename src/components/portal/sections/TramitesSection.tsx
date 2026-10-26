@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,7 @@ export default function TramitesSection() {
   const [procedures, setProcedures] = useState<ProcedureItem[]>([]);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const vuceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -51,20 +52,21 @@ export default function TramitesSection() {
   }, []);
 
   const handleIniciarTramite = () => {
-    // First show premium modal with plans
     setPremiumModalOpen(true);
   };
 
   const handlePlanSelected = () => {
-    // After selecting a plan, show auth modal
     setPremiumModalOpen(false);
     setAuthModalOpen(true);
+  };
+
+  const handleNavigateVUCE = () => {
+    vuceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   if (loading) {
     return (
       <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
-        {/* Header skeleton */}
         <section className="bg-[var(--rm-text)] py-16">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
             <Skeleton className="h-6 w-40 mx-auto mb-4 bg-white/20" />
@@ -72,7 +74,6 @@ export default function TramitesSection() {
             <Skeleton className="h-5 w-96 mx-auto bg-white/20" />
           </div>
         </section>
-        {/* Content skeleton */}
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -90,7 +91,6 @@ export default function TramitesSection() {
 
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate" exit="exit" className="animate-fade-in-up">
-      {/* Header */}
       <section className="bg-[var(--rm-text)] py-16">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
           <Badge className="mb-4 bg-white text-[var(--rm-primary)] border-[var(--rm-primary)]/30 shadow-sm">
@@ -99,57 +99,39 @@ export default function TramitesSection() {
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Gestión de Trámites</h1>
           <p className="text-gray-300 max-w-2xl mx-auto">
-            Realice todos sus trámites mercantiles de forma digital. Constitución, modificaciones, estado de situación e inversión extranjera.
+            Realice todos sus trámites mercantiles de forma digital. Constitución, modificaciones, situación e inversión extranjera.
           </p>
         </div>
       </section>
 
-      {/* Login Prompt */}
-      <div className="bg-[var(--rm-primary)]/10 border-b border-[var(--rm-primary)]/20">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-[var(--rm-primary)]" />
-              <span className="text-sm text-[var(--rm-text)]">
-                Para iniciar un trámite necesita una cuenta de usuario.{' '}
-                <button className="text-[var(--rm-primary)] font-medium underline">Regístrese aquí</button>
-              </span>
-            </div>
-            <Button size="sm" className="bg-[var(--rm-primary)] text-[var(--rm-text)] hover:bg-[var(--rm-primary)]-light" onClick={() => setAuthModalOpen(true)}>
-              Iniciar Sesión
-            </Button>
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
-        {/* Main Procedures */}
-        {procedures.length > 0 && (
+        {procedures.length > 0 ? (
           <motion.div
             variants={staggerContainer}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, margin: '-50px' }}
           >
-            <ProcedureCard onIniciarTramite={handleIniciarTramite} />
+            <ProcedureCard
+              onIniciarTramite={handleIniciarTramite}
+              onNavigateToVUCE={handleNavigateVUCE}
+            />
           </motion.div>
+        ) : (
+          <ProcedureCard
+            onIniciarTramite={handleIniciarTramite}
+            onNavigateToVUCE={handleNavigateVUCE}
+          />
         )}
-        {!procedures.length && <ProcedureCard onIniciarTramite={handleIniciarTramite} />}
 
-        {/* Constitution Steps */}
         <ConstitutionSteps />
-
-        {/* Modifications */}
         <ModificationTypes />
-
-        {/* Foreign Investment */}
-        <ForeignInvestment />
+        <div ref={vuceRef}>
+          <ForeignInvestment />
+        </div>
       </div>
 
-      {/* Authentication Modal */}
       <AuthenticationModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
-
-      {/* Premium Modal */}
       <PremiumModal
         isOpen={premiumModalOpen}
         onClose={() => setPremiumModalOpen(false)}

@@ -23,6 +23,8 @@ import {
   Globe,
   Bot,
   BookOpen,
+  Users,
+  Mail,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +48,9 @@ import CmsSearchNames from './cms-search-names';
 import CmsSitePages from './cms-site-pages';
 import CmsBotConfig from './cms-bot-config';
 import CmsGuides from './cms-guides';
+import CmsUserRoles from './cms-user-roles';
+import CmsPortalUsers from './cms-portal-users';
+import CmsInquiries from './cms-inquiries';
 
 interface CmsLayoutProps {
   user: User;
@@ -79,6 +84,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'procedures', label: 'Trámites', icon: ClipboardList },
       { id: 'regulations', label: 'Normativas', icon: Scale },
       { id: 'faq', label: 'FAQ', icon: HelpCircle },
+      { id: 'inquiries', label: 'Consultas', icon: Mail },
       { id: 'tutorials', label: 'Tutoriales', icon: Video },
       { id: 'webinars', label: 'Webinars', icon: Calendar },
       { id: 'guides', label: 'Guías', icon: BookOpen },
@@ -95,6 +101,8 @@ const NAV_GROUPS: NavGroup[] = [
       { id: 'site-pages', label: 'Páginas del Sitio', icon: Globe },
       { id: 'contacts', label: 'Contactos', icon: Phone },
       { id: 'bot-config', label: 'Bot IA', icon: Bot },
+      { id: 'user-roles', label: 'Roles y Permisos', icon: Users },
+      { id: 'portal-users', label: 'Gestión de Usuarios', icon: Users },
     ],
   },
 ];
@@ -120,6 +128,9 @@ const BREADCRUMB_MAP: Record<CMSView, string> = {
   'search-names': 'Nombres Buscables',
   'site-pages': 'Páginas del Sitio',
   'bot-config': 'Configuración Bot IA',
+  'user-roles': 'Roles y Permisos',
+  'portal-users': 'Gestión de Usuarios',
+  inquiries: 'Consultas Mesa de Ayuda',
 };
 
 export default function CmsLayout({ user, onLogout }: CmsLayoutProps) {
@@ -145,6 +156,9 @@ export default function CmsLayout({ user, onLogout }: CmsLayoutProps) {
       case 'site-pages': return <CmsSitePages />;
       case 'bot-config': return <CmsBotConfig />;
       case 'guides': return <CmsGuides />;
+      case 'user-roles': return <CmsUserRoles />;
+      case 'portal-users': return <CmsPortalUsers />;
+      case 'inquiries': return <CmsInquiries />;
       default: return <CmsDashboard user={user} onNavigate={setActiveView} />;
     }
   };

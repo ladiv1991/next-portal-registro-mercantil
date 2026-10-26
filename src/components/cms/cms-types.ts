@@ -264,7 +264,10 @@ export type CMSView =
   | 'search-names'
   | 'site-pages'
   | 'bot-config'
-  | 'guides';
+  | 'guides'
+  | 'user-roles'
+  | 'portal-users'
+  | 'inquiries';
 
 export const BLOCK_TYPES = [
   'hero',
