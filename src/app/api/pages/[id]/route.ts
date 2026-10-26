@@ -101,10 +101,7 @@ export async function PUT(
 }
 
 // DELETE /api/pages/[id] - Delete page with cascade (admin only)
-export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     if (!checkOrigin(request)) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });

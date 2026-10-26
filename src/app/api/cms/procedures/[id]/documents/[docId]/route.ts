@@ -3,10 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin-check';
 
-export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string; docId: string }> }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string; docId: string }> }) {
   try {
     if (!checkOrigin(request)) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });

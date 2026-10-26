@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { checkOrigin } from '@/lib/origin-check';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     if (!checkOrigin(request)) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
