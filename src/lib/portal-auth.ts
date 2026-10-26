@@ -29,6 +29,16 @@ export function verifyPortalToken(token: string): PortalTokenPayload {
   return payload as PortalTokenPayload;
 }
 
+export function requirePortalAuth(request: NextRequest): PortalTokenPayload {
+  const token = request.cookies.get('portal-token')?.value;
+  if (!token) throw new Error('No autorizado');
+  try {
+    return verifyPortalToken(token);
+  } catch {
+    throw new Error('Sesión portal inválida');
+  }
+}
+
 export function getPortalUserId(request: NextRequest): string | null {
   const token = request.cookies.get('portal-token')?.value;
   if (!token) return null;

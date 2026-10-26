@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAdmin } from '@/lib/api-auth';
+import { requireAdmin, getAuthUser } from '@/lib/api-auth';
 import { z } from 'zod';
 
 const createBlockSchema = z.object({
@@ -12,14 +12,29 @@ const createBlockSchema = z.object({
   visible: z.boolean().optional(),
 });
 
-// GET /api/blocks - Return blocks (optionally filtered by pageId)
+// GET /api/blocks - Return blocks (optionally filtered by pageId).
+// Unauthenticated callers only see visible blocks; admins see everything.
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const pageId = searchParams.get('pageId');
 
+    let user: Awaited<ReturnType<typeof getAuthUser>> = null;
+    try {
+      user = await getAuthUser();
+    } catch {
+      user = null;
+    }
+
+    const where: Record<string, unknown> = {};
+    if (pageId) where.pageId = pageId;
+    // Hide invisible blocks from non-admin public consumers.
+    if (!user || user.role !== 'admin') {
+      where.visible = true;
+    }
+
     const blocks = await db.block.findMany({
-      where: pageId ? { pageId } : undefined,
+      where,
       orderBy: { order: 'asc' },
       include: {
         page: {
