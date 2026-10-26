@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkOrigin } from '@/lib/origin-check';
 
 interface KnowledgeItem {
   section: string;
@@ -12,6 +13,10 @@ interface KnowledgeItem {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { query } = body as { query: string };
 

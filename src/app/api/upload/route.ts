@@ -3,9 +3,14 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { requireAdmin } from '@/lib/api-auth';
 import { categoryFromFolder, safeUploadFolder, sanitizeUploadFilename, validateUpload } from '@/lib/upload-security';
+import { checkOrigin } from '@/lib/origin-check';
 
 export async function POST(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     // Only authenticated CMS administrators may write files to the server filesystem.
     await requireAdmin();
     const formData = await request.formData();

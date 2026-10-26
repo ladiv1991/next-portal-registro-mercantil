@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifyPassword, generateToken } from '@/lib/auth';
 import { z } from 'zod';
+import { rateLimit } from '@/lib/rate-limiter';
+import { checkOrigin } from '@/lib/origin-check';
 
 const loginSchema = z.object({
   email: z.string().email('Correo electrónico inválido'),
@@ -10,6 +12,22 @@ const loginSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
+    // Rate limiting: max 5 intentos por IP cada 60 segundos
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+    const rateLimitKey = `login:${ip}`;
+    const allowed = await rateLimit(rateLimitKey, { max: 5, windowMs: 60_000 });
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Demasiados intentos. Intente nuevamente en 1 minuto.' },
+        { status: 429 },
+      );
+    }
     const body = await request.json();
     const parsed = loginSchema.safeParse(body);
 

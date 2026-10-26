@@ -3,12 +3,17 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/api-auth';
 import { updatePortalUserSchema } from '@/lib/cms-schemas';
 import bcrypt from 'bcryptjs';
+import { checkOrigin } from '@/lib/origin-check';
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAuth();
     const { id } = await params;
     const body = await request.json();
@@ -43,6 +48,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAuth();
     const { id } = await params;
 

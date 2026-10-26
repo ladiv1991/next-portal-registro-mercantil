@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/api-auth';
 import { z } from 'zod';
+import { checkOrigin } from '@/lib/origin-check';
 
 const createPageSchema = z.object({
   title: z.string().min(1, 'El título es requerido').max(200),
@@ -41,6 +42,10 @@ export async function GET(request: NextRequest) {
 // POST /api/pages - Create new page (admin only)
 export async function POST(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAdmin();
 
     const body = await request.json();

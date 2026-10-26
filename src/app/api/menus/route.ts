@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/api-auth';
 import { z } from 'zod';
+import { checkOrigin } from '@/lib/origin-check';
 
 const createMenuSchema = z.object({
   label: z.string().min(1, 'La etiqueta es requerida').max(100),
@@ -29,6 +30,10 @@ export async function GET() {
 // POST /api/menus - Create new menu item (admin only)
 export async function POST(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAdmin();
 
     const body = await request.json();

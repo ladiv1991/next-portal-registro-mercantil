@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/api-auth';
 import { createPortalUserSchema } from '@/lib/cms-schemas';
 import bcrypt from 'bcryptjs';
+import { checkOrigin } from '@/lib/origin-check';
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,6 +39,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAuth();
 
     const body = await request.json();

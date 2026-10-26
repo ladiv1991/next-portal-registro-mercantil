@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleCMSGetOne, handleCMSPut, handleCMSDelete, parseModelFromPath } from '@/lib/cms-handler';
+import { checkOrigin } from '@/lib/origin-check';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

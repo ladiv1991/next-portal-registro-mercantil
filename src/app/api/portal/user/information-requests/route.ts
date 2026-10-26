@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getPortalUserId } from '@/lib/portal-auth';
+import { checkOrigin } from '@/lib/origin-check';
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,6 +27,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     const userId = getPortalUserId(request);
     if (!userId) {
       return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });

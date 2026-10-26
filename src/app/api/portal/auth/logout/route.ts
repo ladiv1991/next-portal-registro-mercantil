@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { checkOrigin } from '@/lib/origin-check';
 
 export async function POST() {
   const response = NextResponse.json({ success: true });

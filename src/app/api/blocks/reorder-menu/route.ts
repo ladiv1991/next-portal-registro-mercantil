@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/api-auth';
 import { z } from 'zod';
+import { checkOrigin } from '@/lib/origin-check';
 
 const reorderMenuSchema = z.object({
   menuIds: z.array(z.string().min(1)).min(1, 'Se requiere al menos un elemento del menú'),
@@ -10,6 +11,10 @@ const reorderMenuSchema = z.object({
 // PUT /api/blocks/reorder-menu - Reorder menu items (admin only)
 export async function PUT(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAdmin();
 
     const body = await request.json();

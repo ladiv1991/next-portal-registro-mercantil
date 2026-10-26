@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
+import { checkOrigin } from '@/lib/origin-check';
 
 const inquirySchema = z.object({
   name: z.string().optional(),
@@ -11,6 +12,10 @@ const inquirySchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     const body = await request.json();
     const validation = inquirySchema.safeParse(body);
 

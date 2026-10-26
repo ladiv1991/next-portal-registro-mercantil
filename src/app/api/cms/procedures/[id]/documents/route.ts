@@ -4,6 +4,7 @@ import { requireAuth, requireAdmin } from '@/lib/api-auth';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { maxUploadBytes, sanitizeUploadFilename, validateUpload } from '@/lib/upload-security';
+import { checkOrigin } from '@/lib/origin-check';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -24,6 +25,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAuth();
     const { id } = await params;
 
@@ -84,6 +89,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAdmin();
     const { id } = await params;
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/api-auth';
 import { z } from 'zod';
+import { checkOrigin } from '@/lib/origin-check';
 
 const reorderSchema = z.object({
   pageId: z.string().min(1, 'El pageId es requerido'),
@@ -11,6 +12,10 @@ const reorderSchema = z.object({
 // PUT /api/blocks/reorder - Reorder blocks within a page (admin only)
 export async function PUT(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
     await requireAdmin();
 
     const body = await request.json();

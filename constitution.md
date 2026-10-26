@@ -24,10 +24,21 @@
 ### 1.3 Protección de datos
 - No se registran (log) tokens JWT completos, contraseñas ni claves API en ningún log de servidor o cliente.
 - El contenido Markdown renderizado en el portal se sanitiza para prevenir XSS.
-- CSRF se mitiga mediante la configuración `SameSite=Lax` de las cookies.
 - Los archivos subidos por usuarios se validan por tipo MIME y tamaño máximo antes de persistirse.
 
-### 1.4 Límites de subida de archivos
+### 1.4 Same-Origin Enforcement (CSRF en Route Handlers)
+- **Toda ruta mutante** (POST/PUT/DELETE/PATCH) en `src/app/api/**` DEBE verificar el header `Origin` contra la allowlist de dominios autorizados antes de procesar el body.
+- La allowlist se construye desde `NEXT_PUBLIC_APP_URL` + `PORTAL_DOMAINS` (con `PORTAL_SCHEME`) + orígenes de desarrollo (`localhost`/`127.0.0.1` en puertos 3000-3008). No hay hardcode de dominios production.
+- La verificación se implementa en `src/lib/origin-check.ts` mediante `checkOrigin(request)`. Cada handler mutante debe incluir:
+  ```ts
+  import { checkOrigin } from '@/lib/origin-check';
+  if (!checkOrigin(request)) return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+  ```
+- **No se permite la suplantación de autoridad del frontend**: unOrigin no autorizado no puede usar la cookie `rmc-token` del usuario legítimo para actuar con su autoridad. Las solicitudes sin header `Origin` (curl, herramientas internas, Server Actions) se permiten pero NUNCA se consideran como procedentes del frontend.
+- Los handlers GET (solo lectura) están exentos de esta verificación, ya que no mutan estado.
+- El wrapper `withCsrfGuard()` está disponible para aplicar la verificación de forma automática en handlers nuevos.
+
+### 1.5 Límites de subida de archivos
 - Se respetan los límites definidos en variables de entorno: `UPLOAD_MAX_FILE_MB`, `UPLOAD_MAX_IMAGE_MB`, `UPLOAD_MAX_DOCUMENT_MB`, `UPLOAD_MAX_VIDEO_MB`.
 
 ---
