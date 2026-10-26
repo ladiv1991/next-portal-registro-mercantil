@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Edit2, Trash2, Loader2, Shield, Mail, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Search, Edit2, Trash2, Loader2, Shield, Mail, Phone, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import PasswordInput from '@/components/ui/password-input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -13,6 +14,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { formatCmsToast } from '@/lib/cms-helpers';
 
 interface PortalUser {
   id: string;
@@ -37,7 +39,16 @@ export default function CmsPortalUsers() {
   const [editActive, setEditActive] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [newUser, setNewUser] = useState({ email: '', password: '', name: '', phone: '', identityCard: '', role: 'user' });
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
+  const [createErrors, setCreateErrors] = React.useState<Record<string, string>>({});
+
+  const clearError = (field: string) => {
+    setFieldErrors(prev => { const next = { ...prev }; delete next[field]; return next; });
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -94,26 +105,41 @@ export default function CmsPortalUsers() {
     setSelectedUser(user);
     setEditRole(user.role);
     setEditActive(user.isActive);
+    setFieldErrors({});
     setDialogOpen(true);
   };
 
   const handleSaveUser = async () => {
     if (!selectedUser) return;
 
-    setSaving(true);
+    const errs: Record<string, string> = {};
+    if (!editRole) errs.role = 'El rol es obligatorio';
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      return;
+    }
+
     try {
+      setSaving(true);
       const res = await fetch(`/api/cms/portal-users/${selectedUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
+          email: selectedUser.email,
+          name: selectedUser.name || null,
+          phone: selectedUser.phone || null,
+          identityCard: selectedUser.identityCard || null,
           role: editRole,
           isActive: editActive,
+          ...(selectedUser._newPassword ? { password: selectedUser._newPassword } : {}),
         }),
       });
 
       if (res.ok) {
-        toast.success('Usuario actualizado');
+        toast.success(formatCmsToast('Usuario', selectedUser?.email || '', 'actualizado'));
+        setFieldErrors({});
         setDialogOpen(false);
         await fetchUsers();
       } else {
@@ -123,6 +149,32 @@ export default function CmsPortalUsers() {
       toast.error('Error al guardar');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleCreateUser = async () => {
+    setCreating(true);
+    setCreateErrors({});
+    try {
+      const res = await fetch('/api/cms/portal-users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(newUser),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(formatCmsToast('Usuario', newUser.email, 'creado'));
+        setCreateDialogOpen(false);
+        setNewUser({ email: '', password: '', name: '', phone: '', identityCard: '', role: 'user' });
+        await fetchUsers();
+      } else {
+        toast.error(data.error || 'Error al crear usuario');
+      }
+    } catch {
+      toast.error('Error al crear usuario');
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -136,7 +188,7 @@ export default function CmsPortalUsers() {
       });
 
       if (res.ok) {
-        toast.success('Usuario eliminado');
+        toast.success(formatCmsToast('Usuario', selectedUser?.email || '', 'eliminado'));
         await fetchUsers();
       } else {
         toast.error('Error al eliminar usuario');
@@ -217,6 +269,12 @@ export default function CmsPortalUsers() {
             disabled={searching}
           >
             {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+          </Button>
+          <Button
+            onClick={() => setCreateDialogOpen(true)}
+            className="bg-[#005A9C] hover:bg-[#0074C8] text-white ml-auto"
+          >
+            <Plus className="w-4 h-4 mr-1" /> Crear Usuario
           </Button>
         </CardContent>
       </Card>
@@ -306,7 +364,7 @@ export default function CmsPortalUsers() {
 
       {/* Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Editar Usuario</DialogTitle>
           </DialogHeader>
@@ -314,46 +372,96 @@ export default function CmsPortalUsers() {
             <div className="space-y-4">
               <div>
                 <Label>Email</Label>
-                <Input value={selectedUser.email} disabled />
+                <Input value={selectedUser.email} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
+                {fieldErrors.email && <p className="text-sm text-red-600 mt-1">{fieldErrors.email}</p>}
               </div>
               <div>
                 <Label>Nombre</Label>
-                <Input value={selectedUser.name || ''} disabled />
+                <Input value={selectedUser.name || ''} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
               </div>
               <div>
-                <Label htmlFor="role">Rol</Label>
-                <Select value={editRole} onValueChange={setEditRole}>
-                  <SelectTrigger id="role">
+                <Label>Teléfono</Label>
+                <Input value={selectedUser.phone || ''} onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })} />
+              </div>
+              <div>
+                <Label>Carné de Identidad</Label>
+                <Input value={selectedUser.identityCard || ''} onChange={(e) => setSelectedUser({ ...selectedUser, identityCard: e.target.value })} />
+              </div>
+              <div>
+                <Label>Nueva Contraseña (dejar vacío para no cambiar)</Label>
+                <PasswordInput placeholder="••••••" onChange={(e) => setSelectedUser({ ...selectedUser, _newPassword: e.target.value } as typeof selectedUser)} />
+              </div>
+              <div>
+                <Label htmlFor="edit-role">Rol</Label>
+                <Select value={editRole} onValueChange={(val) => { setEditRole(val); clearError('role'); }}>
+                  <SelectTrigger id="edit-role">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map(role => (
-                      <SelectItem key={role.id} value={role.name}>
-                        {role.name}
-                      </SelectItem>
+                      <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {fieldErrors.role && <p className="text-sm text-red-600 mt-1">{fieldErrors.role}</p>}
               </div>
               <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={editActive}
-                  onChange={(e) => setEditActive(e.target.checked)}
-                />
-                <Label htmlFor="isActive">Usuario activo</Label>
+                <input type="checkbox" id="edit-active" checked={editActive} onChange={(e) => setEditActive(e.target.checked)} />
+                <Label htmlFor="edit-active">Usuario activo</Label>
               </div>
-              <Button
-                onClick={handleSaveUser}
-                disabled={saving}
-                className="w-full bg-[#1A1A1A] hover:bg-[#1A1A1A]-light"
-              >
+              <Button onClick={handleSaveUser} disabled={saving} className="w-full bg-[#005A9C] hover:bg-[#0074C8] text-white">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                Guardar cambios
+                Actualizar Usuario
               </Button>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Crear Usuario</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Email *</Label>
+              <Input type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+              {createErrors.email && <p className="text-sm text-red-600 mt-1">{createErrors.email}</p>}
+            </div>
+            <div>
+              <Label>Contraseña *</Label>
+              <PasswordInput value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+            </div>
+            <div>
+              <Label>Nombre</Label>
+              <Input value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+            </div>
+            <div>
+              <Label>Teléfono</Label>
+              <Input value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} />
+            </div>
+            <div>
+              <Label>Carné de Identidad</Label>
+              <Input value={newUser.identityCard} onChange={(e) => setNewUser({ ...newUser, identityCard: e.target.value })} />
+            </div>
+            <div>
+              <Label>Rol</Label>
+              <Select value={newUser.role} onValueChange={(val) => setNewUser({ ...newUser, role: val })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {roles.map(role => (
+                    <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button onClick={handleCreateUser} disabled={creating || !newUser.email || !newUser.password} className="w-full bg-[#005A9C] hover:bg-[#0074C8] text-white">
+              {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+              Crear Usuario
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -3,9 +3,11 @@
 import React from 'react';
 import { Save, Loader2, Bot, Zap, ExternalLink, Info, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatCmsToast } from '@/lib/cms-helpers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import PasswordInput from '@/components/ui/password-input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -49,6 +51,11 @@ export default function CmsBotConfig() {
 
   const [form, setForm] = React.useState<FormData>(INTERNAL_DEFAULTS);
   const [existingId, setExistingId] = React.useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
+
+  const clearError = (field: string) => {
+    setFieldErrors(prev => { const next = { ...prev }; delete next[field]; return next; });
+  };
 
   // Test state
   const [testMessage, setTestMessage] = React.useState('');
@@ -73,6 +80,7 @@ export default function CmsBotConfig() {
           temperature: c.temperature,
           enabled: c.enabled,
         });
+        setFieldErrors({});
       }
     } catch (e) {
       toast.error('Error al cargar configuración');
@@ -89,23 +97,20 @@ export default function CmsBotConfig() {
   };
 
   const handleSave = async () => {
+    const errs: Record<string, string> = {};
+    if (!form.provider) errs.provider = 'El proveedor es requerido';
+    if (form.maxTokens < 256 || form.maxTokens > 8192) errs.maxTokens = 'Entre 256 y 8192';
+    if (form.temperature < 0 || form.temperature > 2) errs.temperature = 'Entre 0 y 2';
+    if (Object.keys(errs).length > 0) { setFieldErrors(errs); toast.error('Corrija los errores antes de guardar'); return; }
     try {
       setSaving(true);
       const payload = { ...form };
-      if (existingId) {
-        await updateBotConfig(existingId, payload);
-        toast.success('Configuración actualizada');
-      } else {
-        const created = await createBotConfig(payload);
-        setExistingId(created.id);
-        toast.success('Configuración creada');
-      }
+      if (existingId) { await updateBotConfig(existingId, payload); toast.success(formatCmsToast('Configuración', 'IA', 'actualizada')); }
+      else { const created = await createBotConfig(payload); setExistingId(created.id); toast.success(formatCmsToast('Configuración', 'IA', 'creada')); }
+      setFieldErrors({});
       load();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Error al guardar');
-    } finally {
-      setSaving(false);
-    }
+    } catch (e) { toast.error(e instanceof Error ? e.message : 'Error al guardar'); }
+    finally { setSaving(false); }
   };
 
   const handleTest = async () => {
@@ -174,7 +179,7 @@ export default function CmsBotConfig() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => handleProviderChange('z-ai-web-dev-sdk')}
+                  onClick={() => { clearError('provider'); handleProviderChange('z-ai-web-dev-sdk'); }}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${
                     form.provider === 'z-ai-web-dev-sdk'
                       ? 'border-[#7A2A1E] bg-[#7A2A1E]/5'
@@ -189,7 +194,7 @@ export default function CmsBotConfig() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleProviderChange('openai-compatible')}
+                  onClick={() => { clearError('provider'); handleProviderChange('openai-compatible'); }}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${
                     form.provider === 'openai-compatible'
                       ? 'border-[#7A2A1E] bg-[#7A2A1E]/5'
@@ -203,6 +208,7 @@ export default function CmsBotConfig() {
                   <p className="text-xs text-gray-500">API externa</p>
                 </button>
               </div>
+              {fieldErrors.provider && <p className="text-xs text-[#9E3A2E]">{fieldErrors.provider}</p>}
             </div>
 
             {/* Provider Info Banner */}
@@ -235,11 +241,13 @@ export default function CmsBotConfig() {
                 </div>
                 <div className="space-y-2">
                   <Label>API URL <span className="text-[#9E3A2E]">*</span></Label>
-                  <Input value={form.apiUrl} onChange={(e) => setForm({ ...form, apiUrl: e.target.value })} placeholder="https://api.openai.com/v1" />
+                  <Input value={form.apiUrl} onChange={(e) => setForm({ ...form, apiUrl: e.target.value })} placeholder="https://api.openai.com/v1" maxLength={500} />
+                  <p className="text-xs text-gray-400">{form.apiUrl.length}/500</p>
                 </div>
                 <div className="space-y-2">
                   <Label>API Key <span className="text-[#9E3A2E]">*</span></Label>
-                  <Input type="password" value={form.apiKey} onChange={(e) => setForm({ ...form, apiKey: e.target.value })} placeholder="sk-..." />
+                  <PasswordInput value={form.apiKey} onChange={(e) => setForm({ ...form, apiKey: e.target.value })} placeholder="sk-..." maxLength={500} />
+                  <p className="text-xs text-gray-400">{form.apiKey.length}/500</p>
                 </div>
               </>
             )}
@@ -263,12 +271,14 @@ export default function CmsBotConfig() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Max Tokens</Label>
-                <Input type="number" min={256} max={8192} value={form.maxTokens} onChange={(e) => setForm({ ...form, maxTokens: Math.min(8192, Math.max(256, parseInt(e.target.value) || 256)) })} />
+                <Input type="number" min={256} max={8192} value={form.maxTokens} onChange={(e) => { clearError('maxTokens'); setForm({ ...form, maxTokens: Math.min(8192, Math.max(256, parseInt(e.target.value) || 256)) }); }} />
+                {fieldErrors.maxTokens && <p className="text-xs text-[#9E3A2E]">{fieldErrors.maxTokens}</p>}
                 <p className="text-xs text-gray-400">Rango: 256 - 8192</p>
               </div>
               <div className="space-y-2">
                 <Label>Temperature</Label>
-                <Input type="number" min={0} max={2} step={0.1} value={form.temperature} onChange={(e) => setForm({ ...form, temperature: Math.min(2, Math.max(0, parseFloat(e.target.value) || 0)) })} />
+                <Input type="number" min={0} max={2} step={0.1} value={form.temperature} onChange={(e) => { clearError('temperature'); setForm({ ...form, temperature: Math.min(2, Math.max(0, parseFloat(e.target.value) || 0)) }); }} />
+                {fieldErrors.temperature && <p className="text-xs text-[#9E3A2E]">{fieldErrors.temperature}</p>}
                 <p className="text-xs text-gray-400">Rango: 0 - 2</p>
               </div>
             </div>

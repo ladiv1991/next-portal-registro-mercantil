@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import PasswordInput from '@/components/ui/password-input';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -149,9 +150,8 @@ export default function CmsEnzonaConfig() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="consumerKey">Consumer Key</Label>
-              <Input
+              <PasswordInput
                 id="consumerKey"
-                type="password"
                 value={form.consumerKey}
                 onChange={(e) => setForm({ ...form, consumerKey: e.target.value })}
                 placeholder="Tu consumer key de ENZONA"
@@ -159,9 +159,8 @@ export default function CmsEnzonaConfig() {
             </div>
             <div>
               <Label htmlFor="consumerSecret">Consumer Secret</Label>
-              <Input
+              <PasswordInput
                 id="consumerSecret"
-                type="password"
                 value={form.consumerSecret}
                 onChange={(e) => setForm({ ...form, consumerSecret: e.target.value })}
                 placeholder="Tu consumer secret de ENZONA"

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import PasswordInput from '@/components/ui/password-input';
 import { Separator } from '@/components/ui/separator';
 
 interface AuthenticationModalProps {
@@ -104,9 +105,8 @@ export default function AuthenticationModal({ open, onOpenChange, onAuthSuccess 
               <Label htmlFor="password" className="text-sm font-medium text-[var(--rm-text)]">
                 Contraseña
               </Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 placeholder="Ingrese su contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

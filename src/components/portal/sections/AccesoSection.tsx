@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import PasswordInput from '@/components/ui/password-input';
 import { fadeInUp } from '@/data/portal-data';
 
 interface AccesoSectionProps {
@@ -112,11 +113,10 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                 </div>
                 <div>
                   <Label htmlFor="login-password">Contraseña</Label>
-                  <Input
+                  <PasswordInput
                     id="login-password"
                     placeholder="••••••••"
                     className="mt-1"
-                    type="password"
                     autoComplete="current-password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
