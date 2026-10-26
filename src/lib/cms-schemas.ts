@@ -1,11 +1,26 @@
 import { z } from 'zod';
 
-// ─── Shared helpers ───────────────────────────────────────────────────────────
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// RFC 5322 simplified — covers all common real-world addresses while
+// rejecting obviously malformed input. Full RFC is impractical in Zod.
+const EMAIL_REGEX = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 const URL_REGEX = /^https?:\/\/.+$/;
 const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
 const SLUG_REGEX = /^[a-z0-9-]+$/;
+
+/** Cuban mobile/landline: optional +53 prefix, then exactly 8 digits. */
+const CUBAN_PHONE_REGEX = /^(?:\+53|5)[0-9]{7}$/;
+
+/** OWASP/BIPA password strength: ≥8 chars, at least one uppercase, one digit, one special char. */
+const PASSWORD_STRENGTH = z.string().min(8, 'Mínimo 8 caracteres').max(255).refine(
+  v => /[A-Z]/.test(v),
+  'Debe contener al menos una mayúscula',
+).refine(
+  v => /[0-9]/.test(v),
+  'Debe contener al menos un número',
+).refine(
+  v => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(v),
+  'Debe contener al menos un carácter especial (!@#$%^&*...)',
+);
 
 function dateNotInPast(dateStr: string): boolean {
   if (!dateStr) return true;
@@ -247,20 +262,18 @@ export const updateUserRoleSchema = createUserRoleSchema.partial();
 
 export const createPortalUserSchema = z.object({
   email: z.string().min(1, 'El email es requerido').regex(EMAIL_REGEX, 'Email inválido').max(255),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').max(255),
+  password: PASSWORD_STRENGTH,
   name: z.string().max(255).optional().nullable().or(z.literal('')),
-  phone: z.string().max(50).optional().nullable().or(z.literal('')),
-  identityCard: z.string().max(50).optional().nullable().or(z.literal('')),
+  phone: z.string().regex(CUBAN_PHONE_REGEX, 'Teléfono cubano inválido (ej: +53 5XXXXXXX o 5XXXXXXX)').optional().nullable().or(z.literal('')),
   role: z.string().min(1, 'El rol es requerido').default('user'),
   isActive: z.boolean().default(true),
 });
 
 export const updatePortalUserSchema = z.object({
   email: z.string().min(1, 'El email es requerido').regex(EMAIL_REGEX, 'Email inválido').max(255).optional(),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').max(255).optional(),
+  password: PASSWORD_STRENGTH.optional(),
   name: z.string().max(255).optional().nullable().or(z.literal('')),
-  phone: z.string().max(50).optional().nullable().or(z.literal('')),
-  identityCard: z.string().max(50).optional().nullable().or(z.literal('')),
+  phone: z.string().regex(CUBAN_PHONE_REGEX, 'Teléfono cubano inválido').optional().nullable().or(z.literal('')),
   role: z.string().min(1, 'El rol es requerido').optional(),
   isActive: z.boolean().optional(),
 });

@@ -26,7 +26,6 @@ model PortalUser {
   passwordHash  String?
   name          String?
   phone         String?
-  identityCard  String?  // CI
   enzonaId      String?  @unique // ID de usuario en ENZONA
   enzonaToken   String?  // Token de acceso ENZONA
   role          String   @default("user") // user, operator, admin
@@ -407,4 +406,15 @@ model EnzonaConfig {
   currency          String   @default("CUP")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String
+  subject   String
+  message   String
+  status    String   @default("new") // new, read, replied, closed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -57,7 +57,6 @@ export async function GET(request: NextRequest) {
       email: `user_${code.substring(0, 8)}@enzona.cu`,
       name: 'Usuario ENZONA',
       phone: '+53712345678',
-      identityCard: '12345678901',
     };
 
     // Crear o actualizar usuario
@@ -73,7 +72,6 @@ export async function GET(request: NextRequest) {
         email: mockUserData.email,
         name: mockUserData.name,
         phone: mockUserData.phone,
-        identityCard: mockUserData.identityCard,
         enzonaId: mockUserData.id,
         enzonaToken: mockToken,
         role: 'user',

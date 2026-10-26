@@ -7,7 +7,6 @@ interface PortalUser {
   email: string;
   name?: string;
   phone?: string;
-  identityCard?: string;
   enzonaId?: string;
   isVerified: boolean;
   subscriptions: UserSubscription[];

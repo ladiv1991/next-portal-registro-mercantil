@@ -38,7 +38,6 @@ interface DashboardUser {
   email: string;
   name: string;
   phone?: string;
-  identityCard?: string;
   role: string;
 }
 
@@ -411,12 +410,6 @@ export default function PortalDashboard() {
                 <div>
                   <p className="text-sm text-gray-600">Teléfono</p>
                   <p className="font-semibold text-[#1A1A1A]">{user.phone}</p>
-                </div>
-              )}
-              {user.identityCard && (
-                <div>
-                  <p className="text-sm text-gray-600">Carné de Identidad</p>
-                  <p className="font-semibold text-[#1A1A1A]">{user.identityCard}</p>
                 </div>
               )}
               <div>

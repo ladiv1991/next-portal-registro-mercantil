@@ -21,7 +21,6 @@ interface PortalUser {
   email: string;
   name?: string;
   phone?: string;
-  identityCard?: string;
   role: string;
   isVerified: boolean;
   isActive: boolean;
@@ -41,10 +40,11 @@ export default function CmsPortalUsers() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [newUser, setNewUser] = useState({ email: '', password: '', name: '', phone: '', identityCard: '', role: 'user' });
+  const [newUser, setNewUser] = useState({ email: '', password: '', name: '', phone: '', role: 'user' });
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
   const [createErrors, setCreateErrors] = React.useState<Record<string, string>>({});
+  const [formErrors, setFormErrors] = React.useState<Record<string, string>>({});
 
   const clearError = (field: string) => {
     setFieldErrors(prev => { const next = { ...prev }; delete next[field]; return next; });
@@ -130,7 +130,6 @@ export default function CmsPortalUsers() {
           email: selectedUser.email,
           name: selectedUser.name || null,
           phone: selectedUser.phone || null,
-          identityCard: selectedUser.identityCard || null,
           role: editRole,
           isActive: editActive,
           ...(selectedUser._newPassword ? { password: selectedUser._newPassword } : {}),
@@ -153,7 +152,23 @@ export default function CmsPortalUsers() {
   };
 
   const handleCreateUser = async () => {
+    // Client-side validation before network call
+    const errs: Record<string, string> = {};
+    if (!newUser.email.trim()) errs.email = 'El email es requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.email)) errs.email = 'Email inválido';
+    if (!newUser.password) errs.password = 'La contraseña es requerida';
+    else if (newUser.password.length < 8) errs.password = 'Mínimo 8 caracteres';
+    else if (!/[A-Z]/.test(newUser.password)) errs.password = 'Debe tener al menos una mayúscula';
+    else if (!/[0-9]/.test(newUser.password)) errs.password = 'Debe tener al menos un número';
+    else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(newUser.password)) errs.password = 'Debe tener al menos un carácter especial';
+    if (newUser.phone && !/^(?:\+53|5)[0-9]{7}$/.test(newUser.phone)) errs.phone = 'Teléfono cubano inválido (ej: +53 5XXXXXXX)';
+    if (Object.keys(errs).length > 0) {
+      setFormErrors(errs);
+      return;
+    }
+
     setCreating(true);
+    setFormErrors({});
     setCreateErrors({});
     try {
       const res = await fetch('/api/cms/portal-users', {
@@ -166,19 +181,24 @@ export default function CmsPortalUsers() {
       if (data.success) {
         toast.success(formatCmsToast('Usuario', newUser.email, 'creado'));
         setCreateDialogOpen(false);
-        setNewUser({ email: '', password: '', name: '', phone: '', identityCard: '', role: 'user' });
+        setNewUser({ email: '', password: '', name: '', phone: '', role: 'user' });
         await fetchUsers();
       } else {
-        toast.error(data.error || 'Error al crear usuario');
+        // Map server validation errors to form fields
+        if (res.status === 400 && data.error) {
+          setCreateErrors({ general: data.error });
+        } else {
+          toast.error(data.error || 'Error al crear usuario');
+        }
       }
     } catch {
-      toast.error('Error al crear usuario');
+      setCreateErrors({ general: 'Error de conexión. Intente nuevamente.' });
     } finally {
       setCreating(false);
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
+  const handleDeleteUser = async (userId: string, userEmail: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) return;
 
     try {
@@ -188,7 +208,7 @@ export default function CmsPortalUsers() {
       });
 
       if (res.ok) {
-        toast.success(formatCmsToast('Usuario', selectedUser?.email || '', 'eliminado'));
+        toast.success(formatCmsToast('Usuario', userEmail, 'eliminado'));
         await fetchUsers();
       } else {
         toast.error('Error al eliminar usuario');
@@ -258,7 +278,7 @@ export default function CmsPortalUsers() {
         </CardHeader>
         <CardContent className="flex gap-3">
           <Input
-            placeholder="Buscar por email, nombre o carné..."
+            placeholder="Buscar por email o nombre..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -305,7 +325,7 @@ export default function CmsPortalUsers() {
                     <TableCell>
                       <div>
                         <p className="font-semibold">{user.name || 'Sin nombre'}</p>
-                        <p className="text-xs text-gray-600">{user.identityCard}</p>
+                        {user.phone && <p className="text-xs text-gray-600">{user.phone}</p>}
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-sm">{user.email}</TableCell>
@@ -348,7 +368,7 @@ export default function CmsPortalUsers() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => handleDeleteUser(user.id, user.email)}
                         className="text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -384,10 +404,6 @@ export default function CmsPortalUsers() {
                 <Input value={selectedUser.phone || ''} onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })} />
               </div>
               <div>
-                <Label>Carné de Identidad</Label>
-                <Input value={selectedUser.identityCard || ''} onChange={(e) => setSelectedUser({ ...selectedUser, identityCard: e.target.value })} />
-              </div>
-              <div>
                 <Label>Nueva Contraseña (dejar vacío para no cambiar)</Label>
                 <PasswordInput placeholder="••••••" onChange={(e) => setSelectedUser({ ...selectedUser, _newPassword: e.target.value } as typeof selectedUser)} />
               </div>
@@ -419,20 +435,22 @@ export default function CmsPortalUsers() {
       </Dialog>
 
       {/* Create Dialog */}
-      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+      <Dialog open={createDialogOpen} onOpenChange={(open) => { if (!open) { setCreating(false); setFormErrors({}); } }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Crear Usuario</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <form onSubmit={(e) => { e.preventDefault(); handleCreateUser(); }} className="space-y-4">
             <div>
               <Label>Email *</Label>
-              <Input type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-              {createErrors.email && <p className="text-sm text-red-600 mt-1">{createErrors.email}</p>}
+              <Input type="email" value={newUser.email} onChange={(e) => { setNewUser({ ...newUser, email: e.target.value }); setFormErrors(p => { const n = { ...p }; delete n.email; return n; }); }} />
+              {formErrors.email && <p className="text-sm text-red-600 mt-1">{formErrors.email}</p>}
+              {createErrors.general && <p className="text-sm text-red-600 mt-1">{createErrors.general}</p>}
             </div>
             <div>
               <Label>Contraseña *</Label>
-              <PasswordInput value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+              <PasswordInput value={newUser.password} onChange={(v) => { setNewUser({ ...newUser, password: v }); setFormErrors(p => { const n = { ...p }; delete n.password; return n; }); }} placeholder="Mín. 8 chars, mayúscula, número, especial" />
+              {formErrors.password && <p className="text-sm text-red-600 mt-1">{formErrors.password}</p>}
             </div>
             <div>
               <Label>Nombre</Label>
@@ -440,11 +458,8 @@ export default function CmsPortalUsers() {
             </div>
             <div>
               <Label>Teléfono</Label>
-              <Input value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} />
-            </div>
-            <div>
-              <Label>Carné de Identidad</Label>
-              <Input value={newUser.identityCard} onChange={(e) => setNewUser({ ...newUser, identityCard: e.target.value })} />
+              <Input value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} placeholder="+53 5XXXXXXX" />
+              {formErrors.phone && <p className="text-sm text-red-600 mt-1">{formErrors.phone}</p>}
             </div>
             <div>
               <Label>Rol</Label>
@@ -457,11 +472,11 @@ export default function CmsPortalUsers() {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleCreateUser} disabled={creating || !newUser.email || !newUser.password} className="w-full bg-[#005A9C] hover:bg-[#0074C8] text-white">
+            <Button type="submit" disabled={creating || !newUser.email || !newUser.password} className="w-full bg-[#005A9C] hover:bg-[#0074C8] text-white">
               {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
               Crear Usuario
             </Button>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

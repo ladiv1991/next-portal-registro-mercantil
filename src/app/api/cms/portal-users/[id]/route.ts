@@ -1,22 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/api-auth';
+import { updatePortalUserSchema } from '@/lib/cms-schemas';
+import bcrypt from 'bcryptjs';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
+    const { id } = await params;
+    const body = await request.json();
 
-    const { role, isActive } = await request.json();
+    const validation = updatePortalUserSchema.safeParse(body);
+    if (!validation.success) {
+      const first = validation.error.errors[0];
+      const msg = first?.message ?? 'Datos inválidos';
+      return NextResponse.json({ success: false, error: msg }, { status: 400 });
+    }
+
+    const data = { ...validation.data } as Record<string, unknown>;
+    if (data.password) {
+      data.passwordHash = await bcrypt.hash(data.password as string, 10);
+      delete data.password;
+    }
 
     const user = await db.portalUser.update({
-      where: { id: params.id },
-      data: {
-        role: role || 'user',
-        isActive,
-      },
+      where: { id },
+      data,
     });
 
     return NextResponse.json({ success: true, data: user });
@@ -28,13 +40,14 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth();
+    const { id } = await params;
 
     await db.portalUser.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
