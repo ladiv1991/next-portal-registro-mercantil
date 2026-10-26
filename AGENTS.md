@@ -425,6 +425,18 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 - `ProcedureCard.tsx` tiene su propio array `PROCEDURES` hardcodeado (duplicado de `portal-data.ts`); ambos deben actualizarse manualmente en paralelo.
 - El search API acepta ahora params `province`, `type`, `status` para filtrado avanzado desde la base de datos.
 
+### Rotación de secretos antes de publicar repo (P0 — crítico)
+- **Problema**: `.env` y `.env.local` estaban trackeados en git con `POSTGRES_PASSWORD` y `JWT_SECRET` en claro. Cualquier persona con acceso al repo (o forks/historial futuro) podría autenticarse en la DB y CMS.
+- **Fix aplicado**:
+  1. `.gitignore` ← añade `.env`, `.env.*`, `!.env.example*` (T0.1).
+  2. `git rm --cached .env .env.local` — los ficheros se quedan en disco local pero salen del árbol git (T0.2).
+  3. Generar nuevos secretos con `node -e "crypto.randomBytes(32).toString('hex')"` (T0.3).
+  4. Actualizar `.env` y `.env.local` localmente con los nuevos valores (T0.4).
+  5. Rotar también la contraseña en el contenedor Postgres: `docker exec <pg> psql -U portal_rmc -d postgres -c "ALTER USER portal_rmc WITH PASSWORD '<nuevo>';"` (T0.5).
+  6. Verificar login CMS con el nuevo `JWT_SECRET` antes de commitear (T0.5).
+- **Regla**: Antes de hacer push o de publicar el repo, SIEMPRE rotar todos los secretos que hayan estado en `.env*` trackeados. Si el repo ya fue público, asume que los secretos antiguos están comprometidos y rotalos de inmediato. No uses `git filter-branch`/`BFG` para purgar mientras el repo siga siendo privado; el coste-beneficio no justifica el riesgo de corromper el árbol.
+- **Verificación**: `git ls-files | Select-String "\.env"` debe devolver vacío. `Invoke-RestMethod POST /api/auth/login` con credenciales seed debe devolver `{success:true}`.
+
 ### CMS ↔ Portal unificado
 - **Sin ruta separada `/cms`**: El CMS se accede desde la misma URL raíz (`/`) tras autenticarse. `page.tsx` detecta `cmsUser` y renderiza `CmsLayout`; de lo contrario muestra el portal público.
 - **Auth flow**: Login → cookie `rmc-token` → `CmsLayout` con sidebar de módulos. Logout limpia cookie y restaura portal.
