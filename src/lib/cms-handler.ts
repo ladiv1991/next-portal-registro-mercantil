@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/api-auth';
+import { checkOrigin } from '@/lib/origin-check';
 import { forceRebuildIndex, buildKnowledgeIndex } from '@/lib/chat-knowledge';
 import { CMS_SCHEMAS } from '@/lib/cms-schemas';
 
@@ -107,6 +108,9 @@ export async function handleCMSGet(request: NextRequest, modelPath: string) {
 
 export async function handleCMSPost(request: NextRequest, modelPath: string) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
     await requireAdmin();
     const model = getModel(modelPath);
     const modelDb = getModelDb(model);
@@ -169,6 +173,9 @@ export async function handleCMSGetOne(modelPath: string, id: string) {
 
 export async function handleCMSPut(request: NextRequest, modelPath: string, id: string) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
     await requireAdmin();
     const model = getModel(modelPath);
     const modelDb = getModelDb(model);
@@ -196,8 +203,11 @@ export async function handleCMSPut(request: NextRequest, modelPath: string, id: 
   }
 }
 
-export async function handleCMSDelete(modelPath: string, id: string) {
+export async function handleCMSDelete(request: NextRequest, modelPath: string, id: string) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
     await requireAdmin();
     const model = getModel(modelPath);
     const modelDb = getModelDb(model);

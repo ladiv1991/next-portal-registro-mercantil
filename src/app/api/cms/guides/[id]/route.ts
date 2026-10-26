@@ -17,5 +17,5 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const model = parseModelFromPath(request.nextUrl.pathname);
-  return handleCMSDelete(model, id);
+  return handleCMSDelete(request, model, id);
 }
