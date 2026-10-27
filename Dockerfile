@@ -3,9 +3,8 @@ ARG DOCKER_REGISTRY
 # ===== DEPS STAGE =====
 FROM ${DOCKER_REGISTRY}node:20-alpine AS deps
 WORKDIR /app
-RUN npm install -g bun
 COPY package*.json ./
-RUN bun install --frozen-lockfile || bun install
+RUN npm ci --ignore-scripts --no-audit --no-fund 2>/dev/null || npm install --no-audit --no-fund
 
 # ===== BUILD STAGE =====
 FROM ${DOCKER_REGISTRY}node:20-alpine AS builder
@@ -23,7 +22,6 @@ WORKDIR /app
 ENV NODE_ENV=production PORT=3000
 
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
-RUN npm install -g bun
 
 # Standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./

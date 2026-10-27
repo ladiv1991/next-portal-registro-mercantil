@@ -6,7 +6,12 @@ const nextConfig: NextConfig = {
   compress: true,
 
   async headers() {
-    // These headers reduce clickjacking, MIME confusion, referrer leakage, and browser API exposure.
+    const isDev = process.env.NODE_ENV !== 'production';
+    // CSP: dev needs 'unsafe-inline' + 'unsafe-eval' for Turbopack/React dev features.
+    // Production uses nonce-based (set in middleware.ts) — this static header is fallback-only.
+    const cspValue = isDev
+      ? "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; connect-src 'self';"
+      : "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; connect-src 'self';";
     return [
       {
         source: '/:path*',
@@ -15,9 +20,7 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
-          // shortcut: unsafe-inline en script-src es requerido por Next.js App Router (flight payloads inline). Upgrade: usar nonce/hash por request si se endurece CSP.
-          { key: 'Content-Security-Policy', value: "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; connect-src 'self';" },
+          { key: 'Content-Security-Policy', value: cspValue },
         ],
       },
     ];
