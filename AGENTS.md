@@ -381,7 +381,7 @@ Después: 21 vulnerabilidades (0 critical, 10 high, 10 moderate, 1 low)
 
 Todas las restantes son de dependencias transitivas/de desarrollo (eslint, prismjs, picomatch, postcss) que no afectan la superficie de ataque en producción.
 
-###_CAPTCHA v2 + Guardian Trace Analysis_ (2026-10-27)
+## CAPTCHA v2 + Guardian Trace Analysis (2026-10-27)
 
 | Feature | Detalle |
 |---------|---------|
@@ -393,7 +393,6 @@ Todas las restantes son de dependencias transitivas/de desarrollo (eslint, prism
 | **Local dev skip** | `::ffff:127.0.0.1`, `127.0.0.1`, `::1`, `localhost`, `unknown` → score 0 |
 | **Admin endpoint** | `GET /api/cms/guardian` (requiere admin) — lista perfiles por score |
 | **Integración** | Captcha y login usan guardian; inquiries route también |
-
 
 ---
 
