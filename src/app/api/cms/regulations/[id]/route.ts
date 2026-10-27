@@ -15,9 +15,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const item = await db.regulation.update({ where: { id }, data: body });
     return NextResponse.json({ success: true, data: item });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error';
-    const status = message.includes('Unauthorized') ? 401 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -32,8 +31,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     await db.regulation.delete({ where: { id } });
     return NextResponse.json({ success: true, data: null });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error';
-    const status = message.includes('Unauthorized') ? 401 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

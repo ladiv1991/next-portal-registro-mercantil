@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: users });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al obtener usuarios';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: user }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al crear usuario';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

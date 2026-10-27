@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { checkOrigin } from '@/lib/origin-check';
 import { checkAntiBot, HONEYPOT_FIELD, botOkResponse } from '@/lib/anti-bot';
 import { verifyCaptcha } from '@/lib/captcha';
+import { rateLimit } from '@/lib/rate-limiter';
 
 const inquirySchema = z.object({
   name: z.string().optional(),
@@ -21,6 +22,18 @@ export async function POST(request: Request) {
   try {
     if (!checkOrigin(request)) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
+
+    // Rate limiting: max 10 solicitudes por IP cada 60 segundos
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+    const allowed = await rateLimit(`inquiries:${ip}`, { max: 10, windowMs: 60_000 });
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Demasiados intentos. Inténtelo más tarde.' },
+        { status: 429 },
+      );
     }
 
     const body = await request.json();

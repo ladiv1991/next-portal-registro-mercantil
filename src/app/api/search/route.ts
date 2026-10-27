@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: { results } });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error en búsqueda';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

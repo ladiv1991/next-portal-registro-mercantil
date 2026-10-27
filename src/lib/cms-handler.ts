@@ -100,9 +100,8 @@ export async function handleCMSGet(request: NextRequest, modelPath: string) {
     const items = await modelDb.findMany({ orderBy });
     return NextResponse.json({ success: true, data: items });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    const status = message.includes('Unauthorized') ? 401 : message.includes('Forbidden') ? 403 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -148,9 +147,8 @@ export async function handleCMSPost(request: NextRequest, modelPath: string) {
     await rebuildChatIndex();
     return NextResponse.json({ success: true, data: item }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    const status = message.includes('Unauthorized') ? 401 : message.includes('Forbidden') ? 403 : 400;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -165,9 +163,8 @@ export async function handleCMSGetOne(modelPath: string, id: string) {
     }
     return NextResponse.json({ success: true, data: item });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    const status = message.includes('Unauthorized') ? 401 : message.includes('Forbidden') ? 403 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -197,9 +194,8 @@ export async function handleCMSPut(request: NextRequest, modelPath: string, id: 
     await rebuildChatIndex();
     return NextResponse.json({ success: true, data: item });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    const status = message.includes('Unauthorized') ? 401 : message.includes('Forbidden') ? 403 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -221,8 +217,7 @@ export async function handleCMSDelete(request: NextRequest, modelPath: string, i
     await rebuildChatIndex();
     return NextResponse.json({ success: true });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    const status = message.includes('Unauthorized') ? 401 : message.includes('Forbidden') ? 403 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

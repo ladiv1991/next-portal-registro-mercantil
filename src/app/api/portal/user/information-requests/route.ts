@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
       requests,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al obtener solicitudes';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       data: newRequest,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al crear solicitud';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

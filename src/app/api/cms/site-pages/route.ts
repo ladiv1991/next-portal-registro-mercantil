@@ -9,9 +9,8 @@ export async function GET() {
     const items = await db.sitePage.findMany({ orderBy: { order: 'asc' } });
     return NextResponse.json({ success: true, data: items });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error';
-    const status = message.includes('Unauthorized') ? 401 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -26,8 +25,7 @@ export async function POST(request: NextRequest) {
     const item = await db.sitePage.create({ data: body });
     return NextResponse.json({ success: true, data: item }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error';
-    const status = message.includes('Unauthorized') ? 401 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

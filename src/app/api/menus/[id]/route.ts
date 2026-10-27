@@ -63,9 +63,8 @@ export async function PUT(
 
     return NextResponse.json({ success: true, data: menu });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    const status = message.includes('Unauthorized') ? 401 : message.includes('Forbidden') ? 403 : message.includes('not found') ? 404 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -91,8 +90,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     return NextResponse.json({ success: true, data: menu });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error desconocido';
-    const status = message.includes('Unauthorized') ? 401 : message.includes('Forbidden') ? 403 : message.includes('not found') ? 404 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

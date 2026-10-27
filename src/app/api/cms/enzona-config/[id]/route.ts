@@ -24,7 +24,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true, data: config });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al actualizar configuración';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

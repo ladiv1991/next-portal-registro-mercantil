@@ -339,10 +339,16 @@ openspec init
 - **Browser automation**: La herramienta `browser.fill` requiere refs de snapshot, no selects CSS. React controlled components no responden a cambios directos de DOM; usar `browser.evaluate` con scripts que modifiquen `element.value` directamente.
 - **Screenshots**: Requieren ventana del desktop visible; si falla, usar `browser.preview` en su lugar.
 - **proxy.ts vs middleware.ts**: Next.js 16 renombró el archivo; verificar convención en uso antes de agregar nueva lógica.
+- **Prisma `postgresql://` patch (P2 — deuda técnica)**:
+  - **Problema**: Turbopack en Windows rechaza URLs `postgresql://` (expecta `postgres://`).
+  - **Workaround**: Patch manual a `node_modules/@prisma/client/runtime/library.js` (reemplaza detección de protocolo en `isDirectDb`).
+  - **Riesgo**: Se pierde en reinstall de dependencias (`bun install`, `npm install`).
+  - **Fix permanente**: El script `scripts/postinstall-patch-prisma.js` existe pero **NO** está registrado en `package.json` (no hay hook `postinstall`), así que no se ejecuta automáticamente. Para aplicarse en cada install, agregar `"postinstall": "node scripts/postinstall-patch-prisma.js"` al bloque `scripts` de `package.json`. Alternativa: migrar DATABASE_URL a `postgres://`.
+  - **Script de recuperación**: `node scripts/postinstall-patch-prisma.js` tras cada `bun install`.
 
 ---
 
-## Estado de Seguridad — Actualizado 2026-10-23
+## Estado de Seguridad — Actualizado 2026-10-26
 
 ### Fixes aplicados en esta sesión
 | Fix | Antes | Después | Impacto |
@@ -361,7 +367,6 @@ openspec init
 ### Pendientes para futura implementación
 - **CSP con nonces**: Requiere `proxy.ts` + pasar nonce a componentes. Compatible con App Router.
 - **DOMPurify en chatbot**: El contenido del LLM se renderiza con `dangerouslySetInnerHTML` sin sanitización. Agregar `isomorphic-dompurify` si se habilita contenido generado por usuarios.
-- **Rate limiter con Redis**: Actual actualmente en-memoria (no compartido entre instancias). Migrar a Redis o usar el rate limiter del host en producción escalada.
 - **HSTS preload**: Solo aplicar cuando el dominio tenga SSL activo y todos los subdominios respondan HTTPS.
 
 ### Resumen de vulnerabilidades post-audit

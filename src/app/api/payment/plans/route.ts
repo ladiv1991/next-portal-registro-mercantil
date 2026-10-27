@@ -10,7 +10,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, plans });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al obtener planes';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }

@@ -100,10 +100,9 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Error en autenticación';
+    console.error('[API] Internal error:', error);
     return NextResponse.redirect(
-      new URL(`/auth/login?error=${encodeURIComponent(message)}`, request.url)
+      new URL(`/auth/login?error=${encodeURIComponent('Error interno del servidor. Por favor, inténtelo más tarde.')}`, request.url)
     );
   }
 }

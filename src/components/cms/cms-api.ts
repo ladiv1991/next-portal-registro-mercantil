@@ -512,6 +512,7 @@ export async function testEnzonaConnection(): Promise<{ success: boolean; messag
     });
     return await handleResponse<{ success: boolean; message: string }>(response);
   } catch (error) {
-    return { success: false, message: error instanceof Error ? error.message : 'Error de conexión' };
+    console.error('[API] Internal error:', error);
+    return { success: false, message: 'Error de conexión' };
   }
 }

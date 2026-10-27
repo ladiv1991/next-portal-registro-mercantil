@@ -29,9 +29,8 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: config });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al obtener configuración';
-    const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
@@ -60,9 +59,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: config });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Error al guardar configuración';
-    const status = message === 'Unauthorized' ? 401 : message === 'Forbidden' ? 403 : 500;
-    return NextResponse.json({ success: false, error: message }, { status });
+    console.error('[API] Internal error:', error);
+    return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
 }
 
