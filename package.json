@@ -23,7 +23,8 @@
     "auth:check": "node scripts/check-auth.js",
     "auth:reset-admin": "node scripts/reset-admin-password.js",
     "app:configure-domains": "node scripts/configure-app-domains.js",
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "npx tsx prisma/seed.ts",
+    "postinstall": "node scripts/postinstall-patch-prisma.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -71,6 +72,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.2",
     "input-otp": "^1.4.2",
+    "isomorphic-dompurify": "^4.6.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.525.0",
     "next": "^16.1.1",

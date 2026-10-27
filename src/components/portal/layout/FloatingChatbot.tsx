@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, X, Send, Loader2, BookOpen, HelpCircle, BookText, Sparkles } from 'lucide-react';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface ChatMessage {
   role: 'user' | 'bot';
@@ -243,17 +244,17 @@ export default function FloatingChatbot() {
         elements.push(
           <div key={i} className="flex gap-2 ml-1">
             <span className="text-[var(--rm-primary)] mt-0.5 shrink-0">•</span>
-            <span dangerouslySetInnerHTML={{ __html: content }} />
+            <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
           </div>
         );
       } else if (processed.startsWith('## ')) {
         elements.push(
-          <div key={i} className="font-bold text-[var(--rm-text)] mt-2 text-sm" dangerouslySetInnerHTML={{ __html: processed.replace('## ', '') }} />
+          <div key={i} className="font-bold text-[var(--rm-text)] mt-2 text-sm" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processed.replace('## ', '')) }} />
         );
       } else if (processed.trim() === '') {
         elements.push(<div key={i} className="h-1" />);
       } else {
-        elements.push(<div key={i} dangerouslySetInnerHTML={{ __html: processed }} />);
+        elements.push(<div key={i} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processed) }} />);
       }
     });
 
