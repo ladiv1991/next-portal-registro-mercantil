@@ -381,6 +381,20 @@ Después: 21 vulnerabilidades (0 critical, 10 high, 10 moderate, 1 low)
 
 Todas las restantes son de dependencias transitivas/de desarrollo (eslint, prismjs, picomatch, postcss) que no afectan la superficie de ataque en producción.
 
+###_CAPTCHA v2 + Guardian Trace Analysis_ (2026-10-27)
+
+| Feature | Detalle |
+|---------|---------|
+| **CAPTCHA alfanumérico** | 5-6 caracteres (sin 0/O/1/l/I), rotación ±20°, tamaño variable, colores HSL aleatorios |
+| **Ruido SVG** | 8-14 líneas, ondas sinusoidales, 20-40 puntos, arcos punteados |
+| **Anti-replay** | Single-use tokens, TTL 5 min, mapa in-memory con sweep |
+| **Guardian trace analyzer** | Per-IP profiling (score 0-100), detecta: rapid_requests, captcha_farming, brute_force, anomalous_ua |
+| **Tiers** | normal (<40) → warning (40-69) → throttle (70-89) → block (≥90) |
+| **Local dev skip** | `::ffff:127.0.0.1`, `127.0.0.1`, `::1`, `localhost`, `unknown` → score 0 |
+| **Admin endpoint** | `GET /api/cms/guardian` (requiere admin) — lista perfiles por score |
+| **Integración** | Captcha y login usan guardian; inquiries route también |
+
+
 ---
 
 ## Flujo de trabajo recomendado para agentes
