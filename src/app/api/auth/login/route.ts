@@ -4,6 +4,7 @@ import { verifyPassword, generateToken } from '@/lib/auth';
 import { z } from 'zod';
 import { rateLimit } from '@/lib/rate-limiter';
 import { checkOrigin } from '@/lib/origin-check';
+import { guardianCheck, recordFailedLogin, recordSuccessfulLogin } from '@/lib/guardian';
 
 const loginSchema = z.object({
   email: z.string().email('Correo electrónico inválido'),
@@ -11,17 +12,26 @@ const loginSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || request.headers.get('x-real-ip')
+    || 'unknown';
+
+  // Guardian check
+  const g = await guardianCheck(request, { path: '/api/auth/login', ip });
+  if (g.blocked) {
+    return NextResponse.json(
+      { success: false, error: 'Acceso denegado. Contacte al administrador.' },
+      { status: 403 },
+    );
+  }
+
   try {
     if (!checkOrigin(request)) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
     // Rate limiting: max 5 intentos por IP cada 60 segundos
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || request.headers.get('x-real-ip')
-      || 'unknown';
-    const rateLimitKey = `login:${ip}`;
-    const allowed = await rateLimit(rateLimitKey, { max: 5, windowMs: 60_000 });
+    const allowed = await rateLimit(`login:${ip}`, { max: 5, windowMs: 60_000 });
     if (!allowed) {
       return NextResponse.json(
         { success: false, error: 'Demasiados intentos. Intente nuevamente en 1 minuto.' },
@@ -43,6 +53,7 @@ export async function POST(request: NextRequest) {
     const user = await db.user.findUnique({ where: { email } });
 
     if (!user || !user.active) {
+      recordFailedLogin(ip);
       return NextResponse.json(
         { success: false, error: 'Credenciales inválidas' },
         { status: 401 }
@@ -52,11 +63,14 @@ export async function POST(request: NextRequest) {
     const valid = await verifyPassword(password, user.password);
 
     if (!valid) {
+      recordFailedLogin(ip);
       return NextResponse.json(
         { success: false, error: 'Credenciales inválidas' },
         { status: 401 }
       );
     }
+
+    recordSuccessfulLogin(ip);
 
     const token = generateToken({
       userId: user.id,

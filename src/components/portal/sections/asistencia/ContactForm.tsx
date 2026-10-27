@@ -38,32 +38,30 @@ export default function ContactForm() {
   const [captchaSvg, setCaptchaSvg] = useState<string>('');
   const [captchaId, setCaptchaId] = useState<string>('');
   const [captchaAnswer, setCaptchaAnswer] = useState<string>('');
+  const [captchaType, setCaptchaType] = useState<string>('alphanum');
   const [submittedAt] = useState<string>(() => new Date().toISOString());
   const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
+  const fetchCaptcha = () => {
     fetch('/api/captcha/new')
       .then((res) => res.json())
       .then((json) => {
         if (json.success) {
           setCaptchaSvg(json.svg);
           setCaptchaId(json.id);
+          setCaptchaType(json.type ?? 'alphanum');
         }
       })
       .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchCaptcha();
   }, []);
 
   const refreshCaptcha = () => {
     setCaptchaAnswer('');
-    fetch('/api/captcha/new')
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success) {
-          setCaptchaSvg(json.svg);
-          setCaptchaId(json.id);
-        }
-      })
-      .catch(() => {});
+    fetchCaptcha();
   };
 
   const validate = (): FormErrors => {

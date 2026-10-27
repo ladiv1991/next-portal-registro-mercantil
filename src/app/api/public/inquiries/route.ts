@@ -3,8 +3,9 @@ import { z } from 'zod';
 import { db } from '@/lib/db';
 import { checkOrigin } from '@/lib/origin-check';
 import { checkAntiBot, HONEYPOT_FIELD, botOkResponse } from '@/lib/anti-bot';
-import { verifyCaptcha } from '@/lib/captcha';
+import { verifyCaptchaV2 } from '@/lib/captcha-v2';
 import { rateLimit } from '@/lib/rate-limiter';
+import { guardianCheck } from '@/lib/guardian';
 
 const inquirySchema = z.object({
   name: z.string().optional(),
@@ -19,15 +20,25 @@ const inquirySchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || request.headers.get('x-real-ip')
+    || 'unknown';
+
+  // Guardian check
+  const g = await guardianCheck(request, { path: '/api/public/inquiries', ip });
+  if (g.blocked) {
+    return NextResponse.json(
+      { success: false, error: 'Acceso denegado. Contacte al administrador.' },
+      { status: 403 },
+    );
+  }
+
   try {
     if (!checkOrigin(request)) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
     // Rate limiting: max 10 solicitudes por IP cada 60 segundos
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || request.headers.get('x-real-ip')
-      || 'unknown';
     const allowed = await rateLimit(`inquiries:${ip}`, { max: 10, windowMs: 60_000 });
     if (!allowed) {
       return NextResponse.json(
@@ -41,16 +52,14 @@ export async function POST(request: Request) {
     // Anti-bot: honeypot + timing
     const antiBotReason = checkAntiBot(body);
     if (antiBotReason !== null) {
-      // Honeypot hit → silent 200 so bots can't fingerprint the rule.
-      // checkAntiBot returns '' for honeypot, non-empty string for timing fail.
       if (antiBotReason === '') {
         return botOkResponse();
       }
       return NextResponse.json({ success: false, error: antiBotReason }, { status: 400 });
     }
 
-    // CAPTCHA verification (mandatory — zod enforces min length above)
-    const captchaValid = verifyCaptcha(body.captchaId ?? '', body.captchaAnswer ?? '');
+    // CAPTCHA verification (v2 — alfanumérico complejo)
+    const captchaValid = verifyCaptchaV2(body.captchaId ?? '', body.captchaAnswer ?? '');
     if (!captchaValid) {
       return NextResponse.json(
         { success: false, error: 'La verificación de seguridad no es correcta. Por favor, intentelo de nuevo.' },
