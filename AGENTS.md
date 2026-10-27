@@ -348,7 +348,7 @@ openspec init
 
 ---
 
-## Estado de Seguridad — Actualizado 2026-10-26
+## Estado de Seguridad — Actualizado 2026-10-27 (upgrade Next.js 16.4.3)
 
 ### Fixes aplicados en esta sesión
 | Fix | Antes | Después | Impacto |
@@ -360,14 +360,18 @@ openspec init
 | `serverActions.allowedOrigins` | No configurado | Lista de origins permitidos | Medio — restricción CSRF Server Actions |
 | Rate limiting en login CMS | No existente | 5 intentos/60s por IP | Alto — previene brute force |
 | Rate limiting en login Portal | No existente | 5 intentos/60s por IP | Alto — previene brute force |
-| Upgrade `next` | 16.1.3 | **16.4.1** | Crítico — 5 CVEs RCE eliminados |
+| Upgrade `next` | 16.1.3 | **16.4.3** | Crítico — 5 CVEs RCE eliminados |
 | Upgrade `next-auth` | 4.24.13 | **4.24.15** | Crítico — homoglyph bypass eliminado |
 | Upgrade `sharp` | 0.34.5 | **0.35.5** | Alto — CVEs libheif/libvips eliminados |
+| `isomorphic-dompurify` + sanitización chatbot | No existente | **3 sitios con DOMPurify.sanitize()** | Alto — previene XSS LLM output |
+| Postinstall Prisma patch hook | No registrado | `"postinstall": "node scripts/postinstall-patch-prisma.js"` | Medio — parche survive reinstalls |
+
+**Segundos menores seguros actualizados**: react 19.3.1, typescript 5.9.3, tailwindcss 4.3.3, zod 4.6.7, @tanstack/react-query 5.105.0, next-intl 4.14.9, react-hook-form 7.91.0, sonner 2.0.8, zustand 5.0.16, eslint 9.39.2, bun-types 1.4.4, y 10+ más. Commit `c06d0c5`.
 
 ### Pendientes para futura implementación
 - **CSP con nonces**: Requiere `proxy.ts` + pasar nonce a componentes. Compatible con App Router.
-- **DOMPurify en chatbot**: El contenido del LLM se renderiza con `dangerouslySetInnerHTML` sin sanitización. Agregar `isomorphic-dompurify` si se habilita contenido generado por usuarios.
 - **HSTS preload**: Solo aplicar cuando el dominio tenga SSL activo y todos los subdominios respondan HTTPS.
+- **Node ≥24.15**: `isomorphic-dompurify@4.6.0` exige esta versión; actualmente en 24.14.1 (warning EBADENGINE, funciona pero conviene actualizar).
 
 ### Resumen de vulnerabilidades post-audit
 ```
