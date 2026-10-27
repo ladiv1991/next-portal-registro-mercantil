@@ -3,8 +3,11 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin-check';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
     await requireAuth();
     const items = await db.regulation.findMany({ orderBy: { order: 'asc' } });
     return NextResponse.json({ success: true, data: items });

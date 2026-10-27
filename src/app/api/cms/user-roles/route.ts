@@ -4,8 +4,11 @@ import { requireAuth } from '@/lib/api-auth';
 import { createUserRoleSchema, updateUserRoleSchema } from '@/lib/cms-schemas';
 import { checkOrigin } from '@/lib/origin-check';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    if (!checkOrigin(request)) {
+      return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
+    }
     await requireAuth();
 
     const roles = await db.userRole.findMany({
