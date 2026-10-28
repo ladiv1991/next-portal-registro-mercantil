@@ -141,7 +141,24 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 - **Skills**: `brainstorming`, `diagnosing-superpowers`, `dispatching-parallel-agents`, `executing-plans`, `finishing-a-development-branch`, `receiving-code-review`, `requesting-code-review`, `subagent-driven-development`, `systematic-debugging`, `test-driven-development`, `using-git-worktrees`, `using-superpowers`, `verification-before-completion`, `writing-plans`, `writing-skills`
 - **Uso**: Workflows de ingenieria completos -- brainstorming antes de crear, debugging sistematico, TDD, planes de ejecucion, parallel agents, verificacion antes de completar.
 
-### 9. Skills locales del proyecto
+### 9. Spec Kit (Spec-Driven Development)
+- **Instalación**: `uv tool install specify-cli`
+- **Propósito**: Toolkit estructurado para desarrollo guiado por especificaciones — define qué construir, planifica, genera tareas y ejecuta
+- **Ubicación**: `.specify/` en el raíz del proyecto, scripts PowerShell en `.specify/scripts/powershell/`
+- **Comandos clave** (ejecutar desde el chat del agente, no terminal):
+  - `/speckit-constitution` — Crear principios constitucionales del proyecto (una vez)
+  - `/speckit-specify <descripción>` — Crear especificación de feature
+  - `/speckit-plan` — Generar plan de implementación técnico
+  - `/speckit-tasks` — Desglosar en tareas accionables con checkboxes
+  - `/speckit-implement` — Ejecutar implementación siguiendo tasks.md
+  - `/speckit-converge` — Validar que el código cumple specs y agregar tareas pendientes
+  - `/speckit-clarify` — Resolver ambigüedades antes de planificar (opcional)
+  - `/speckit-analyze` — Consistencia cross-artifact entre spec y plan (opcional)
+  - `/speckit-checklist` — Checklists de calidad (opcional)
+- **Flujo SDD mínimo**: `/speckit-constitution` → `/speckit-specify` → `/speckit-plan` → `/speckit-tasks` → `/speckit-implement` → `/speckit-converge`
+- **Extensión de testing**: `/speckit.extension add bug` (bug fixing), `/speckit.extension add assess` (idea assessment)
+
+### 10. Skills locales del proyecto
 | Skill | Uso |
 |-------|-----|
 | `code-review` | Revisar diffs, commits, rangos git |
@@ -434,6 +451,13 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 - Capas cacheadas: deps separados de build. Reconstrucción ~30-60s solo builder+runner.
 - CMD usa `;` entre prisma db push, seed y server.js (no `&&`) para que fallo de seed no bloquee servidor.
 - Stack: app:3003, postgres:5433, traefik:8082.
+- **Docker Desktop en Windows**: si el daemon está caído, arrancar desde PowerShell como admin:
+  ```powershell
+  Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+  # O esperar a que Docker Desktop esté ready:
+  docker info --format "{{.ServerVersion}}"
+  ```
+  Si falla por timeout, reiniciar el servicio: `Restart-Service com.docker.service` (en Services.msc o con `Stop-Service`/`Start-Service`).
 
 ### Normativa legal
 - Toda actualización de datos normativos/legales en el portal debe indicar la fuente (decreto o ley).
@@ -471,6 +495,30 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 - Código Enzona intacto en `src/app/auth/enzona/`, `src/app/api/auth/enzona/callback/`, `src/components/cms/cms-enzona-config.tsx` (solo admin puede configuarlo).
 - En `AuthenticationModal.tsx` el botón "Autenticarse con ENZONA" y sección están presentes pero el usuario puede ignorarlos — usar login normal con email/contraseña.
 - En `PortalDashboard.tsx` las rutas de fallback aún apuntan a `/auth/enzona` si no hay sesión de portal; esto se corregirá cuando Enzona esté operativo.
+
+### Docker Push to Harbor Corporate Registry
+- **Registry**: `registry.dev.xetid.cu/portales-web`
+- **Script**: `scripts/push-to-harbor.sh`
+- **Usage**:
+  ```bash
+  # Login to Harbor (requires corporate credentials)
+  docker login registry.dev.xetid.cu
+
+  # Build, tag, and push with latest tag
+  bash scripts/push-to-harbor.sh
+
+  # Build, tag, and push with custom tag
+  bash scripts/push-to-harbor.sh --tag v1.0.0
+
+  # Build and tag only (no push)
+  bash scripts/push-to-harbor.sh --no-push
+
+  # Skip database migration check
+  bash scripts/push-to-harbor.sh --skip-db
+  ```
+- **Image names**: `portales-web/portal-rmc:latest` and `portales-web/portal-rmc:<tag>`
+- **Database note**: The Dockerfile CMD currently runs `prisma db push --accept-data-loss` on container start. For production pushes, run migrations manually before deploy: `npx prisma migrate deploy`. Use `--skip-db` flag to silence this check during image push.
+- **Env var**: Override `HARBOR_REGISTRY` to use a different Harbor instance.
 
 ### Multi-dominio para despliegue
 - El sitio responde en: `registro-mercantil.xetid.cu`, `https://portal-registromercantil.test.xutil.cu/`, `https://portal-registromercantil.egob.dev.xetid.cu/`
