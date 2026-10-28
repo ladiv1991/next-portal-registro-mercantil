@@ -1,0 +1,7 @@
+# Credenciales y secretos (NO subir a git)
+.env
+*.tar.gz
+*.tar
+__pycache__/
+node_modules/
+.DS_Store

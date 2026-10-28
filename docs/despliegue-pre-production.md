@@ -1,185 +1,254 @@
-# Despliegue en Pre-Producción — Portal del Registro Mercantil
+# Despliegue Offline — Portal del Registro Mercantil
 
-> **Imagen**: `registry.dev.xetid.cu/portales-web/portal-rmc:latest`
-> **Tamaño**: 660MB | **CMD**: `node server.js`
-> **Puerto**: 3000
-> **Estado**: ✅ Verificado (health check pasa)
+> **Imagen**: `registry.dev.xetid.cu/portales-web/portal-rmc:latest` (660MB)
+> **CMD**: `node server.js` | **Puerto**: 3000
+> **Estado**: ✅ Verificado en test-local
 
 ---
 
-## Requisitos previos en el servidor de pre-producción
+## Flujo de despliegue (sin internet en el servidor)
 
-1. **Docker** instalado y corriendo
-2. **Credenciales Harbor** (usuario: `voacosta`)
-3. **Puerto 3000** disponible (o cambiar en el comando)
+```
+┌─────────────────────┐       ┌──────────────────────┐
+│  Equipo con acceso  │  tar  │  Servidor pre-prod   │
+│  a Harbor (local)   │ ───►  │  (sin internet)      │
+└─────────────────────┘       └──────────────────────┘
+        │                              │
+   docker save                   docker load
+        │                              │
+   portal-rmc-latest.tar    ─────►   bash deploy.sh
+                                    (automático)
+```
+
+---
+
+## PASO 1 — En el equipo con acceso a Harbor (o Docker Desktop local)
+
+### 1.1 Verificar credenciales Harbor
 
 ```powershell
-# Verificar Docker
+docker login registry.dev.xetid.cu
+# usuario: voacosta
+# password: (tu contraseña corporativa)
+```
+
+### 1.2 Verificar que la imagen existe
+
+```powershell
+docker pull registry.dev.xetid.cu/portales-web/portal-rmc:latest
+docker images registry.dev.xetid.cu/portales-web/portal-rmc
+```
+
+### 1.3 Exportar la imagen a archivo tar
+
+```powershell
+cd D:\WORK\www\github\next-portal-registro-mercantil
+docker save registry.dev.xetid.cu/portales-web/portal-rmc:latest -o scripts\deploy\portal-rmc-latest.tar
+```
+
+> El archivo resultante mide ~175MB (comprimido).
+
+### 1.4 Preparar archivos para transferencia
+
+Los siguientes archivos deben copiarse al servidor de pre-producción:
+
+| Archivo | Tamaño | Propósito |
+|---------|--------|-----------|
+| `scripts/deploy/portal-rmc-latest.tar` | 175MB | Imagen Docker |
+| `scripts/deploy/deploy.sh` | 6KB | Script de despliegue |
+| `scripts/deploy/.env.example` | 500B | Plantilla de variables |
+
+> **Método de transferencia**: USB, SCP, rsync, o cualquier medio disponible en tu red interna.
+
+---
+
+## PASO 2 — En el servidor de pre-producción (sin internet)
+
+### 2.1 Copiar los archivos
+
+```bash
+# Ejemplo: vía SCP desde otro equipo en la red interna
+scp -r deploy/ usuario@servidor-preprod:/opt/portal-rmc/
+# O via USB/medio físico
+```
+
+### 2.2 Crear el archivo .env con tus credenciales reales
+
+```bash
+cd /opt/portal-rmc
+cp .env.example .env
+nano .env
+```
+
+Editar el archivo `.env` con valores reales:
+
+```env
+DATABASE_URL=postgresql://portal_rmc:TuPasswordDB@192.168.x.x:5433/registro_mercantil
+JWT_SECRET=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6
+NODE_ENV=production
+PORT=3000
+```
+
+> **JWT_SECRET**: mínimo 32 caracteres aleatorios. Generar si es necesario:
+> ```bash
+> node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+> ```
+
+### 2.3 Verificar Docker
+
+```bash
 docker --version
 docker info --format "{{.ServerVersion}}"
 ```
 
----
+Si Docker no está instalado:
+```bash
+# CentOS/RHEL
+curl -fsSL https://get.docker.com | sh
+systemctl enable --now docker
 
-## Paso 1 — Descargar la imagen desde Harbor (sin internet)
-
-```powershell
-docker pull registry.dev.xetid.cu/portales-web/portal-rmc:latest
+# Ubuntu/Debian
+curl -fsSL https://get.docker.com | sh
+systemctl enable --now docker
 ```
 
-> Si el servidor no tiene acceso a Harbor, exportar/importar:
-> ```powershell
-> # Desde equipo con acceso a Harbor
-> docker save registry.dev.xetid.cu/portales-web/portal-rmc:latest -o portal-rmc-latest.tar
-> # Copiar el archivo .tar al servidor pre-prod
-> # Desde servidor pre-prod
-> docker load -i portal-rmc-latest.tar
-> ```
+### 2.4 Ejecutar el despliegue
 
----
-
-## Paso 2 — Configurar variables de entorno
-
-Crea un archivo `.env` en el servidor con al menos:
-
-```env
-DATABASE_URL=postgresql://portal_rmc:<password>@<host-db>:5433/registro_mercantil
-JWT_SECRET=<tu-secret-de-32-charactores-minimo>
+```bash
+cd /opt/portal-rmc
+bash deploy.sh
 ```
 
-> **Nota**: Las migraciones de base de datos YA están aplicadas en la imagen.
-> Solo se necesita conexión a la DB y el JWT_SECRET.
+El script hará automáticamente:
+1. Cargar la imagen desde `portal-rmc-latest.tar` (660MB)
+2. Validar `.env` (DATABASE_URL + JWT_SECRET presentes)
+3. Eliminar contenedor anterior si existe
+4. Iniciar contenedor en segundo plano
+5. Esperar a que el servidor esté listo
+6. Verificar health check (`/api/health`)
+7. Mostrar resumen final
 
 ---
 
-## Paso 3 — Ejecutar el contenedor
+## PASO 3 — Verificación post-despliegue
 
-```powershell
-docker run -d `
-  --name portal-rmc `
-  --restart unless-stopped `
-  -p 3000:3000 `
-  -e NODE_ENV=production `
-  -e PORT=3000 `
-  -e DATABASE_URL="postgresql://portal_rmc:<password>@<host-db>:5433/registro_mercantil" `
-  -e JWT_SECRET="<tu-secret>" `
-  registry.dev.xetid.cu/portales-web/portal-rmc:latest
-```
+### 3.1 Health check
 
-O con archivo .env:
-
-```powershell
-docker run -d `
-  --name portal-rmc `
-  --restart unless-stopped `
-  --env-file .env `
-  -p 3000:3000 `
-  registry.dev.xetid.cu/portales-web/portal-rmc:latest
-```
-
----
-
-## Paso 4 — Verificar que arrancó
-
-```powershell
-docker logs -f portal-rmc
-# Debe mostrar: "✓ Ready in ..."
-```
-
-En otra terminal, probar health check:
-
-```powershell
+```bash
 curl http://localhost:3000/api/health
-# Esperado: {"status":"ok"}
+# Respuesta esperada: {"status":"ok"}
+```
+
+### 3.2 Logs
+
+```bash
+docker logs -f portal-rmc
+```
+
+### 3.3 Probar login CMS
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@registromercantil.cu","password":"Admin2026!"}'
+# Respuesta: { success: true, token: "eyJ..." }
+```
+
+### 3.4 Estado del contenedor
+
+```bash
+docker ps --filter "name=portal-rmc"
+docker stats portal-rmc
 ```
 
 ---
 
-## Paso 5 — Verificar credenciales de prueba
+## COMANDOS DE GESTIÓN
 
-```powershell
-# Login CMS
-$body = @{ email = "admin@registromercantil.cu"; password = "Admin2026!" } | ConvertTo-Json
-Invoke-RestMethod -Uri "http://localhost:3000/api/auth/login" -Method POST -Body $body -ContentType "application/json"
-# Respuesta esperada: { success: true, token: "..." }
-```
-
----
-
-## Comandos útiles
-
-```powershell
-# Ver estado
-docker ps | Select-String "portal-rmc"
-
-# Ver logs
-docker logs portal-rmc
+```bash
+# Parar el servicio
+docker stop portal-rmc
 
 # Reiniciar
 docker restart portal-rmc
 
-# Parar
-docker stop portal-rmc
-
-# Eliminar y recrear (ej. después de actualizar imagen)
+# Eliminar completamente
 docker rm -f portal-rmc
-docker pull registry.dev.xetid.cu/portales-web/portal-rmc:latest
-# ... ejecutar docker run de nuevo
-```
-
----
-
-## Rollback a versión anterior
-
-```powershell
-# Si `latest` falla, bajar a una versión conocida
-docker pull registry.dev.xetid.cu/portales-web/portal-rmc:v1.0.0
-docker stop portal-rmc && docker rm portal-rmc
-# Ejecutar docker run con :v1.0.0
-```
-
----
-
-## Solución de problemas
-
-### Error: `Cannot find module 'next'`
-La imagen es autocontenida. Si aparece este error, la imagen no se descargó completa.
-```powershell
 docker rmi registry.dev.xetid.cu/portales-web/portal-rmc:latest
-docker pull registry.dev.xetid.cu/portales-web/portal-rmc:latest
-```
 
-### Error: `connect ECONNREFUSED` en DB
-Verificar que el host de base de datos es accesible desde el contenedor.
-```powershell
-# Si la DB está en otro contenedor Docker, usar --network host o linking
-docker run --network host ... 
-# O si la DB es un servicio externo, verificar conectividad
-Test-NetConnection -ComputerName <host-db> -Port 5433
-```
+# Ver logs en tiempo real
+docker logs -f portal-rmc
 
-### Error: `Invalid JWT_SECRET`
-El JWT_SECRET debe tener al menos 32 caracteres. Generar uno nuevo:
-```powershell
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# Ver consumo de recursos
+docker stats portal-rmc
+
+# Entrar al contenedor (debug)
+docker exec -it portal-rmc bash
 ```
 
 ---
 
-## Arquitectura de la imagen
+## ROLLOVER (actualizar a nueva versión)
 
-```
-registry.dev.xetid.cu/portales-web/portal-rmc:latest (660MB)
-├── .next/server.js          ← Servidor Next.js standalone
-├── .next/static/            ← Assets estáticos
-├── node_modules/            ← Todas las dependencias de runtime
-├── prisma/                  ← Schema + migraciones (ya aplicadas)
-├── public/                  ← Archivos estáticos del portal
-└── package.json             ← Metadatos (no usado en runtime)
-
-CMD: node server.js
-PORT: 3000
-Healthcheck: wget -qO- http://localhost:3000/api/health
+```bash
+# Si se actualizó el archivo tar en el servidor:
+cd /opt/portal-rmc
+bash deploy.sh
+# El script detecta el contenedor existente y lo reemplaza
 ```
 
-> **Offline-safe**: No requiere internet ni ejecuta `npm install`, `bun install`, o `prisma migrate` dentro del contenedor.
+---
+
+## SOLUCIÓN DE PROBLEMAS
+
+### Error: "Cannot find module 'next'"
+```bash
+# La imagen no cargó bien. Recargar:
+docker rmi registry.dev.xetid.cu/portales-web/portal-rmc:latest
+bash deploy.sh
+```
+
+### Error: "connect ECONNREFUSED" en DB
+```bash
+# Verificar conectividad con la base de datos
+nc -zv <host-db> 5433
+# Verificar que DATABASE_URL es correcto en .env
+```
+
+### Error: "JWT_SECRET is too short"
+```bash
+# El JWT_SECRET debe tener al menos 32 caracteres
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# Copiar el valor y actualizar .env
+```
+
+### El contenedor arranca pero health check falla
+```bash
+# Verificar logs completos
+docker logs portal-rmc
+# Si es problema de DB, revisar que el servicio PostgreSQL esté corriendo
+docker ps --filter "status=running"
+```
+
+---
+
+## CONTENIDO DE LA IMAGEN
+
+```
+/ (rootfs)
+├── app/
+│   ├── server.js            ← Entry point (Next.js standalone)
+│   ├── .next/               ← Build de Next.js (standalone)
+│   │   ├── static/          ← Assets JS/CSS
+│   │   ├── server/          ← Server-side routes
+│   │   └── package.json     ← Metadata
+│   ├── node_modules/        ← Todas las dependencias runtime
+│   ├── prisma/
+│   │   ├── schema.prisma    ← Esquema DB
+│   │   └── migrations/      ← 2 migraciones (ya aplicadas en prod)
+│   ├── public/              ← Archivos estáticos
+│   └── package.json
+└── .env                     ← Copia del .env del host (solo lectura)
+```
+
+> **Offline-safe**: El contenedor NO ejecuta `npm install`, `bun install`, ni `prisma migrate`. Todo está pre-construido.
