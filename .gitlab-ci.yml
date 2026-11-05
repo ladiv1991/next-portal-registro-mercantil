@@ -30,7 +30,7 @@ build_image:
       echo "Pushing a Harbor..."
       docker push "$HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
       docker push "$HARBOR_REGISTRY/$IMAGE_NAME:latest"
-      echo "✅ Imagen lista: $HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+      echo "Imagen lista: $HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
   after_script:
     - docker logout $HARBOR_REGISTRY 2>/dev/null || true
   rules:
@@ -48,28 +48,26 @@ deploy_preprod:
   script:
     - |
       echo "Generando docker-compose.override.yml..."
-      cat > "$PREPROD_DIR/docker-compose.override.yml" <<EOFOVERRIDE
-services:
-  app:
-    image: ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
-    build: {}
-  postgres:
-    image: registry.dev.xetid.cu/proxy.docker.io/postgres:15
-    build: {}
-  traefik:
-    image: registry.dev.xetid.cu/proxy.docker.io/traefik:v3.0
-    build: {}
-EOFOVERRIDE
-      echo "✅ Override generado"
+      echo "services:" > "$PREPROD_DIR/docker-compose.override.yml"
+      echo "  app:" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    image: ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    build: {}" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "  postgres:" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    image: registry.dev.xetid.cu/proxy.docker.io/postgres:15" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    build: {}" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "  traefik:" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    image: registry.dev.xetid.cu/proxy.docker.io/traefik:v3.0" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    build: {}" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "Override generado"
 
       echo "Pulling imagen desde Harbor..."
       docker pull ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
-      echo "✅ Imagen pullada"
+      echo "Imagen pullada"
 
       echo "Reiniciando contenedor app..."
       cd "$PREPROD_DIR"
       docker compose up -d --no-deps app
-      echo "✅ Contenedor reiniciado"
+      echo "Contenedor reiniciado"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       needs:
@@ -87,13 +85,13 @@ health_check:
       echo "Esperando que la app levante (/api/health)..."
       for i in $(seq 1 30); do
         if curl -fsS "http://127.0.0.1:${PREPROD_PORT}/api/health" 2>/dev/null | grep -q '"status":"ok"'; then
-          echo "✅ Health checkPassed en intento $i"
+          echo "Health check passed en intento $i"
           exit 0
         fi
         echo "  Intento $i/30 — esperando..."
         sleep 5
       done
-      echo "❌ Health check failed — la app no responde"
+      echo "Health check failed - la app no responde"
       docker logs registro-mercantil-app --tail 30
       exit 1
   needs:
