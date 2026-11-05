@@ -74,6 +74,16 @@ if [[ "$MODE" == "server" ]]; then
     info "Aplicando .env (si existe)..."
     [[ -f .env ]] || die ".env no encontrado en $SERVER_DIR"
 
+    # Generar override para evitar build local y forzar uso de imagen Harbor
+    # El servidor no tiene acceso a Docker Hub, usa imágenes proxy de Harbor
+    cat > docker-compose.override.yml <<EOFOVERRIDE
+services:
+  app:
+    image: ${HARBOR_REGISTRY%/}/portal-rmc:latest
+    build: {}
+EOFOVERRIDE
+    info "Override generado (usa imagen Harbor, no construye)"
+
     info "Reiniciando contenedor app ..."
     docker compose up -d --no-deps app || die "Fallo docker compose up"
 
