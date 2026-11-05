@@ -1,0 +1,102 @@
+# ================================================================
+# CI/CD — Portal del Registro Mercantil de Cuba
+# Runner: shell en 10.10.3.22 (executor=shell, Docker nativo del host)
+# ================================================================
+stages:
+  - build
+  - deploy
+  - health_check
+
+variables:
+  HARBOR_REGISTRY: registry.dev.xetid.cu/portales-web
+  IMAGE_NAME: portal-rmc
+  PREPROD_DIR: /opt/portal-mercantil
+  PREPROD_PORT: "3003"
+
+# ============================================================
+# BUILD: construir imagen y subir a Harbor
+# ============================================================
+build_image:
+  stage: build
+  tags:
+    - portal-rmc
+  before_script:
+    - echo "$HARBOR_PASSWORD" | docker login $HARBOR_REGISTRY -u "$HARBOR_USERNAME" --password-stdin
+  script:
+    - |
+      echo "Construyendo imagen..."
+      docker build --network=host -t "$HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA" .
+      docker build --network=host -t "$HARBOR_REGISTRY/$IMAGE_NAME:latest" .
+      echo "Pushing a Harbor..."
+      docker push "$HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+      docker push "$HARBOR_REGISTRY/$IMAGE_NAME:latest"
+      echo "✅ Imagen lista: $HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+  after_script:
+    - docker logout $HARBOR_REGISTRY 2>/dev/null || true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ============================================================
+# DEPLOY: override + pull + restart en servidor
+# ============================================================
+deploy_preprod:
+  stage: deploy
+  tags:
+    - portal-rmc
+  before_script:
+    - '[ -f "$PREPROD_DIR/docker-compose.override.yml" ] && echo "Override existe, actualizando"'
+  script:
+    - |
+      echo "Generando docker-compose.override.yml..."
+      cat > "$PREPROD_DIR/docker-compose.override.yml" <<EOFOVERRIDE
+services:
+  app:
+    image: ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
+    build: {}
+  postgres:
+    image: registry.dev.xetid.cu/proxy.docker.io/postgres:15
+    build: {}
+  traefik:
+    image: registry.dev.xetid.cu/proxy.docker.io/traefik:v3.0
+    build: {}
+EOFOVERRIDE
+      echo "✅ Override generado"
+
+      echo "Pulling imagen desde Harbor..."
+      docker pull ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest
+      echo "✅ Imagen pullada"
+
+      echo "Reiniciando contenedor app..."
+      cd "$PREPROD_DIR"
+      docker compose up -d --no-deps app
+      echo "✅ Contenedor reiniciado"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      needs:
+        - build_image
+
+# ============================================================
+# HEALTH CHECK: verificar que la app responde
+# ============================================================
+health_check:
+  stage: health_check
+  tags:
+    - portal-rmc
+  script:
+    - |
+      echo "Esperando que la app levante (/api/health)..."
+      for i in $(seq 1 30); do
+        if curl -fsS "http://127.0.0.1:${PREPROD_PORT}/api/health" 2>/dev/null | grep -q '"status":"ok"'; then
+          echo "✅ Health checkPassed en intento $i"
+          exit 0
+        fi
+        echo "  Intento $i/30 — esperando..."
+        sleep 5
+      done
+      echo "❌ Health check failed — la app no responde"
+      docker logs registro-mercantil-app --tail 30
+      exit 1
+  needs:
+    - deploy_preprod
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
