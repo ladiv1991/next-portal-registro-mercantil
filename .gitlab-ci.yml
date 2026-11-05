@@ -58,7 +58,10 @@ deploy_preprod:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   after_script:
-    - docker logout $HARBOR_REGISTRY 2>/dev/null || true: verificar que la app responde
+    - docker logout $HARBOR_REGISTRY 2>/dev/null || true
+
+# ============================================================
+# HEALTH CHECK: verificar que la app responde
 # ============================================================
 health_check:
   stage: health_check
