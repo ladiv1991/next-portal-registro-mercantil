@@ -1,6 +1,6 @@
 # Override para entornos sin acceso a Docker Hub (preproducción).
 # Fuerza el uso de imágenes de Harbor en vez de construir localmente.
-# El deploy script genera este archivo automáticamente en modo --server.
+# El deploy script y el pipeline CI/CD generan este archivo automáticamente.
 services:
   app:
     image: registry.dev.xetid.cu/portales-web/portal-rmc:latest
