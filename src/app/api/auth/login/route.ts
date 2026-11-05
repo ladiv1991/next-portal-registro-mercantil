@@ -5,10 +5,13 @@ import { z } from 'zod';
 import { rateLimit } from '@/lib/rate-limiter';
 import { checkOrigin } from '@/lib/origin-check';
 import { guardianCheck, recordFailedLogin, recordSuccessfulLogin } from '@/lib/guardian';
+import { verifyCaptchaV2 } from '@/lib/captcha-v2';
 
 const loginSchema = z.object({
   email: z.string().email('Correo electrónico inválido'),
   password: z.string().min(1, 'La contraseña es requerida'),
+  captchaId: z.string().min(1, 'CAPTCHA requerido'),
+  captchaAnswer: z.string().min(1, 'CAPTCHA requerido'),
 });
 
 export async function POST(request: NextRequest) {
@@ -38,17 +41,29 @@ export async function POST(request: NextRequest) {
         { status: 429 },
       );
     }
+
     const body = await request.json();
     const parsed = loginSchema.safeParse(body);
 
     if (!parsed.success) {
+      const firstError = parsed.error.issues[0]?.message || 'Datos inválidos';
       return NextResponse.json(
-        { success: false, error: parsed.error.issues[0]?.message || 'Datos inválidos' },
+        { success: false, error: firstError },
         { status: 400 }
       );
     }
 
-    const { email, password } = parsed.data;
+    const { email, password, captchaId, captchaAnswer } = parsed.data;
+
+    // Verify CAPTCHA (single-use, anti-replay)
+    const captchaValid = verifyCaptchaV2(captchaId, captchaAnswer);
+    if (!captchaValid) {
+      recordFailedLogin(ip);
+      return NextResponse.json(
+        { success: false, error: 'Verificación de seguridad inválida. Intente de nuevo.' },
+        { status: 400 }
+      );
+    }
 
     const user = await db.user.findUnique({ where: { email } });
 

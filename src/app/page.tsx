@@ -117,10 +117,10 @@ export default function Home() {
   }, [handleNavClick]);
 
   // ---- Authentication ----
-  const handleCmsLogin = async (email: string, password: string): Promise<boolean> => {
+  const handleCmsLogin = async (email: string, password: string, captchaId: string, captchaAnswer: string): Promise<boolean> => {
     setLoginError('');
     try {
-      const result = await cmsLogin(email, password);
+      const result = await cmsLogin(email, password, captchaId, captchaAnswer);
       if (result && result.user) {
         setCmsUser(result.user);
         return true;

@@ -44,12 +44,17 @@ async function handleResponse<T>(response: Response): Promise<T> {
 // Auth
 // ============================================================
 
-export async function login(email: string, password: string): Promise<{ user: User }> {
+export async function login(
+  email: string,
+  password: string,
+  captchaId: string,
+  captchaAnswer: string,
+): Promise<{ user: User }> {
   const response = await fetch(`${API_BASE}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, captchaId, captchaAnswer }),
   });
   return handleResponse<{ user: User }>(response);
 }

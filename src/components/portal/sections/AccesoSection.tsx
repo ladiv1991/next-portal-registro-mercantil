@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Lock, Shield, AlertCircle, FileSignature, FileCheck, Award,
   ClipboardList, BarChart3, FolderOpen, MessageCircle, UserCog,
-  Settings, BadgeInfo, ExternalLink,
+  Settings, BadgeInfo, ExternalLink, RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +16,7 @@ import PasswordInput from '@/components/ui/password-input';
 import { fadeInUp } from '@/data/portal-data';
 
 interface AccesoSectionProps {
-  onLogin: (email: string, password: string) => Promise<boolean>;
+  onLogin: (email: string, password: string, captchaId: string, captchaAnswer: string) => Promise<boolean>;
   loginError: string;
 }
 
@@ -25,6 +25,30 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
   const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [localError, setLocalError] = useState('');
+  const [captchaSvg, setCaptchaSvg] = useState<string>('');
+  const [captchaId, setCaptchaId] = useState<string>('');
+  const [captchaAnswer, setCaptchaAnswer] = useState<string>('');
+
+  const fetchCaptcha = () => {
+    fetch('/api/captcha/new')
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          setCaptchaSvg(json.svg);
+          setCaptchaId(json.id);
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
+
+  const refreshCaptcha = () => {
+    setCaptchaAnswer('');
+    fetchCaptcha();
+  };
 
   const displayError = localError || loginError;
 
@@ -40,15 +64,20 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
       setLocalError('Por favor, ingrese su contraseña.');
       return;
     }
+    if (!captchaAnswer.trim()) {
+      setLocalError('Complete la verificación de seguridad.');
+      return;
+    }
 
     setLoginLoading(true);
     try {
-      const success = await onLogin(loginEmail, loginPassword);
+      const success = await onLogin(loginEmail, loginPassword, captchaId, captchaAnswer);
       if (!success) {
-        // Error is set by parent via loginError prop
+        refreshCaptcha();
       }
     } catch {
       setLocalError('Error de conexión. Intente nuevamente.');
+      refreshCaptcha();
     } finally {
       setLoginLoading(false);
     }
@@ -122,6 +151,45 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                     onChange={(e) => setLoginPassword(e.target.value)}
                     disabled={loginLoading}
                   />
+                </div>
+                {/* CAPTCHA challenge */}
+                <div>
+                  <Label className="flex items-center gap-1">
+                    <Shield className="w-3 h-3" />
+                    Verificación de seguridad
+                  </Label>
+                  <div className="flex items-center gap-3 mt-1">
+                    {captchaSvg ? (
+                      <div
+                        className="border rounded-md p-2 bg-white flex-shrink-0"
+                        dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                      />
+                    ) : (
+                      <div className="w-[200px] h-[70px] border rounded-md bg-gray-100 flex-shrink-0" />
+                    )}
+                    <Input
+                      type="text"
+                      placeholder="Escriba lo que ve"
+                      className={`flex-1 ${localError && !captchaAnswer ? 'border-red-500' : ''}`}
+                      value={captchaAnswer}
+                      onChange={(e) => {
+                        setCaptchaAnswer(e.target.value);
+                        if (localError) setLocalError('');
+                      }}
+                      autoFocus
+                      disabled={loginLoading}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={refreshCaptcha}
+                      title="Actualzar CAPTCHA"
+                      disabled={loginLoading}
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 text-sm">
