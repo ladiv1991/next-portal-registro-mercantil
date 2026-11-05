@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAuth, requireAdmin } from '@/lib/api-auth';
 import { updateUserRoleSchema } from '@/lib/cms-schemas';
 import { checkOrigin } from '@/lib/origin-check';
 
@@ -13,7 +13,8 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    // Solo admin puede modificar roles
+    await requireAdmin();
     const { id } = await params;
     const body = await request.json();
 
@@ -45,7 +46,8 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    // Solo admin puede eliminar roles
+    await requireAdmin();
     const { id } = await params;
 
     // Verificar que no sea un rol por defecto

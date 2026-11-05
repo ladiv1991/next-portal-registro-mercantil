@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAuth, requireAdmin } from '@/lib/api-auth';
 import { createUserRoleSchema, updateUserRoleSchema } from '@/lib/cms-schemas';
 import { checkOrigin } from '@/lib/origin-check';
 
@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    // Solo admin crea roles (evita escalada de privilegios por editors)
+    await requireAdmin();
     const body = await request.json();
 
     const validation = createUserRoleSchema.safeParse(body);

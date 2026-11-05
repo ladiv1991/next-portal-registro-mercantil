@@ -25,8 +25,13 @@ async function main() {
   if (!DATABASE_URL) {
     throw new Error('DATABASE_URL must be configured before resetting the admin password.');
   }
-  const email = args.email || process.env.CMS_ADMIN_EMAIL || 'admin@registromercantil.cu';
-  const password = args.password || process.env.CMS_ADMIN_PASSWORD || 'Admin2026!';
+  const email = args.email || process.env.CMS_ADMIN_EMAIL;
+  const password = args.password || process.env.CMS_ADMIN_PASSWORD;
+  if (!email || !password) {
+    console.error('Provide --email <email> --password <password> or set CMS_ADMIN_EMAIL / CMS_ADMIN_PASSWORD. No fallback defaults for security.');
+    process.exitCode = 1;
+    return;
+  }
 
   const prisma = new PrismaClient({
     datasources: {

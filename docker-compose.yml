@@ -13,6 +13,7 @@ services:
       DATABASE_URL: postgresql://portal_rmc:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD_is_required}@postgres:5432/registro_mercantil
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET_is_required}
       NODE_ENV: production
+      HOSTNAME: "0.0.0.0"
       NEXT_PUBLIC_APP_URL: ${PORTAL_SCHEME:-https}://${PORTAL_DOMAIN:-portal-registromercantil.test.xutil.cu}
       UPLOAD_MAX_FILE_MB: ${UPLOAD_MAX_FILE_MB:-5}
       UPLOAD_MAX_IMAGE_MB: ${UPLOAD_MAX_IMAGE_MB:-5}
@@ -38,7 +39,10 @@ services:
     image: ${DOCKER_REGISTRY}traefik:v3.0
     container_name: registro-mercantil-traefik
     command:
-      - "--api.insecure=true"
+      # API dashboard DESHABILITADO - usar auth real (Basic auth + TLS)
+      - "--api=true"
+      - "--api.dashboard=false"
+      - "--api.insecure=false"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:8081"

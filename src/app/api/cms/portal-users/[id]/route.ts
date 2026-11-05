@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { updatePortalUserSchema } from '@/lib/cms-schemas';
 import bcrypt from 'bcryptjs';
 import { checkOrigin } from '@/lib/origin-check';
@@ -14,7 +14,8 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    // Solo admin gestiona usuarios del portal (evita escalada de privilegios por editors)
+    await requireAdmin();
     const { id } = await params;
     const body = await request.json();
 
@@ -52,7 +53,8 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    // Solo admin gestiona usuarios del portal (evita escalada de privilegios por editors)
+    await requireAdmin();
     const { id } = await params;
 
     await db.portalUser.delete({

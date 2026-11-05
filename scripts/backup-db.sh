@@ -1,45 +1,64 @@
-#!/bin/bash
-# backup-db.sh - Script para backup automático de la base de datos
-# Uso: ./scripts/backup-db.sh
+#!/usr/bin/env bash
+# Automated Postgres backup — runs daily via cron or as a one-shot.
+# Usage:
+#   bash scripts/backup-db.sh              # defaults: last 7 days retention
+#   bash scripts/backup-db.sh 30           # keep last 30 days
+#   bash scripts/backup-db.sh --help       # show help
+#
+# Integrates with docker-compose: uses the postgres container directly.
+# Backup files go to ./backups/ (gitignored).
 
-set -e  # Salir en caso de error
+set -euo pipefail
 
-BACKUP_DIR="./backups"
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_FILE="$BACKUP_DIR/backup_$TIMESTAMP.sql.gz"
+RETENTION_DAYS="${1:-7}"
+BACKUP_DIR="$(cd "$(dirname "$0")/../backups" && pwd)"
+TIMESTAMP="$(date +%Y%m%dT%H%M%S)"
+BACKUP_FILE="${BACKUP_DIR}/postgres-backup-${TIMESTAMP}.sql.gz"
+PG_CONTAINER="registro-mercantil-postgres"
 
-# Crear directorio de backups si no existe
-mkdir -p $BACKUP_DIR
+log() { echo "[$(date '+%F %T')] $*"; }
 
-echo "📦 Creando backup de la base de datos..."
-echo "📁 Archivo: $BACKUP_FILE"
+usage() {
+  echo "Usage: $0 [RETENTION_DAYS]"
+  echo "  Default retention: ${RETENTION_DAYS} days"
+  echo ""
+  echo "Examples:"
+  echo "  $0            # use 7-day retention"
+  echo "  $0 30         # keep 30 days of backups"
+  exit 0
+}
 
-# Verificar que el contenedor PostgreSQL esté ejecutándose
-if ! docker ps | grep -q registro-mercantil-postgres; then
-    echo "❌ Error: Contenedor PostgreSQL no está ejecutándose"
-    echo "💡 Ejecuta: docker compose up -d postgres"
-    exit 1
+[[ "${1:-}" == "--help" ]] && usage
+
+mkdir -p "${BACKUP_DIR}"
+
+if ! command -v docker &>/dev/null; then
+  log "ERROR: docker is not installed or not in PATH"
+  exit 1
 fi
 
-# Crear backup comprimido
-docker exec registro-mercantil-postgres pg_dump -U portal_rmc -d registro_mercantil | gzip > $BACKUP_FILE
-
-if [ $? -eq 0 ]; then
-    echo "✅ Backup completado exitosamente"
-    echo "📊 Tamaño: $(du -h $BACKUP_FILE | cut -f1)"
-    echo "📅 Fecha: $(date)"
-    
-    # Mantener solo los últimos 10 backups
-    echo "🧹 Limpiando backups antiguos..."
-    cd $BACKUP_DIR
-    ls -t backup_*.sql.gz 2>/dev/null | tail -n +11 | xargs -r rm -f
-    echo "✅ Backups antiguos eliminados (manteniendo últimos 10)"
-    
-    echo ""
-    echo "💡 Para restaurar este backup:"
-    echo "   bun run db:restore $BACKUP_FILE"
-else
-    echo "❌ Error al crear el backup"
-    rm -f $BACKUP_FILE 2>/dev/null || true
-    exit 1
+if ! docker ps --format '{{.Names}}' | grep -qw "${PG_CONTAINER}"; then
+  log "ERROR: container '${PG_CONTAINER}' is not running"
+  exit 1
 fi
+
+log "Starting backup to ${BACKUP_FILE} ..."
+docker exec "${PG_CONTAINER}" pg_dump \
+  -U portal_rmc \
+  -d registro_mercantil \
+  --clean \
+  --if-exists \
+  --create \
+  --no-owner \
+  --no-privileges \
+  | gzip > "${BACKUP_FILE}"
+
+BACKUP_SIZE="$(du -sh "${BACKUP_FILE}" | cut -f1)"
+log "Backup created: ${BACKUP_FILE} (${BACKUP_SIZE})"
+
+# Rotate old backups
+log "Rotating backups older than ${RETENTION_DAYS} days ..."
+find "${BACKUP_DIR}" -name 'postgres-backup-*.sql.gz' -type f -mtime "+${RETENTION_DAYS}" -delete
+log "Rotation complete"
+
+log "Done."

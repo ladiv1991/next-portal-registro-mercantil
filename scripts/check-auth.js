@@ -2,8 +2,14 @@ const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 
 const DATABASE_URL = process.env.DATABASE_URL;
-const ADMIN_EMAIL = process.env.CMS_ADMIN_EMAIL || 'admin@registromercantil.cu';
-const ADMIN_PASSWORD = process.env.CMS_ADMIN_PASSWORD || 'Admin2026!';
+const ADMIN_EMAIL = process.env.CMS_ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.CMS_ADMIN_PASSWORD;
+
+if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+  console.error('CMS_ADMIN_EMAIL and CMS_ADMIN_PASSWORD must be set (no fallback defaults for security).');
+  process.exitCode = 1;
+  process.exit();
+}
 
 function maskDatabaseUrl(url) {
   if (!url) return 'NOT_SET';

@@ -10,7 +10,7 @@ interface CmsFileUploadProps {
   onChange: (url: string) => void;
   /** Comma-separated accepted extensions, e.g. ".jpg,.png,.gif,.webp" */
   accept?: string;
-  /** Upload folder under public/uploads/ */
+  /** Upload folder category (e.g. 'general', 'images', 'documents') */
   folder: string;
   /** Max file size in MB */
   maxSizeMB?: number;
@@ -160,7 +160,7 @@ function CmsFileUploadInner({
       {isImage && (
         <div className="relative group rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
           <img
-            src={value}
+            src={value?.startsWith('/api/upload/serve/') ? value : `/api/upload/serve/${value.split('/').pop()}`}
             alt={label || 'preview'}
             className="w-full h-40 object-cover"
           />
@@ -181,7 +181,7 @@ function CmsFileUploadInner({
             <Upload className="w-4 h-4 text-[#1A1A1A]" />
           </div>
           <span className="text-sm text-gray-700 truncate flex-1" title={value}>
-            {value.split('/').pop()}
+            {value.split('/api/upload/serve/').pop()?.split('/').pop() || value.split('/').pop()}
           </span>
           <button
             type="button"

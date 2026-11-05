@@ -1,9 +1,10 @@
 const { spawnSync } = require('child_process');
 
 function runCommand(command, args) {
+  // Windows cannot spawn .cmd shims (npx.cmd) without a shell.
   const result = spawnSync(command, args, {
     stdio: 'inherit',
-    shell: false,
+    shell: process.platform === 'win32',
     env: process.env,
   });
 

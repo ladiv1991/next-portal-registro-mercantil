@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAuth, requireAdmin } from '@/lib/api-auth';
 import { createPortalUserSchema } from '@/lib/cms-schemas';
 import bcrypt from 'bcryptjs';
 import { checkOrigin } from '@/lib/origin-check';
@@ -43,7 +43,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    // Solo admin puede crear usuarios del portal (evita escalada de privilegios por editors)
+    await requireAdmin();
 
     const body = await request.json();
     const validation = createPortalUserSchema.safeParse(body);

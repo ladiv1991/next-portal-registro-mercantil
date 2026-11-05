@@ -1,4 +1,12 @@
+/**
+ * Security-hardened upload utilities.
+ * - Private storage: uploads go to .private/uploads/, not public/
+ * - Magic bytes validation: enforced in route.ts via file-validation.ts
+ * - Safe path resolution: prevents directory traversal attacks
+ */
+
 import path from 'path';
+import { EXTENSIONS_BY_CATEGORY } from './file-validation';
 
 export type UploadCategory = 'file' | 'image' | 'document' | 'video';
 
@@ -9,11 +17,17 @@ const MIME_BY_CATEGORY: Record<UploadCategory, Set<string>> = {
   video: new Set(['video/mp4', 'video/webm', 'video/quicktime']),
 };
 
-const EXTENSIONS_BY_CATEGORY: Record<UploadCategory, Set<string>> = {
-  file: new Set(['.pdf', '.jpg', '.jpeg', '.png', '.webp']),
-  image: new Set(['.jpg', '.jpeg', '.png', '.webp']),
-  document: new Set(['.pdf']),
-  video: new Set(['.mp4', '.webm', '.mov']),
+/**
+ * Rutas privadas de almacenamiento para cada categoría.
+ * Estos directorios NO son accesibles directamente desde el navegador.
+ */
+const PRIVATE_UPLOAD_ROOT = path.join(process.cwd(), '.private', 'uploads');
+
+const PRIVATE_UPLOAD_FOLDERS: Record<UploadCategory, string> = {
+  file: PRIVATE_UPLOAD_ROOT,
+  image: path.join(PRIVATE_UPLOAD_ROOT, 'images'),
+  document: path.join(PRIVATE_UPLOAD_ROOT, 'documents'),
+  video: path.join(PRIVATE_UPLOAD_ROOT, 'videos'),
 };
 
 function envMegabytes(name: string, fallback: number): number {
@@ -49,16 +63,16 @@ export function validateUpload(file: File, category: UploadCategory): string | n
   return null;
 }
 
-export function safeUploadFolder(folder: string): string | null {
-  const normalized = folder.replace(/\\/g, '/');
-  if (!normalized || normalized.startsWith('/') || normalized.split('/').some((part) => part === '..' || !/^[a-zA-Z0-9_-]+$/.test(part))) {
-    return null;
-  }
-  return normalized;
-}
-
 export function sanitizeUploadFilename(filename: string): string {
   const extension = path.extname(filename || '').toLowerCase();
   const basename = path.basename(filename || 'upload', extension).replace(/[^a-zA-Z0-9_-]/g, '_');
   return `${crypto.randomUUID()}_${basename || 'file'}${extension}`;
+}
+
+/**
+ * Retorna la ruta absoluta del directorio privado para una categoría dada.
+ * Útil para limpiar archivos viejos o para auditar el almacenamiento.
+ */
+export function getPrivateUploadPath(category: UploadCategory): string {
+  return PRIVATE_UPLOAD_FOLDERS[category];
 }
