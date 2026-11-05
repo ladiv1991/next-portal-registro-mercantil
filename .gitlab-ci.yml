@@ -2,12 +2,16 @@
 # CI/CD — Portal del Registro Mercantil de Cuba
 # Runner: shell en 10.10.3.22 (executor=shell, Docker nativo del host)
 #
+# IMPORTANTE: build_image NO está en CI — el servidor no tiene internet.
+# Haz build + push desde tu máquina local:
+#   bash scripts/push-to-harbor.sh
+# Luego push a main dispara solo deploy_preprod + health_check.
+#
 # REQUISITOS EN EL SERVIDOR (ejecutar UNA vez):
 #   sudo usermod -aG docker gitlab-runner
 #   sudo systemctl restart gitlab-runner
 # ================================================================
 stages:
-  - build
   - deploy
   - health_check
 
@@ -18,34 +22,8 @@ variables:
   PREPROD_PORT: "3003"
 
 # ============================================================
-# BUILD: construir imagen y subir a Harbor
-# ============================================================
-build_image:
-  stage: build
-  tags:
-    - portal-rmc
-  before_script:
-    - echo "$HARBOR_PASSWORD" | docker login $HARBOR_REGISTRY -u "$HARBOR_USERNAME" --password-stdin
-  script:
-    - |
-      echo "Instalando dependencias..."
-      bun install --frozen-lockfile
-      echo "Construyendo Next.js (next build)..."
-      bun run build
-      echo "Construyendo imagen Docker..."
-      docker build --network=host -t "$HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA" .
-      docker build --network=host -t "$HARBOR_REGISTRY/$IMAGE_NAME:latest" .
-      echo "Pushing a Harbor..."
-      docker push "$HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
-      docker push "$HARBOR_REGISTRY/$IMAGE_NAME:latest"
-      echo "Imagen lista: $HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
-  after_script:
-    - docker logout $HARBOR_REGISTRY 2>/dev/null || true
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-
-# ============================================================
 # DEPLOY: override + pull + restart en servidor
+# La imagen ya fue construida localmente y subida a Harbor.
 # ============================================================
 deploy_preprod:
   stage: deploy
@@ -78,8 +56,6 @@ deploy_preprod:
       echo "Contenedor reiniciado"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-  needs:
-    - build_image
 
 # ============================================================
 # HEALTH CHECK: verificar que la app responde
