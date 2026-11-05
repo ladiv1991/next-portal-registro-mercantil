@@ -57,10 +57,10 @@ deploy_preprod:
       echo "    image: ${HARBOR_REGISTRY}/${IMAGE_NAME}:latest" >> "$PREPROD_DIR/docker-compose.override.yml"
       echo "    build: {}" >> "$PREPROD_DIR/docker-compose.override.yml"
       echo "  postgres:" >> "$PREPROD_DIR/docker-compose.override.yml"
-      echo "    image: registry.dev.xetid.cu/proxy.docker.io/postgres:15" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    image: ${HARBOR_REGISTRY}/postgres:15" >> "$PREPROD_DIR/docker-compose.override.yml"
       echo "    build: {}" >> "$PREPROD_DIR/docker-compose.override.yml"
       echo "  traefik:" >> "$PREPROD_DIR/docker-compose.override.yml"
-      echo "    image: registry.dev.xetid.cu/proxy.docker.io/traefik:v3.0" >> "$PREPROD_DIR/docker-compose.override.yml"
+      echo "    image: ${HARBOR_REGISTRY}/traefik:v3.0" >> "$PREPROD_DIR/docker-compose.override.yml"
       echo "    build: {}" >> "$PREPROD_DIR/docker-compose.override.yml"
       echo "Override generado"
 

@@ -6,8 +6,8 @@ services:
     image: registry.dev.xetid.cu/portales-web/portal-rmc:latest
     build: {}
   postgres:
-    image: registry.dev.xetid.cu/proxy.docker.io/postgres:15
+    image: registry.dev.xetid.cu/portales-web/postgres:15
     build: {}
   traefik:
-    image: registry.dev.xetid.cu/proxy.docker.io/traefik:v3.0
+    image: registry.dev.xetid.cu/portales-web/traefik:v3.0
     build: {}
