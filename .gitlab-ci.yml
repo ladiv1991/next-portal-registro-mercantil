@@ -1,6 +1,10 @@
 # ================================================================
 # CI/CD — Portal del Registro Mercantil de Cuba
 # Runner: shell en 10.10.3.22 (executor=shell, Docker nativo del host)
+#
+# REQUISITOS EN EL SERVIDOR (ejecutar UNA vez):
+#   sudo usermod -aG docker gitlab-runner
+#   sudo systemctl restart gitlab-runner
 # ================================================================
 stages:
   - build
