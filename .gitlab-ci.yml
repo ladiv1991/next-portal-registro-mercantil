@@ -28,7 +28,11 @@ build_image:
     - echo "$HARBOR_PASSWORD" | docker login $HARBOR_REGISTRY -u "$HARBOR_USERNAME" --password-stdin
   script:
     - |
-      echo "Construyendo imagen..."
+      echo "Instalando dependencias..."
+      bun install --frozen-lockfile
+      echo "Construyendo Next.js (next build)..."
+      bun run build
+      echo "Construyendo imagen Docker..."
       docker build --network=host -t "$HARBOR_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA" .
       docker build --network=host -t "$HARBOR_REGISTRY/$IMAGE_NAME:latest" .
       echo "Pushing a Harbor..."
