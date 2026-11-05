@@ -1,6 +1,6 @@
 # ===== PRODUCTION: pre-built standalone, offline-safe =====
-# Usa oven/bun disponible localmente o del mirror de Harbor
-FROM registry.dev.xetid.cu/proxy.docker.io/oven/bun:1.4.4-debian AS runner
+# Usa oven/bun desde Harbor (no requiere acceso a Docker Hub)
+FROM registry.dev.xetid.cu/portales-web/oven-bun:1.4.4-debian AS runner
 ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0
 
 RUN /usr/sbin/groupadd --system nodejs 2>/dev/null || true && \
