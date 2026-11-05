@@ -70,8 +70,8 @@ deploy_preprod:
       echo "Contenedor reiniciado"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-      needs:
-        - build_image
+  needs:
+    - build_image
 
 # ============================================================
 # HEALTH CHECK: verificar que la app responde
