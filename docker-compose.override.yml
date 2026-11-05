@@ -1,0 +1,13 @@
+# Override para entornos sin acceso a Docker Hub (preproducción).
+# Fuerza el uso de imágenes de Harbor en vez de construir localmente.
+# El deploy script genera este archivo automáticamente en modo --server.
+services:
+  app:
+    image: registry.dev.xetid.cu/portales-web/portal-rmc:latest
+    build: {}
+  postgres:
+    image: registry.dev.xetid.cu/proxy.docker.io/postgres:15
+    build: {}
+  traefik:
+    image: registry.dev.xetid.cu/proxy.docker.io/traefik:v3.0
+    build: {}
