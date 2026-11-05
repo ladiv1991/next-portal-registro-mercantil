@@ -1,15 +1,6 @@
 # ================================================================
 # CI/CD — Portal del Registro Mercantil de Cuba
 # Runner: shell en 10.10.3.22 (executor=shell, Docker nativo del host)
-#
-# IMPORTANTE: build_image NO está en CI — el servidor no tiene internet.
-# Haz build + push desde tu máquina local:
-#   bash scripts/push-to-harbor.sh
-# Luego push a main dispara solo deploy_preprod + health_check.
-#
-# REQUISITOS EN EL SERVIDOR (ejecutar UNA vez):
-#   sudo usermod -aG docker gitlab-runner
-#   sudo systemctl restart gitlab-runner
 # ================================================================
 stages:
   - deploy
