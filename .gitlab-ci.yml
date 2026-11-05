@@ -31,6 +31,7 @@ deploy_preprod:
     - portal-rmc
   before_script:
     - '[ -f "$PREPROD_DIR/docker-compose.override.yml" ] && echo "Override existe, actualizando"'
+    - echo "$HARBOR_PASSWORD" | docker login $HARBOR_REGISTRY -u "$HARBOR_USERNAME" --password-stdin
   script:
     - |
       echo "Generando docker-compose.override.yml..."
@@ -56,9 +57,8 @@ deploy_preprod:
       echo "Contenedor reiniciado"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-
-# ============================================================
-# HEALTH CHECK: verificar que la app responde
+  after_script:
+    - docker logout $HARBOR_REGISTRY 2>/dev/null || true: verificar que la app responde
 # ============================================================
 health_check:
   stage: health_check
