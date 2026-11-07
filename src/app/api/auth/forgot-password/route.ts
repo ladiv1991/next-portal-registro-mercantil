@@ -7,6 +7,7 @@ import { rateLimit } from '@/lib/rate-limiter';
 import { verifyCaptchaV2 } from '@/lib/captcha-v2';
 import { createPasswordResetToken } from '@/lib/reset-token';
 import { sendEmail } from '@/lib/email';
+import { passwordReset } from '@/lib/email-templates';
 
 const schema = z.object({
   email: z.string().email(),
@@ -46,8 +47,8 @@ export async function POST(request: NextRequest) {
   try {
     await sendEmail({
       to: email,
-      subject: 'Recuperación de contraseña - Registro Mercantil',
-      html: `<p>Hola ${user.name || ''},</p><p>Haz clic para restablecer tu contraseña:</p><a href="${resetUrl}">Restablecer contraseña</a><p>Este enlace expira en 1 hora.</p>`,
+      subject: 'Recuperación de contraseña — Registro Mercantil',
+      html: passwordReset(user.name || '', resetUrl),
     });
   } catch {
     // swallow email errors to avoid leaking
