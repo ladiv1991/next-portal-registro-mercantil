@@ -181,6 +181,8 @@ Todas las skills estan en `~/.agents/skills/` (disponibles para todos los proyec
 | `prototype` | Prototipos desechables de diseno |
 | `diagnosing-bugs` | Loop de diagnostico para bugs dificiles |
 | `using-superpowers` | Regla de invocación de skills antes de cualquier acción |
+| `seo` | Optimización SEO — metadata, sitemap, Open Graph, JSON-LD, robots.txt |
+| `ui-ux-pro-max` | Inteligencia UI/UX — estilos, paletas, tipografía, UX guidelines, diseño de componentes |
 
 
 ---

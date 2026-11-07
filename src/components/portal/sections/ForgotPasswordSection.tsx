@@ -141,15 +141,15 @@ export default function ForgotPasswordSection({ onBack }: Props) {
                 <Shield className="w-3 h-3" />
                 Verificación de seguridad
               </Label>
-              <div className="flex items-center gap-3 mt-1">
-                {captchaSvg ? (
-                  <div
-                    className="border rounded-md p-2 bg-white flex-shrink-0"
-                    dangerouslySetInnerHTML={{ __html: captchaSvg }}
-                  />
-                ) : (
-                  <div className="w-[200px] h-[70px] border rounded-md bg-gray-100 flex-shrink-0" />
-                )}
+              <div
+                className="mt-1 border rounded-md p-2 bg-white inline-block"
+                dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                aria-label="Imagen CAPTCHA para verificación de seguridad"
+              />
+              <p className="text-xs text-muted-foreground mt-1 mb-2">
+                Escriba exactamente los caracteres que ve en la imagen. Use mayúsculas si las hay.
+              </p>
+              <div className="flex items-center gap-2">
                 <Input
                   type="text"
                   placeholder="Escriba lo que ve"
@@ -158,8 +158,10 @@ export default function ForgotPasswordSection({ onBack }: Props) {
                   onChange={(e) => { setCaptchaAnswer(e.target.value); if (error) setError(''); }}
                   autoFocus
                   disabled={loading}
+                  maxLength={8}
+                  aria-label="Respuesta del CAPTCHA"
                 />
-                <Button type="button" variant="outline" size="icon" onClick={fetchCaptcha} disabled={loading}>
+                <Button type="button" variant="outline" size="icon" onClick={fetchCaptcha} disabled={loading} aria-label="Actualizar imagen CAPTCHA">
                   <RefreshCw className="w-4 h-4" />
                 </Button>
               </div>

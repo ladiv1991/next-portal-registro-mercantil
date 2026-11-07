@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Shield, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
+import { Shield, RefreshCw, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,13 +18,30 @@ export default function ResetPasswordPage() {
   const [email, setEmail] = useState(searchParams.get('email') || '');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [captchaSvg, setCaptchaSvg] = useState('');
+  const [captchaId, setCaptchaId] = useState('');
+  const [captchaAnswer, setCaptchaAnswer] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
+  const fetchCaptcha = () => {
+    fetch('/api/captcha/new')
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success) {
+          setCaptchaSvg(json.svg);
+          setCaptchaId(json.id);
+        }
+      })
+      .catch(() => {});
+  };
+
   useEffect(() => {
     if (!token || !email) {
       setError('Enlace inválido. Solicita uno nuevo desde el formulario de recuperación.');
+    } else {
+      fetchCaptcha();
     }
   }, [token, email]);
 
@@ -40,13 +57,17 @@ export default function ResetPasswordPage() {
       setError('La contraseña debe tener al menos 8 caracteres');
       return;
     }
+    if (!captchaAnswer.trim()) {
+      setError('Complete la verificación de seguridad');
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, email, password }),
+        body: JSON.stringify({ token, email, password, captchaId, captchaAnswer }),
       });
       const json = await res.json();
       if (!json.success) {
@@ -134,6 +155,48 @@ export default function ResetPasswordPage() {
                 disabled={loading}
               />
             </div>
+
+            <div>
+              <Label className="flex items-center gap-1">
+                <Shield className="w-3 h-3" />
+                Verificación de seguridad
+              </Label>
+              {captchaSvg ? (
+                <div
+                  className="mt-1 border rounded-md p-2 bg-white inline-block"
+                  dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                  aria-label="Imagen CAPTCHA para verificación de seguridad"
+                />
+              ) : (
+                <div className="mt-1 w-[220px] h-[72px] border rounded-md bg-gray-100" />
+              )}
+              <p className="text-xs text-muted-foreground mt-1 mb-2">
+                Escriba exactamente los caracteres que ve en la imagen. Use mayúsculas si las hay.
+              </p>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="text"
+                  placeholder="Escriba lo que ve"
+                  className={`flex-1 ${error && !captchaAnswer ? 'border-red-500' : ''}`}
+                  value={captchaAnswer}
+                  onChange={(e) => { setCaptchaAnswer(e.target.value); if (error) setError(''); }}
+                  disabled={loading || !token}
+                  maxLength={8}
+                  aria-label="Respuesta del CAPTCHA"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={fetchCaptcha}
+                  disabled={loading || !token}
+                  aria-label="Actualizar imagen CAPTCHA"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
             <Button type="submit" className="w-full bg-[var(--rm-text)] hover:bg-[var(--rm-text)]-light text-white" disabled={loading}>
               {loading ? 'Procesando...' : 'Restablecer contraseña'}
             </Button>
