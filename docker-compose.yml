@@ -10,7 +10,9 @@ services:
       dockerfile: Dockerfile
     container_name: registro-mercantil-app
     environment:
-      DATABASE_URL: postgresql://portal_rmc:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD_is_required}@10.66.0.3:5432/registro_mercantil
+      # ⚠️ Conectar al contenedor local propio (servicio 'local-postgres') en vez de m11-postgres compartido
+      #   m11-postgres está vacío; los datos están en el volumen postgres_data del servicio 'local-postgres'
+      DATABASE_URL: postgresql://portal_rmc:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD_is_required}@local-postgres:5432/registro_mercantil
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET_is_required}
       NODE_ENV: production
       HOSTNAME: "0.0.0.0"
@@ -58,9 +60,9 @@ services:
     ports:
       - "3003:3000"
     depends_on:
-      - postgres
+      - local-postgres
     restart: unless-stopped
-    # Conectar a la red del entorno multisitios para alcanzar Mailpit (SMTP)
+    # Conectar a AMBAS redes: default (para local-postgres) y multisitios (para Mailpit)
     networks:
       - next-portal-registro-mercantil_default
       - multisitios11_drupalnet
@@ -92,7 +94,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 
-  postgres:
+  local-postgres:
     image: ${DOCKER_REGISTRY}postgres:15
     container_name: registro-mercantil-postgres
     environment:

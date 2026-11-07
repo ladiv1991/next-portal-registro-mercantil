@@ -83,10 +83,9 @@ function evaluateEvents(profile: IpProfile): GuardEvent[] {
   if (profile.failedLogins >= 5) events.push('brute_force');
 
   // Anomalous UA
-  const ua = profile.ip === profile.ip ? '' : profile.traces[profile.traces.length - 1]?.ua ?? '';
+  const ua = profile.traces[profile.traces.length - 1]?.ua ?? '';
   const botPatterns = /bot|crawler|scan|curl|python|wget|httpclient/i;
-  if (ua && botPatterns.test(ua)) events.push('anomalous_ua');
-  if (!ua || ua.length < 10) events.push('anomalous_ua');
+  if (!ua || botPatterns.test(ua)) events.push('anomalous_ua');
 
   return events;
 }

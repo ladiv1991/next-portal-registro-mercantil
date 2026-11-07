@@ -84,6 +84,19 @@ function shell(title: string, bodyHtml: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&')
+    .replace(/</g, '<')
+    .replace(/>/g, '>')
+    .replace(/"/g, '"')
+    .replace(/'/g, '&#039;');
+}
+
+// ---------------------------------------------------------------------------
 // Password reset
 // ---------------------------------------------------------------------------
 
@@ -93,7 +106,7 @@ export function passwordReset(name: string, resetUrl: string): string {
     Restablece tu contraseña
   </h1>
   <p style="margin:0 0 8px;font-size:15px;color:${COLORS.text};line-height:1.6;">
-    Hola <strong>${name}</strong>,
+    Hola <strong>${escapeHtml(name)}</strong>,
   </p>
   <p style="margin:0 0 24px;font-size:15px;color:${COLORS.muted};line-height:1.6;">
     Hemos recibido una solicitud para restablecer tu contraseña. Si fuiste tú, haz clic en el botón de abajo para crear una nueva.

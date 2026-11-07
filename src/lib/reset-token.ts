@@ -22,11 +22,13 @@ export async function consumePasswordResetToken(token: string, email: string) {
   });
   if (!record) return null;
   if (record.expiresAt.getTime() < Date.now()) return null;
+  if (record.email !== email) return null;
   await db.passwordResetToken.update({
     where: { id: record.id },
     data: { used: true },
   });
   const user = await db.user.findUnique({ where: { id: record.userId } });
   if (!user) return null;
+  if (user.email !== email) return null;
   return user;
 }

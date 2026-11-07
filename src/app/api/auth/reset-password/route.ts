@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
   }
 
   const user = await consumePasswordResetToken(token, email);
-  if (!user) return NextResponse.json({ success: false, error: 'Token inválido o expirado' }, { status: 400 });
+  if (!user || user.email !== email) return NextResponse.json({ success: false, error: 'Token inválido o expirado' }, { status: 400 });
 
   const hashed = await hashPassword(password);
   await db.user.update({ where: { id: user.id }, data: { password: hashed } });
