@@ -6,6 +6,7 @@ export { default as NormatividadSection } from './NormatividadSection';
 export { default as EstadisticasSection } from './EstadisticasSection';
 export { default as AsistenciaSection } from './AsistenciaSection';
 export { default as AccesoSection } from './AccesoSection';
+export { default as ForgotPasswordSection } from './ForgotPasswordSection';
 export { default as RefreshCw } from './RefreshCw';
 
 // Sub-components

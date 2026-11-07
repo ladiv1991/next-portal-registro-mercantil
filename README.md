@@ -506,12 +506,159 @@ Las reglas completas para agentes están documentadas en [`AGENTS.md`](./AGENTS.
 
 ---
 
+## 🔄 CI/CD — Despliegue Automático (Preproducción)
+
+El pipeline GitLab CI/CD despliega automáticamente en el servidor de preproducción (`10.10.3.22`) cuando se hace push a `main`.
+
+### Arquitectura del Pipeline
+
+```
+Máquina local → bash scripts/push-to-harbor.sh → git push main
+                                                    ↓
+                                         deploy_preprod (pull + restart)
+                                                    ↓
+                                         health_check (/api/health OK)
+                                                    ↓
+                                         server_logs (últimas 50 líneas)
+```
+
+**Regla CRÍTICA**: El servidor no tiene acceso a internet. La imagen Docker debe construirse localmente y subirse a Harbor ANTES de hacer push a `main`.
+
+### Flujo de Despliegue
+
+```bash
+# 1. Construir y publicar imagen en Harbor (máquina local con internet)
+bash scripts/push-to-harbor.sh
+
+# 2. Push a main dispara el pipeline automáticamente
+git push gitlab main
+```
+
+### Etapas del Pipeline
+
+| Stage | Qué hace | Dónde |
+|-------|----------|-------|
+| `deploy_preprod` | Genera override.yml, pull imagen Harbor, reinicia contenedor | Servidor 10.10.3.22 |
+| `health_check` | Polling `/api/health` hasta 30 intentos (5s c/u) | Servidor 10.10.3.22 |
+| `server_logs` | Muestra últimas 50 líneas de logs del contenedor app | Servidor 10.10.3.22 |
+| `db_backup` | Ejecuta `pg_dump` del contenedor postgres | Servidor 10.10.3.22 |
+| `restart_app` | Reinicio manual del contenedor (trigger manual) | Servidor 10.10.3.22 |
+| `rollback_app` | Revierte a una imagen anterior de Harbor (trigger manual, var IMAGE_TAG) | Servidor 10.10.3.22 |
+
+### Variables CI/CD (GitLab UI)
+
+Configurar en **Settings → CI/CD → Variables**:
+
+| Variable | Valor | Tipo |
+|----------|-------|------|
+| `HARBOR_USERNAME` | `voacosta` | Normal |
+| `HARBOR_PASSWORD` | *(contraseña Harbor)* | Masked + Protected |
+
+### Infraestructura
+
+- **Runner**: `portal-rmc-runner-10.10.3.22` (shell executor, tags: `portal-rmc`)
+- **Registry**: `registry.dev.xetid.cu/portales-web`
+- **Directorio servidor**: `/opt/portal-mercantil`
+- **Puerto app**: `3003`
+- **Imágenes**: `portal-rmc:latest`, `postgres:15`, `traefik:v3.0`, `oven-bun:1.4.4-debian`
+
+### Operaciones Remotas vía CI
+
+Para evitar SSH directo al servidor, se pueden disparar jobs manuales desde la UI de GitLab:
+
+- **Ver logs**: Pipeline → `server_logs` → ver output
+- **Backup DB**: Pipeline → `db_backup` → ejecutar manualmente
+- **Reiniciar app**: Pipeline → `restart_app` → ejecutar manualmente
+- **Rollback**: Pipeline → `rollback_app` → ejecutar manualmente (pasar `IMAGE_TAG=vX.Y.Z`)
+
+### Scripts Disponibles
+
+| Script | Uso |
+|--------|-----|
+| `scripts/push-to-harbor.sh` | Build local + push a Harbor (requiere internet) |
+| `scripts/deploy-preprod.sh` | Despliegue completo interactivo (local o `--server`) |
+| `scripts/backup-db.sh` | Backup de PostgreSQL |
+| `scripts/reset-admin-password.js` | Resetear contraseña admin |
+
+---
+
+## 🔐 Seguridad en Autenticación CMS
+
+El login del portal (sección "Acceso al Sistema") implementa múltiples capas de seguridad:
+
+| Capa | Implementación | Archivo |
+|------|---------------|---------|
+| **CAPTCHA v2** | Alfanumérico SVG distorsionado, single-use, TTL 5 min | `src/lib/captcha-v2.ts` |
+| **Guardian** | Per-IP profiling (score 0-100), detección de brute force/farming | `src/lib/guardian.ts` |
+| **Rate Limiting** | 5 intentos/60s por IP | `src/lib/rate-limiter.ts` |
+| **Origin Check** | Validación de origen permitido | `src/lib/origin-check.ts` |
+| **Zod Validation** | Schema estricto de entrada | `src/app/api/auth/login/route.ts` |
+| **JWT httpOnly** | Cookie `rmc-token`, 8h expiry, sameSite lax | `src/lib/auth.ts` |
+
+### Flujo de Login CMS
+
+1. Usuario carga sección "Acceso" → se genera CAPTCHA SVG (`GET /api/captcha/new`)
+2. Guardian analiza la IP → si score ≥ 90, bloquea (403)
+3. Rate limiter verifica ≤ 5 intentos/minuto
+4. Zod valida email + password + captchaId + captchaAnswer
+5. CAPTCHA se verifica (single-use, anti-replay)
+6. Credenciales se verifican contra bcrypt hash en PostgreSQL
+7. Si OK → JWT en cookie httpOnly; si fail → Guardian registra intento fallido
+
+### Recuperación de Contraseña
+
+El sistema incluye un flujo completo de recuperación de contraseña:
+
+1. Usuario hace clic en "¿Olvidó su contraseña?" → formulario de recuperación
+2. Ingresar correo electrónico + CAPTCHA v2
+3. Si el correo existe → se genera token de recuperación (TTL 1 hora)
+4. Se envía correo con enlace de recuperación (`/auth/reset-password?token=...&email=...`)
+5. Usuario abre enlace → ingresa nueva contraseña
+6. Se verifica token, se actualiza contraseña en BD
+
+APIs:
+- `POST /api/auth/forgot-password` — solicita recuperación
+- `POST /api/auth/reset-password` — restablece contraseña
+
+### Configuración de Email (SMTP)
+
+Para habilitar el envío de correos de recuperación, configurar variables de entorno:
+
+| Variable | Valor por defecto | Descripción |
+|----------|-------------------|-------------|
+| `SMTP_HOST` | `localhost` | Host del servidor SMTP |
+| `SMTP_PORT` | `1025` | Puerto SMTP |
+| `SMTP_USER` | *(vacío)* | Usuario SMTP si requiere auth |
+| `SMTP_PASS` | *(vacío)* | Contraseña SMTP si requiere auth |
+| `SMTP_FROM` | `noreply@registromercantil.cu` | Remitente de los correos |
+| `SMTP_SECURE` | `false` | Usar TLS/SSL |
+
+En desarrollo local usar Mailpit: `SMTP_HOST=localhost SMTP_PORT=1025`
+
+### Recuperación de Contraseña
+
+El sistema incluye un flujo completo de recuperación de contraseña:
+
+1. Usuario hace clic en "¿Olvidó su contraseña?" → formulario de recuperación
+2. Ingresar correo electrónico + CAPTCHA v2
+3. Si el correo existe → se genera token de recuperación (TTL 1 hora)
+4. Se envía correo con enlace de recuperación (`/auth/reset-password?token=...&email=...`)
+5. Usuario abre enlace → ingresa nueva contraseña
+6. Se verifica token, se actualiza contraseña en BD
+
+APIs:
+- `POST /api/auth/forgot-password` — solicita recuperación
+- `POST /api/auth/reset-password` — restablece contraseña
+
+---
+
 ## 🤝 Contribución
 
 1. Crear una rama.
 2. Hacer los cambios.
 3. Ejecutar validaciones relevantes (`npm run lint`, `graphify update .`).
-4. Abrir un Pull Request con descripción clara.
+4. Build local: `bash scripts/push-to-harbor.sh`
+5. Push a main → pipeline automático despliega en preproducción.
 
 ## 📄 Licencia
 

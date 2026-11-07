@@ -52,6 +52,11 @@ const AccesoSection = dynamic(
   { ssr: false, loading: () => <SectionSkeleton /> }
 );
 
+const ForgotPasswordSection = dynamic(
+  () => import('@/components/portal/sections').then((m) => m.ForgotPasswordSection),
+  { ssr: false, loading: () => <SectionSkeleton /> }
+);
+
 // Lazy-load the chatbot (heavy: markdown rendering, AI SDK)
 const FloatingChatbot = dynamic(
   () => import('@/components/portal/layout').then((m) => m.FloatingChatbot),
@@ -88,6 +93,7 @@ export default function Home() {
   const [cmsUser, setCmsUser] = useState<CmsUser | null>(null);
   const [loginError, setLoginError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   // ---- Scroll detection ----
   useEffect(() => {
@@ -164,8 +170,11 @@ export default function Home() {
             {activeSection === 'normatividad' && <NormatividadSection key="normatividad" />}
             {activeSection === 'estadisticas' && <EstadisticasSection key="estadisticas" />}
             {activeSection === 'asistencia' && <AsistenciaSection key="asistencia" />}
-            {activeSection === 'acceso' && (
-              <AccesoSection key="acceso" onLogin={handleCmsLogin} loginError={loginError} />
+            {activeSection === 'acceso' && !showForgotPassword && (
+              <AccesoSection key="acceso" onLogin={handleCmsLogin} loginError={loginError} onForgotPassword={() => setShowForgotPassword(true)} />
+            )}
+            {showForgotPassword && (
+              <ForgotPasswordSection key="forgot-password" onBack={() => setShowForgotPassword(false)} />
             )}
           </AnimatePresence>
         </main>

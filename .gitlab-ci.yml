@@ -14,7 +14,8 @@ variables:
 
 # ============================================================
 # DEPLOY: override + pull + restart en servidor
-# La imagen ya fue construida localmente y subida a Harbor.
+# La imagen YA fue construida localmente y subida a Harbor.
+# NO hay build en CI — el servidor no tiene internet.
 # ============================================================
 deploy_preprod:
   stage: deploy
@@ -74,5 +75,111 @@ health_check:
       exit 1
   needs:
     - deploy_preprod
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ============================================================
+# SERVER LOGS: diagnóstico remoto sin SSH
+# Muestra las últimas 50 líneas del contenedor app tras el deploy.
+# ============================================================
+server_logs:
+  stage: health_check
+  tags:
+    - portal-rmc
+  script:
+    - |
+      echo "=== Ultimas 50 lineas del log de app ==="
+      docker logs registro-mercantil-app --tail 50 2>&1 || true
+  needs:
+    - deploy_preprod
+  when: always
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ============================================================
+# DB BACKUP: pg_dump del contenedor postgres (manual)
+# Permite backup de BD sin SSH al servidor.
+# ============================================================
+db_backup:
+  stage: health_check
+  tags:
+    - portal-rmc
+  script:
+    - |
+      echo "=== Backup de PostgreSQL ==="
+      TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+      BACKUP_DIR="/opt/portal-mercantil/backups"
+      BACKUP_FILE="${BACKUP_DIR}/backup_${TIMESTAMP}.sql"
+      mkdir -p "${BACKUP_DIR}"
+      docker exec registro-mercantil-postgres pg_dump -U portal_rmc -d registro_mercantil > "${BACKUP_FILE}"
+      echo "Backup guardado en: ${BACKUP_FILE}"
+      ls -lh "${BACKUP_FILE}"
+  when: manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ============================================================
+# RESTART APP: reinicio manual del contenedor app (manual)
+# Util para recargar config o recuperar de estado degradado.
+# ============================================================
+restart_app:
+  stage: health_check
+  tags:
+    - portal-rmc
+  script:
+    - |
+      echo "=== Reiniciando contenedor app ==="
+      cd /opt/portal-mercantil
+      docker compose restart app
+      echo "Esperando health check..."
+      for i in $(seq 1 15); do
+        if curl -fsS "http://127.0.0.1:3003/api/health" 2>/dev/null | grep -q '"status":"ok"'; then
+          echo "App reiniciada y saludable en intento $i"
+          exit 0
+        fi
+        sleep 3
+      done
+      echo "WARN: health check no paso tras reinicio, revisar logs"
+      docker logs registro-mercantil-app --tail 30
+  when: manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ============================================================
+# ROLLBACK: revertir a una imagen anterior de Harbor (manual)
+# Uso: pasar IMAGE_TAG con el tag de la imagen a revertir
+# ============================================================
+rollback_app:
+  stage: health_check
+  tags:
+    - portal-rmc
+  variables:
+    IMAGE_TAG: "${IMAGE_TAG:-latest}"
+  script:
+    - |
+      echo "=== Rollback a imagen ${IMAGE_TAG} ==="
+      echo "$HARBOR_PASSWORD" | docker login $HARBOR_REGISTRY -u "$HARBOR_USERNAME" --password-stdin
+      docker pull ${HARBOR_REGISTRY}/portal-rmc:${IMAGE_TAG}
+      cd /opt/portal-mercantil
+      cat > docker-compose.override.yml <<EOF
+services:
+  app:
+    image: ${HARBOR_REGISTRY}/portal-rmc:${IMAGE_TAG}
+    build: {}
+EOF
+      docker compose up -d --no-deps app
+      echo "Esperando health check tras rollback..."
+      for i in $(seq 1 20); do
+        if curl -fsS "http://127.0.0.1:3003/api/health" 2>/dev/null | grep -q '"status":"ok"'; then
+          echo "Rollback completado exitosamente (versión ${IMAGE_TAG})"
+          exit 0
+        fi
+        sleep 5
+      done
+      echo "WARN: health check no pasó tras rollback"
+      docker logs registro-mercantil-app --tail 30
+      exit 1
+  when: manual
+  allow_failure: false
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'

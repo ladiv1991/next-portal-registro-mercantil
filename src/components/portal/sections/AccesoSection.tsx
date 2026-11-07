@@ -18,9 +18,10 @@ import { fadeInUp } from '@/data/portal-data';
 interface AccesoSectionProps {
   onLogin: (email: string, password: string, captchaId: string, captchaAnswer: string) => Promise<boolean>;
   loginError: string;
+  onForgotPassword: () => void;
 }
 
-export default function AccesoSection({ onLogin, loginError }: AccesoSectionProps) {
+export default function AccesoSection({ onLogin, loginError, onForgotPassword }: AccesoSectionProps) {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
@@ -146,9 +147,8 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                     id="login-password"
                     placeholder="••••••••"
                     className="mt-1"
-                    autoComplete="current-password"
                     value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
+                    onChange={(v) => setLoginPassword(v)}
                     disabled={loginLoading}
                   />
                 </div>
@@ -196,7 +196,7 @@ export default function AccesoSection({ onLogin, loginError }: AccesoSectionProp
                     <input type="checkbox" className="rounded border-gray-300" />
                     Recordar sesión
                   </label>
-                  <button type="button" className="text-sm text-[var(--rm-primary)] hover:underline">¿Olvidó su contraseña?</button>
+                  <button type="button" className="text-sm text-[var(--rm-primary)] hover:underline" onClick={onForgotPassword}>¿Olvidó su contraseña?</button>
                 </div>
                 <Button
                   type="submit"
