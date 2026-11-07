@@ -111,7 +111,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
           {/* Logo */}
           <button onClick={() => handleNavClick('home')} className="flex items-center gap-3 group">
             <div className="relative">
-              <img src="/favicon.png" alt="Registro Mercantil de Cuba" className="w-10 h-10 transition-transform duration-300 group-hover:scale-105" />
+              <img src="/favicon.svg" alt="Registro Mercantil de Cuba" className="w-10 h-10 transition-transform duration-300 group-hover:scale-105" />
               {/* Subtle glow ring */}
               <div
                 className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"

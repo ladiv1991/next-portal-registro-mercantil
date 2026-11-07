@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Registro Mercantil de Cuba" }],
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
     title: "Portal del Registro Mercantil de Cuba",
@@ -75,7 +75,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <link rel="apple-touch-icon" href="/favicon.png" sizes="180x180" />
+        <link rel="apple-touch-icon" href="/favicon.svg" sizes="180x180" />
         {/* JSON-LD Structured Data */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
@@ -84,7 +84,7 @@ export default function RootLayout({
           "alternateName": "Oficina del Registro Mercantil",
           "description": "Organismo dependiente del Ministerio de Justicia de la República de Cuba, encargado del registro, inscripción y certificación de actos y documentos mercantiles.",
           "url": "https://registro-mercantil.xetid.cu",
-          "logo": "https://registro-mercantil.xetid.cu/favicon.png",
+          "logo": "https://registro-mercantil.xetid.cu/favicon.svg",
           "parentOrganization": {
             "@type": "GovernmentOrganization",
             "name": "Ministerio de Justicia de la República de Cuba",

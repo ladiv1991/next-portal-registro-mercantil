@@ -1,0 +1,16 @@
+{
+  "name": "Registro Mercantil de Cuba",
+  "short_name": "RMC",
+  "description": "Portal oficial del Registro Mercantil de Cuba",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#005A9C",
+  "theme_color": "#005A9C",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

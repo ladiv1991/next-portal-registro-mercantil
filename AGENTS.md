@@ -432,7 +432,17 @@ Todas las restantes son de dependencias transitivas/de desarrollo (eslint, prism
 |------|-----------|------|
 | **1. Código** | Validar que el código compila y no tiene errores de tipo | `curl` a la ruta afectada + revisar logs de dev server (`Get-Content $env:TEMP\rmc-dev.log \| Select-String "error|Error|Compiled"`) |
 | **2. Tests unitarios** | Ejecutar tests relevantes y confirmar 0 fails | `bun test <ruta-del-test>` — 0 fails es requisito mínimo |
-| **3. Navegador** | Abrir la página en el browser y verificar visualmente | `tools.browser.navigate` al URL afectado; si hay sección nueva, navegar a esa sección desde el menú |
+| **3. Backend** | Verificar cada endpoint/ruta nueva responde correctamente | `Invoke-RestMethod` a cada ruta afectada con headers `Origin` válidos; confirmar status codes y responses |
+| **4. Navegador** | Abrir la página en el browser, verificar visualmente Y revisar consola | `tools.browser.navigate` al URL afectado; si hay sección nueva, navegar a esa sección desde el menú; **inspeccionar Console del navegador** en busca de 404, CSP violations, Permissions-Policy violations, JS errors; confirmar que todos los recursos estáticos (favicon, manifest, CSS, JS) devuelven 200 |
+
+**Regla de la consola del navegador (OBLIGATORIA):**
+Después de navegar a la página afectada, SIEMPRE revisar la consola del navegador (`browser_console`) antes de declarar el cambio terminado. Un cambio no está completo si la consola muestra:
+- `Failed to load resource: 404` (recurso faltante — favicon, manifest, imágenes, CSS/JS)
+- `[Violation] Permissions-Policy` o CSP violations
+- JavaScript errors o warnings no resueltos
+- `Unauthorized` o `Forbidden` en requests que deberían ser públicos
+
+Si la consola muestra errores, corregirlos ANTES de pasar a la siguiente capa. No se omite la revisión de consola, incluso si el cambio parece trivial.
 
 Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, incluso si el cambio parece trivial.
 
