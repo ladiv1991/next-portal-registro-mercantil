@@ -125,7 +125,12 @@ export interface GuardianResult {
 function isLocalIp(ip: string): boolean {
   // Normalize IPv4-mapped IPv6 (::ffff:127.0.0.1 → 127.0.0.1)
   const normalized = ip.replace(/^::ffff:/i, '');
-  return normalized === '127.0.0.1' || normalized === '::1' || normalized === 'localhost' || normalized === 'unknown';
+  if (normalized === '127.0.0.1' || normalized === '::1' || normalized === 'localhost' || normalized === 'unknown') return true;
+  // Docker bridge networks — requests from host to container ports arrive with these source IPs
+  if (/^172\.(1[7-9]|2[0-9]|3[0-1])\./.test(normalized)) return true;
+  if (/^192\.168\.(0|1)\./.test(normalized)) return true;
+  if (/^10\.(0|1)\./.test(normalized)) return true;
+  return false;
 }
 
 /**
