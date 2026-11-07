@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search, FileText, Shield, Award, ChevronDown,
-  CheckCircle2, AlertCircle, Loader2, RotateCcw,
+  CheckCircle2, AlertCircle, Loader2, RotateCcw, RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,6 +65,36 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // CAPTCHA state for search
+  const [captchaSvg, setCaptchaSvg] = useState<string>('');
+  const [captchaId, setCaptchaId] = useState<string>('');
+  const [captchaAnswer, setCaptchaAnswer] = useState<string>('');
+  const [searchError, setSearchError] = useState('');
+
+  const fetchCaptcha = () => {
+    fetch('/api/captcha/new')
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          setCaptchaSvg(json.svg);
+          setCaptchaId(json.id);
+          setCaptchaAnswer('');
+          setSearchError('');
+        }
+      })
+      .catch(() => {});
+  };
+
+  const refreshCaptcha = () => {
+    setCaptchaAnswer('');
+    setSearchError('');
+    fetchCaptcha();
+  };
+
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
+
   // Filter state
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedType, setSelectedType] = useState('');
@@ -98,6 +128,10 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
       setHasSearched(false);
       return;
     }
+    if (!captchaAnswer.trim()) {
+      setSearchError('Complete la verificación de seguridad.');
+      return;
+    }
     setSearching(true);
     setHasSearched(true);
     try {
@@ -105,17 +139,33 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
       if (selectedProvince) params.set('province', selectedProvince);
       if (selectedType) params.set('type', selectedType);
       if (selectedStatus) params.set('status', selectedStatus);
+      params.set('captchaId', captchaId);
+      params.set('captchaAnswer', captchaAnswer);
       const res = await fetch(`/api/search?${params}`);
       if (res.ok) {
         const json = await res.json();
-        setSearchResults(json.success ? (json.data?.results || []) : []);
+        if (json.success) {
+          setSearchResults(json.data?.results || []);
+          // Refresh captcha after successful search
+          fetchCaptcha();
+        } else {
+          setSearchError(json.error || 'Error en la búsqueda');
+          if (json.error?.includes('seguridad') || json.error?.includes('CAPTCHA')) {
+            refreshCaptcha();
+          }
+        }
+      } else if (res.status === 429) {
+        setSearchError('Demasiadas búsquedas. Espere un momento e intente de nuevo.');
+      } else {
+        setSearchError('Error en la búsqueda. Intente nuevamente.');
       }
     } catch {
       setSearchResults([]);
+      setSearchError('Error de conexión. Intente nuevamente.');
     } finally {
       setSearching(false);
     }
-  }, [selectedProvince, selectedType, selectedStatus]);
+  }, [selectedProvince, selectedType, selectedStatus, captchaId, captchaAnswer]);
 
   // Execute search automatically if initialQuery is provided
   useEffect(() => {
@@ -210,6 +260,41 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     {searching ? 'Buscando...' : 'Buscar'}
                   </Button>
                 </div>
+                {/* CAPTCHA for search */}
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 border mt-3">
+                  <Shield className="w-4 h-4 text-[var(--rm-primary)] shrink-0" />
+                  <div
+                    className="border rounded bg-white inline-block p-1"
+                    dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                    aria-label="Imagen CAPTCHA para búsqueda"
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Código de seguridad"
+                    className="w-32 h-9"
+                    value={captchaAnswer}
+                    onChange={(e) => { setCaptchaAnswer(e.target.value); setSearchError(''); }}
+                    maxLength={8}
+                    disabled={searching}
+                    aria-label="Respuesta del CAPTCHA de búsqueda"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 shrink-0"
+                    onClick={refreshCaptcha}
+                    disabled={searching}
+                    title="Actualiza CAPTCHA"
+                    aria-label="Actualiza imagen CAPTCHA"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </Button>
+                </div>
+                {searchError && (
+                  <p className="text-xs text-red-500 mt-2">{searchError}</p>
+                )}
+                <p className="text-xs text-muted-foreground mt-1">Máximo 3 búsquedas por minuto. Escriba los caracteres de la imagen.</p>
               </TabsContent>
 <TabsContent value="avanzada">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -273,6 +358,41 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     Limpiar
                   </Button>
                 </div>
+                {/* CAPTCHA for advanced search */}
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 border mt-3">
+                  <Shield className="w-4 h-4 text-[var(--rm-primary)] shrink-0" />
+                  <div
+                    className="border rounded bg-white inline-block p-1"
+                    dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                    aria-label="Imagen CAPTCHA para búsqueda avanzada"
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Código de seguridad"
+                    className="w-32 h-9"
+                    value={captchaAnswer}
+                    onChange={(e) => { setCaptchaAnswer(e.target.value); setSearchError(''); }}
+                    maxLength={8}
+                    disabled={searching}
+                    aria-label="Respuesta del CAPTCHA de búsqueda avanzada"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 shrink-0"
+                    onClick={refreshCaptcha}
+                    disabled={searching}
+                    title="Actualiza CAPTCHA"
+                    aria-label="Actualiza imagen CAPTCHA"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </Button>
+                </div>
+                {searchError && (
+                  <p className="text-xs text-red-500 mt-2">{searchError}</p>
+                )}
+                <p className="text-xs text-muted-foreground mt-1">Máximo 3 búsquedas por minuto. Escriba los caracteres de la imagen.</p>
               </TabsContent>
             </Tabs>
           </CardContent>

@@ -10,11 +10,17 @@ services:
       dockerfile: Dockerfile
     container_name: registro-mercantil-app
     environment:
-      DATABASE_URL: postgresql://portal_rmc:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD_is_required}@postgres:5432/registro_mercantil
+      DATABASE_URL: postgresql://portal_rmc:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD_is_required}@10.66.0.3:5432/registro_mercantil
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET_is_required}
       NODE_ENV: production
       HOSTNAME: "0.0.0.0"
-      NEXT_PUBLIC_APP_URL: ${PORTAL_SCHEME:-https}://${PORTAL_DOMAIN:-portal-registromercantil.test.xutil.cu}
+      PORTAL_SCHEME: ${PORTAL_SCHEME:-http}
+      PORTAL_DOMAIN: ${PORTAL_DOMAIN:-portal-registromercantil.test.xutil.cu}
+      PORTAL_DOMAINS: ${PORTAL_DOMAINS:-portal-registromercantil.test.xutil.cu,portal-registromercantil.egob.dev.xetid.cu}
+      NEXT_PUBLIC_APP_URL: ${PORTAL_SCHEME:-http}://${PORTAL_DOMAIN:-portal-registromercantil.test.xutil.cu}
+      SMTP_HOST: m11-mailpit
+      SMTP_PORT: "1025"
+      SMTP_FROM: noreply@registromercantil.cu
       UPLOAD_MAX_FILE_MB: ${UPLOAD_MAX_FILE_MB:-5}
       UPLOAD_MAX_IMAGE_MB: ${UPLOAD_MAX_IMAGE_MB:-5}
       UPLOAD_MAX_DOCUMENT_MB: ${UPLOAD_MAX_DOCUMENT_MB:-20}
@@ -24,6 +30,10 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    # Conectar a la red del entorno multisitios para alcanzar Mailpit (SMTP)
+    networks:
+      - next-portal-registro-mercantil_default
+      - multisitios11_drupalnet
     # Traefik labels — wildcard HostRule para múltiples dominios
     labels:
       - "traefik.enable=true"
@@ -66,6 +76,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+
+networks:
+  next-portal-registro-mercantil_default:
+    driver: bridge
+  multisitios11_drupalnet:
+    external: true
 
 volumes:
   postgres_data:

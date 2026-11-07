@@ -129,7 +129,7 @@ function isLocalIp(ip: string): boolean {
   // Docker bridge networks — requests from host to container ports arrive with these source IPs
   if (/^172\.(1[7-9]|2[0-9]|3[0-1])\./.test(normalized)) return true;
   if (/^192\.168\.(0|1)\./.test(normalized)) return true;
-  if (/^10\.(0|1)\./.test(normalized)) return true;
+  if (/^10\.(0|1|66)\./.test(normalized)) return true;
   return false;
 }
 

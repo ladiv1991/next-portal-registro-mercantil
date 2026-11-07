@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
+import { verifyCaptchaV2 } from '@/lib/captcha-v2';
+import { rateLimit } from '@/lib/rate-limiter';
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,6 +11,28 @@ export async function GET(request: NextRequest) {
     const province = searchParams.get('province');
     const type = searchParams.get('type');
     const status = searchParams.get('status');
+    const captchaId = searchParams.get('captchaId') || '';
+    const captchaAnswer = searchParams.get('captchaAnswer') || '';
+
+    // CAPTCHA verification
+    if (!verifyCaptchaV2(captchaId, captchaAnswer)) {
+      return NextResponse.json(
+        { success: false, error: 'Verificación de seguridad requerida' },
+        { status: 400 },
+      );
+    }
+
+    // Rate limiting: max 3 searches per IP per minute
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+    const allowed = await rateLimit(`search:${ip}`, { max: 3, windowMs: 60_000 });
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Demasiadas búsquedas. Intente nuevamente en 1 minuto.' },
+        { status: 429 },
+      );
+    }
 
     const normalizedQuery = rawQuery
       .toLowerCase()

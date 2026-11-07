@@ -32,12 +32,12 @@ function getAllowedOrigins(): Set<string> {
     }
   }
 
-  // Development origins (only in dev)
-  if (process.env.NODE_ENV === 'development') {
-    for (const port of ['3000', '3001', '3002', '3003', '3008']) {
-      origins.add(`http://localhost:${port}`);
-      origins.add(`http://127.0.0.1:${port}`);
-    }
+  // Development origins (always allow localhost ports for preview/testing)
+  for (const port of ['3000', '3001', '3002', '3003', '3008', '8081', '8082']) {
+    origins.add(`http://localhost:${port}`);
+    origins.add(`http://127.0.0.1:${port}`);
+    origins.add(`https://localhost:${port}`);
+    origins.add(`https://127.0.0.1:${port}`);
   }
 
   return origins;
