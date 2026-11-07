@@ -38,9 +38,7 @@ export default function ResetPasswordPage() {
   };
 
   useEffect(() => {
-    if (!token || !email) {
-      setError('Enlace inválido. Solicita uno nuevo desde el formulario de recuperación.');
-    } else {
+    if (token && email) {
       fetchCaptcha();
     }
   }, [token, email]);
@@ -125,12 +123,25 @@ export default function ResetPasswordPage() {
         </CardHeader>
         <CardContent>
           {error && (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 mb-4">
-              <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-              <p className="text-sm text-red-500">{error}</p>
+            <div className="flex flex-col gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20 mb-4">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                <p className="text-sm text-red-500">{error}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => router.push('/')} className="self-start w-fit">
+                Volver al inicio
+              </Button>
             </div>
           )}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {(!token || !email) && !success ? (
+            <div className="text-center py-4">
+              <p className="text-sm text-muted-foreground mb-4">¿Necesitas restablecer tu contraseña?</p>
+              <Button onClick={() => router.push('#forgot-password')} className="w-full">
+                Solicitar enlace de recuperación
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="password">Nueva contraseña</Label>
               <Input
@@ -201,6 +212,7 @@ export default function ResetPasswordPage() {
               {loading ? 'Procesando...' : 'Restablecer contraseña'}
             </Button>
           </form>
+          )}
         </CardContent>
       </Card>
     </motion.div>
