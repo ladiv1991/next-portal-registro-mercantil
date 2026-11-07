@@ -39,3 +39,19 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions) {
     html,
   });
 }
+
+/**
+ * Helper to safely log SMTP config without exposing the password.
+ * Use this in debug logging to verify configuration without leaking secrets.
+ */
+export function safeSmtpConfig(): Record<string, string> {
+  const pass = process.env.SMTP_PASS || '';
+  return {
+    host: process.env.SMTP_HOST || 'localhost',
+    port: process.env.SMTP_PORT || '1025',
+    user: process.env.SMTP_USER || '',
+    pass: pass ? `${'*'.repeat(pass.length)} (${pass.length} chars)` : '(not set)',
+    secure: process.env.SMTP_SECURE === 'true' ? 'true' : 'false',
+    from: process.env.SMTP_FROM || 'noreply@registromercantil.cu',
+  };
+}

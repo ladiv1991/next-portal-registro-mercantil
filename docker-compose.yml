@@ -18,9 +18,39 @@ services:
       PORTAL_DOMAIN: ${PORTAL_DOMAIN:-portal-registromercantil.test.xutil.cu}
       PORTAL_DOMAINS: ${PORTAL_DOMAINS:-portal-registromercantil.test.xutil.cu,portal-registromercantil.egob.dev.xetid.cu}
       NEXT_PUBLIC_APP_URL: ${PORTAL_SCHEME:-http}://${PORTAL_DOMAIN:-portal-registromercantil.test.xutil.cu}
+      # --- SMTP configuration ---
+      # Para usar un servidor SMTP externo (Gmail, SendGrid, Mailgun, etc.):
+      # 1. Exporta SMTP_USER y SMTP_PASS en tu entorno o en un archivo .env
+      #    (el archivo .env está en .gitignore, nunca se commite)
+      # 2. Cambia SMTP_HOST y SMTP_PORT al valor del proveedor
+      # 3. Activa SMTP_SECURE=true para TLS (puerto 465) o false para STARTTLS (587)
+      #
+      # ⚠️ NUNCA hardcodees la contraseña aquí. Usa variables de entorno.
+      #    Si necesitas pasarla por CLI: export SMTP_PASS="tu-contraseña"
+      #    El archivo .env.local es ignorado por git (ver .gitignore).
+      #
+      # Ejemplo Gmail:
+      #   SMTP_HOST: smtp.gmail.com
+      #   SMTP_PORT: "587"
+      #   SMTP_SECURE: "false"
+      #   SMTP_USER: ${SMTP_USER:-}
+      #   SMTP_PASS: ${SMTP_PASS:-}
+      #   SMTP_FROM: noreply@registromercantil.cu
+      #
+      # Para ofuscar la contraseña que te dan (si la debes pasar por un canal inseguro):
+      #   - No la copies en el código fuente ni en docker-compose.yml
+      #   - Usá un gestor de secrets (Docker Secrets, Kubernetes Secrets, o un vault)
+      #   - O pasala por variable de entorno en tiempo de ejecución:
+      #       docker run -e SMTP_PASS="valor-secreto" ...
+      #   - En docker-compose, usá ${SMTP_PASS} y definela en .env (gitignored)
+      #
+      # Ejemplo Mailpit (local, sin auth):
       SMTP_HOST: m11-mailpit
       SMTP_PORT: "1025"
+      SMTP_SECURE: "false"
       SMTP_FROM: noreply@registromercantil.cu
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
       UPLOAD_MAX_FILE_MB: ${UPLOAD_MAX_FILE_MB:-5}
       UPLOAD_MAX_IMAGE_MB: ${UPLOAD_MAX_IMAGE_MB:-5}
       UPLOAD_MAX_DOCUMENT_MB: ${UPLOAD_MAX_DOCUMENT_MB:-20}
