@@ -1,18 +1,24 @@
 /**
- * CAPTCHA v2 — Alfanumérico complejo (SVG)
+ * CAPTCHA v2 — Alfanumérico complejo con distorsiones avanzadas
  *
  * Sustituye al captcha matemático simple (fácil para OCR/IA).
  * Distorsiones aplicadas:
- *   - Rotación aleatoria por carácter
+ *   - Rotación aleatoria por carácter (±30°)
+ *   - Skew/traslación diagonal por carácter
  *   - Desplazamiento vertical por carácter
  *   - Tamaño variable por carácter
  *   - Color HSL variable por carácter
- *   - Líneas de ruido (6-12) con opacidad
- *   - Ondulaciones horizontales (wave paths)
- *   - Puntos de ruido (15-30)
+ *   - Opacidad variable por carácter
+ *   - Fondo con textura de puntos sutiles
+ *   - Líneas de ruido cruzadas (10-18)
+ *   - Ondulaciones sinusoidales horizontales (3-5)
+ *   - Puntos de ruido densos (30-60)
+ *   - Arcos punteados de confusión (2-5)
+ *   - Líneas de tachado / subrayado por carácter
  *   - Carácter ambiguo eliminado (0/O/1/l/I)
  *
  * Estado servidor: Map<id, entry> con TTL 5 min. Single-use.
+ * Case-sensitive: la respuesta debe coincidir exactamente en mayúsculas/minúsculas.
  */
 
 import crypto from 'node:crypto';
@@ -40,7 +46,7 @@ function randInt(min: number, max: number): number {
   return Math.floor(rand(min, max + 1));
 }
 
-/** Characters that don't look alike: no 0/O/1/l/I */
+/** Characters kept: no 0/O/1/l/I (ambiguous pairs), but keeps mixed case A-Z a-z */
 const SAFE_CHARS = '23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 
 function randomChars(len: number): string {
@@ -64,6 +70,12 @@ function svgCircle(cx: number, cy: number, r: number,
   return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" opacity="${opacity}"/>`;
 }
 
+function svgEllipse(cx: number, cy: number, rx: number, ry: number,
+  color: string, opacity: number): string {
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" `
+       + `fill="none" stroke="${color}" stroke-width="0.8" opacity="${opacity}"/>`;
+}
+
 // ---------------------------------------------------------------------------
 // Main generator
 // ---------------------------------------------------------------------------
@@ -78,63 +90,105 @@ export interface CaptchaResult {
 export function generateCaptchaV2(): CaptchaResult {
   const chars = randomChars(randInt(5, 6));
   const answer = chars;
-  const W = 220, H = 72;
-  const baseFontSize = randInt(26, 32);
+  const W = 260, H = 80;
+  const baseFontSize = randInt(28, 36);
+
+  // ---- Background texture (subtle dot pattern) ----
+  const bgDots = Array.from({ length: 80 }, () => {
+    const cx = randInt(0, W), cy = randInt(0, H);
+    const r = rand(0.3, 0.8);
+    return svgCircle(cx, cy, r, '#c0c8d4', rand(0.08, 0.18));
+  }).join('\n    ');
 
   // ---- Individual character elements with per-char distortion ----
   const charElements = chars.split('').map((ch, i) => {
-    const rot = rand(-20, 20);
-    const ty = randInt(-8, 8);
-    const fs = baseFontSize + randInt(-4, 4);
-    const opacity = rand(0.72, 1);
+    const rot = rand(-30, 30);           // wider rotation range
+    const tx = rand(-4, 4);              // horizontal skew offset
+    const ty = randInt(-10, 10);         // vertical offset
+    const skew = rand(-15, 15);          // diagonal skew degrees
+    const fs = baseFontSize + randInt(-5, 5);  // size variation
+    const opacity = rand(0.65, 1.0);
     const fillHue = randInt(0, 360);
-    const fillLight = randInt(12, 32);
-    // X position: spread chars across the width
-    const slotWidth = (W - 30) / chars.length;
-    const elemX = 12 + i * slotWidth + randInt(-3, 3);
-    return `<g transform="translate(${elemX},${ty}) rotate(${rot})">
-      <text x="0" y="${fs}" font-family="'Courier New', monospace" font-size="${fs}"
-            font-weight="bold" fill="hsl(${fillHue},50%,${fillLight}%)" opacity="${opacity}">${ch}</text>
+    const fillSat = randInt(40, 80);
+    const fillLight = randInt(15, 38);
+    const fontWeight = randInt(400, 900);
+
+    // X position: spread chars across the width with some overlap
+    const slotWidth = (W - 40) / Math.max(chars.length, 1);
+    const elemX = 18 + i * slotWidth + randInt(-5, 5);
+
+    // Inter-character overlap effect: each char slightly offset on Y relative to neighbors
+    const neighborShift = Math.sin(i * 1.7) * randInt(-6, 6);
+
+    return `<g transform="translate(${elemX},${ty + neighborShift}) rotate(${rot}) skewX(${skew})">
+      <text x="${tx}" y="${fs}" font-family="'Courier New', monospace"
+            font-size="${fs}" font-weight="${fontWeight}"
+            fill="hsl(${fillHue}, ${fillSat}%, ${fillLight}%)"
+            opacity="${opacity}">${ch}</text>
     </g>`;
   }).join('\n    ');
 
-  // ---- Noise lines ----
-  const noiseLines = Array.from({ length: randInt(8, 14) }, () => {
+  // ---- Noise lines (crossing, not parallel) ----
+  const noiseLines = Array.from({ length: randInt(10, 18) }, () => {
     const x1 = randInt(0, W), y1 = randInt(0, H);
     const x2 = randInt(0, W), y2 = randInt(0, H);
-    const color = `hsl(${randInt(0, 360)},${randInt(30, 60)}%,${randInt(25, 50)}%)`;
-    return svgLine(x1, y1, x2, y2, color, rand(0.5, 1.8), rand(0.15, 0.45));
+    // Ensure lines cross the character area more often
+    const color = `hsl(${randInt(0, 360)},${randInt(30, 70)}%,${randInt(20, 50)}%)`;
+    return svgLine(x1, y1, x2, y2, color, rand(0.4, 2.0), rand(0.12, 0.4));
   }).join('\n    ');
 
-  // ---- Wave paths (sinusoidal干扰) ----
-  const wavePaths = Array.from({ length: randInt(2, 4) }, (_, idx) => {
-    const baseY = randInt(12, H - 12);
-    const points = Array.from({ length: 12 }, (_, i) => {
-      const px = i * (W / 11);
-      const py = baseY + Math.sin(i * 0.7 + idx * 1.5) * rand(8, 16);
+  // ---- Wave paths (multiple sinusoidal干扰) ----
+  const wavePaths = Array.from({ length: randInt(3, 5) }, (_, idx) => {
+    const baseY = randInt(10, H - 10);
+    const freq = rand(0.05, 0.15);
+    const amp = rand(6, 20);
+    const points = Array.from({ length: 16 }, (_, i) => {
+      const px = i * (W / 15);
+      const py = baseY + Math.sin(px * freq + idx * 2.1) * amp;
       return `${px.toFixed(1)},${py.toFixed(1)}`;
     });
-    const color = `hsl(${randInt(0, 360)},40%,${randInt(35, 55)}%)`;
+    const color = `hsl(${randInt(0, 360)},${randInt(30, 60)}%,${randInt(30, 55)}%)`;
     return `<polyline points="${points.join(' ')}" fill="none" stroke="${color}" `
-         + `stroke-width="${rand(0.6, 1.2)}" opacity="${rand(0.25, 0.5)}"/>`;
+         + `stroke-width="${rand(0.5, 1.5)}" opacity="${rand(0.2, 0.45)}"/>`;
   }).join('\n    ');
 
-  // ---- Noise dots ----
-  const noiseDots = Array.from({ length: randInt(20, 40) }, () => {
+  // ---- Noise dots (dense) ----
+  const noiseDots = Array.from({ length: randInt(30, 60) }, () => {
     const cx = randInt(0, W), cy = randInt(0, H);
-    const r = rand(0.5, 2.2);
-    const color = `hsl(${randInt(0, 360)},40%,${randInt(30, 55)}%)`;
-    return svgCircle(cx, cy, r, color, rand(0.25, 0.55));
+    const r = rand(0.4, 2.5);
+    const color = `hsl(${randInt(0, 360)},${randInt(30, 60)}%,${randInt(25, 55)}%)`;
+    return svgCircle(cx, cy, r, color, rand(0.2, 0.5));
   }).join('\n    ');
 
-  // ---- Random arcs for extra confusion ----
-  const arcs = Array.from({ length: randInt(1, 3) }, () => {
+  // ---- Random arcs / ellipses for extra confusion ----
+  const arcs = Array.from({ length: randInt(2, 5) }, () => {
     const cx = randInt(20, W - 20), cy = randInt(10, H - 10);
-    const r = randInt(15, 35);
-    const color = `hsl(${randInt(0, 360)},30%,${randInt(40, 55)}%)`;
-    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" `
-         + `stroke-width="${rand(0.5, 1)}" opacity="${rand(0.15, 0.3)}" `
-         + `stroke-dasharray="${randInt(3, 8)},${randInt(2, 6)}"/>`;
+    const rx = randInt(12, 40), ry = randInt(6, 25);
+    const color = `hsl(${randInt(0, 360)},${randInt(20, 50)}%,${randInt(35, 55)}%)`;
+    return svgEllipse(cx, cy, rx, ry, color, rand(0.12, 0.35));
+  }).join('\n    ');
+
+  // ---- Character-specific strike-through / underline overlays ----
+  const overlays = chars.split('').map((_, i) => {
+    if (Math.random() > 0.5) return '';
+    const slotWidth = (W - 40) / Math.max(chars.length, 1);
+    const cx = 18 + i * slotWidth + slotWidth / 2 + randInt(-3, 3);
+    const cy = H / 2 + randInt(-4, 4);
+    const color = `hsl(${randInt(0, 360)},40%,${randInt(30, 50)}%)`;
+    const isStrike = Math.random() > 0.5;
+    if (isStrike) {
+      // Horizontal line through character
+      return svgLine(cx - 12, cy, cx + 12, cy, color, rand(0.8, 1.5), rand(0.3, 0.55));
+    } else {
+      // Wavy underline
+      const pts = Array.from({ length: 6 }, (_, j) => {
+        const px = cx - 12 + j * 5;
+        const py = cy + 8 + Math.sin(j * 1.5) * 2;
+        return `${px},${py}`;
+      });
+      return `<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" `
+           + `stroke-width="${rand(0.6, 1.2)}" opacity="${rand(0.3, 0.5)}"/>`;
+    }
   }).join('\n    ');
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
@@ -146,9 +200,11 @@ export function generateCaptchaV2(): CaptchaResult {
     </linearGradient>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
+    ${bgDots}
     ${noiseLines}
     ${wavePaths}
     ${arcs}
+    ${overlays}
     ${noiseDots}
     ${charElements}
 </svg>`;
@@ -169,7 +225,8 @@ export function verifyCaptchaV2(id: string, answer: string): boolean {
   if (!entry) return false;
   store.delete(id); // anti-replay
   if (Date.now() - entry.createdAt > TTL_MS) return false;
-  return answer.trim().toLowerCase() === entry.answer.toLowerCase();
+  // EXACT match — case sensitive, no trimming to prevent bypass attempts
+  return answer === entry.answer;
 }
 
 export function captchaStoreSizeV2(): number {
