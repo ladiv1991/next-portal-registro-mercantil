@@ -275,9 +275,17 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     <Input
                       type="text"
                       placeholder="Escriba los caracteres de la imagen…"
-                      className="flex-1 max-w-xs h-10 font-mono tracking-widest uppercase"
+                      className="flex-1 max-w-xs h-10 font-mono tracking-widest"
                       value={captchaAnswer}
-                      onChange={(e) => { setCaptchaAnswer(e.target.value.toUpperCase()); setSearchError(''); }}
+                      onChange={(e) => { setCaptchaAnswer(e.target.value); setSearchError(''); }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (!searching && searchQuery.trim() && captchaAnswer.trim()) {
+                            performSearch(searchQuery);
+                          }
+                        }
+                      }}
                       maxLength={8}
                       disabled={searching}
                       autoComplete="off"
@@ -383,9 +391,17 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     <Input
                       type="text"
                       placeholder="Escriba los caracteres de la imagen…"
-                      className="flex-1 max-w-xs h-10 font-mono tracking-widest uppercase"
+                      className="flex-1 max-w-xs h-10 font-mono tracking-widest"
                       value={captchaAnswer}
-                      onChange={(e) => { setCaptchaAnswer(e.target.value.toUpperCase()); setSearchError(''); }}
+                      onChange={(e) => { setCaptchaAnswer(e.target.value); setSearchError(''); }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (!searching && searchQuery.trim() && captchaAnswer.trim()) {
+                            performSearch(searchQuery);
+                          }
+                        }
+                      }}
                       maxLength={8}
                       disabled={searching}
                       autoComplete="off"

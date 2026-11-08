@@ -227,7 +227,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Search handler with debounce
+  // Search handler: navigate to ConsultasSection with query (no direct API call)
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
@@ -236,22 +236,9 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
       setShowSearchDropdown(false);
       return;
     }
-    setShowSearchDropdown(true);
-    setSearchLoading(true);
-    searchTimeoutRef.current = setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-        if (res.ok) {
-          const json = await res.json();
-          setSearchResults(json.success ? (json.data?.results || []) : []);
-        }
-      } catch {
-        setSearchResults([]);
-      } finally {
-        setSearchLoading(false);
-      }
-    }, 400);
-  }, []);
+    // Just navigate — the ConsultasSection handles CAPTCHA-protected search
+    onNavigate('consultas', query);
+  }, [onNavigate]);
 
   // Embla Carousel setup
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
