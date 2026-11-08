@@ -64,7 +64,7 @@ services:
     restart: unless-stopped
     # Conectar a AMBAS redes: default (para local-postgres) y multisitios (para Mailpit)
     networks:
-      - next-portal-registro-mercantil_default
+      - default
       - multisitios11_drupalnet
     # Traefik labels — wildcard HostRule para múltiples dominios
     labels:
@@ -110,7 +110,8 @@ services:
     restart: unless-stopped
 
 networks:
-  next-portal-registro-mercantil_default:
+  default:
+    name: next-portal-registro-mercantil_default
     driver: bridge
   multisitios11_drupalnet:
     external: true
