@@ -265,7 +265,7 @@ export default function AsistenciaSection() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Nuestro asistente virtual está disponible 24/7 para responder sus preguntas frecuentes sobre trámites y servicios del Registro Mercantil.
                 </p>
-                <Button className="bg-[var(--rm-primary)] text-[var(--rm-text)] hover:bg-[var(--rm-primary)]-light">
+                <Button className="bg-[var(--rm-primary)] text-[var(--rm-text)] hover:bg-[var(--rm-primary)]-light" onClick={() => window.dispatchEvent(new Event('open-chatbot'))}>
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Iniciar Chat
                 </Button>

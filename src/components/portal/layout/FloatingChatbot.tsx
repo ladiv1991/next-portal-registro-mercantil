@@ -64,6 +64,13 @@ export default function FloatingChatbot() {
     }
   }, [chatOpen]);
 
+  // Open chatbot from external triggers (e.g. "Iniciar Chat" button)
+  useEffect(() => {
+    const handleOpen = () => setChatOpen(true);
+    window.addEventListener('open-chatbot', handleOpen);
+    return () => window.removeEventListener('open-chatbot', handleOpen);
+  }, []);
+
   // ─── Fetch data immediately on mount (not on chat open) ───
   useEffect(() => {
     const load = async () => {
