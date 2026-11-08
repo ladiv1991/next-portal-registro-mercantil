@@ -8,6 +8,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ObfuscatedContact from '@/components/portal/layout/ObfuscatedContact';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fadeInUp, staggerContainer } from '@/data/portal-data';
 import GuidesSection from './asistencia/GuidesSection';
@@ -210,16 +211,28 @@ export default function AsistenciaSection() {
                     <>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
                         <Phone className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
-                        <div>
+                        <div className="min-w-0">
                           <p className="text-sm font-semibold text-[var(--rm-text)]">Teléfono</p>
-                          <p className="text-sm text-muted-foreground">(+53) 7 862-3456 • Lun-Vie 8:30-16:30</p>
+                          <ObfuscatedContact
+                            fullValue="+5378623456"
+                            type="phone"
+                            label="(+) 53 7 862-3456 • Lun-Vie 8:30-16:30"
+                            className="mt-0.5"
+                          />
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
                         <Mail className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
-                        <div>
+                        <div className="min-w-0">
                           <p className="text-sm font-semibold text-[var(--rm-text)]">Correo Electrónico</p>
-                          <p className="text-sm text-muted-foreground">soporte@registromercantil.cu</p>
+                          <a href="mailto:soporte@registromercantil.cu" className="block mt-0.5">
+                            <ObfuscatedContact
+                              fullValue="soporte@registromercantil.cu"
+                              type="email"
+                              label="soporte@registromercantil.cu"
+                              className="py-0.5"
+                            />
+                          </a>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
