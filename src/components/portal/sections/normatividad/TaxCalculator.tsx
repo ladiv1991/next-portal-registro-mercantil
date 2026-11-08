@@ -190,37 +190,13 @@ const DOC_TAX_GROUPS: DocTaxGroup[] = [
 type ScenarioKey = string;
 
 export default function TaxCalculator() {
-  const [selectedScenario, setSelectedScenario] = useState<ScenarioKey>('constitution');
+  const [selectedScenario, setSelectedScenario] = useState<ScenarioKey>('');
   const [numBooks, setNumBooks] = useState(2);
   const [hasLateFee, setHasLateFee] = useState(false);
   const [exemption, setExemption] = useState('');
 
-  const scenario = REGISTRATION_FEES.find((s) => s.key === selectedScenario)!;
-
-  // Calculate fees
-  const presentationFee = scenario.basePresentation;
-  const inscriptionFee = scenario.baseInscription;
-  const booksFee = scenario.key === 'constitution' ? numBooks * 300 : 0;
-  const reservationFee = scenario.key === 'constitution' && selectedScenario === 'constitution' ? 600 : 0;
-
-  // Certification-specific: use the selected cert fee instead of presentation+inscription
-  let subtotal = 0;
-  if (selectedScenario === 'certification') {
-    const certAmounts: Record<string, number> = { '15': 900, '16': 600, '17': 600, '18': 300 };
-    subtotal = certAmounts[exemption] || 0;
-  } else {
-    subtotal = presentationFee + inscriptionFee + booksFee + reservationFee;
-  }
-
-  const lateFeePercent = 30;
-  const lateFeeAmount = hasLateFee ? Math.round(subtotal * (lateFeePercent / 100)) : 0;
-  const total = hasLateFee || exemption ? subtotal + lateFeeAmount : subtotal;
-
-  // Determine applicable taxes (Ley 181/2026 confirmed rates)
-  const applicableTaxes = TAX_RULES.filter((tax) => tax.aplicableA.includes(selectedScenario));
-
   const handleReset = () => {
-    setSelectedScenario('constitution');
+    setSelectedScenario('');
     setNumBooks(2);
     setHasLateFee(false);
     setExemption('');
@@ -255,7 +231,7 @@ export default function TaxCalculator() {
           </label>
           <Select value={selectedScenario} onValueChange={setSelectedScenario}>
             <SelectTrigger className="w-full">
-              <SelectValue />
+              <SelectValue placeholder="Sin seleccionar" />
             </SelectTrigger>
             <SelectContent>
               {REGISTRATION_FEES.map((s) => (
@@ -270,8 +246,9 @@ export default function TaxCalculator() {
           </Select>
         </div>
 
-        {/* Scenario-specific options */}
-        {selectedScenario === 'constitution' && (
+        {/* Scenario-specific options, fee breakdown, and applicable taxes — only show when a scenario is selected */}
+        {selectedScenario && (<>
+          {selectedScenario === 'constitution' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-[var(--rm-text)] mb-2 block">
@@ -433,6 +410,7 @@ export default function TaxCalculator() {
             </div>
           </div>
         )}
+        </>)}
 
         <Button
           variant="outline"
