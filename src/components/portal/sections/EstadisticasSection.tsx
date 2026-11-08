@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import {
-  BarChart3, Building2, TrendingUp, Activity, PenTool, Download, FileText, ExternalLink,
+  BarChart3, Building2, TrendingUp, Activity, PenTool, Download, FileText,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fadeInUp, staggerContainer } from '@/data/portal-data';
@@ -106,7 +105,7 @@ export default function EstadisticasSection() {
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
           <Badge className="mb-4 bg-white text-[var(--rm-primary)] border-[var(--rm-primary)]/30 shadow-sm">
             <BarChart3 className="w-3 h-3 mr-1" />
-            Estadísticas y Datos Abiertos
+            Estadísticas
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Panel de Estadísticas</h1>
           <p className="text-white/70 max-w-2xl mx-auto">
@@ -154,77 +153,38 @@ export default function EstadisticasSection() {
           <ProvinceDistribution />
         </div>
 
-        {/* Open Data & Downloads */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="glass-card overflow-hidden">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Download className="w-5 h-5 text-[var(--rm-primary)]" />
-                <CardTitle className="text-[var(--rm-text)]">Informes Descargables</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {[
-                  { title: 'Informe Anual 2024', format: 'PDF', size: '2.4 MB' },
-                  { title: 'Boletín Estadístico Q4 2024', format: 'PDF', size: '1.1 MB' },
-                  { title: 'Datos Abiertos - Sociedades Activas', format: 'CSV', size: '4.8 MB' },
-                  { title: 'Serie Histórica 2015-2024', format: 'XLSX', size: '3.2 MB' },
-                  { title: 'Reporte de Inversión Extranjera (VUCE) 2024', format: 'PDF', size: '1.8 MB' },
-                ].map((report) => (
-                  <div key={report.title} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-[var(--rm-primary)]/30 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-[var(--rm-text)]/5 flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-[var(--rm-text)]" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-[var(--rm-text)] group-hover:text-[var(--rm-primary)] transition-colors">{report.title}</p>
-                        <p className="text-xs text-muted-foreground">{report.format} • {report.size}</p>
-                      </div>
+        {/* Downloads */}
+        <Card className="glass-card overflow-hidden max-w-3xl">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Download className="w-5 h-5 text-[var(--rm-primary)]" />
+              <CardTitle className="text-[var(--rm-text)]">Informes Descargables</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { title: 'Informe Anual 2024', format: 'PDF', size: '2.4 MB' },
+                { title: 'Boletín Estadístico Q4 2024', format: 'PDF', size: '1.1 MB' },
+                { title: 'Serie Histórica 2015-2024', format: 'XLSX', size: '3.2 MB' },
+                { title: 'Reporte de Inversión Extranjera (VUCE) 2024', format: 'PDF', size: '1.8 MB' },
+              ].map((report) => (
+                <div key={report.title} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-[var(--rm-primary)]/30 transition-colors cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded bg-[var(--rm-text)]/5 flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-[var(--rm-text)]" />
                     </div>
-                    <Download className="w-4 h-4 text-muted-foreground group-hover:text-[var(--rm-primary)]" />
+                    <div>
+                      <p className="text-sm font-medium text-[var(--rm-text)] group-hover:text-[var(--rm-primary)] transition-colors">{report.title}</p>
+                      <p className="text-xs text-muted-foreground">{report.format} • {report.size}</p>
+                    </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card overflow-hidden">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Activity className="w-5 h-5 text-[var(--rm-primary)]" />
-                <CardTitle className="text-[var(--rm-text)]">Portal de Datos Abiertos</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Acceda a las APIs y conjuntos de datos del Registro Mercantil para aplicaciones de terceros e investigación.
-                </p>
-                <div className="space-y-3">
-                  {[
-                    { title: 'API REST de Consultas', desc: 'Endpoints para búsqueda de sujetos, representantes y actos registrales', status: 'Vigente' },
-                    { title: 'Dataset Sociedades Activas', desc: 'Conjunto completo de datos de sociedades activas con actualización diaria', status: 'Vigente' },
-                    { title: 'Dataset Estadístico', desc: 'Datos agregados de constituciones, cancelaciones y modificaciones', status: 'Vigente' },
-                    { title: 'API de Verificación CSV', desc: 'Servicio de verificación de documentos registrales por código CSV', status: 'Vigente' },
-                  ].map((api) => (
-                    <div key={api.title} className="p-3 rounded-lg border border-gray-200">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="text-sm font-semibold text-[var(--rm-text)]">{api.title}</h4>
-                        <Badge className="bg-green-100 text-green-800 text-xs">{api.status}</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{api.desc}</p>
-                    </div>
-                  ))}
+                  <Download className="w-4 h-4 text-muted-foreground group-hover:text-[var(--rm-primary)]" />
                 </div>
-                <Button variant="outline" className="w-full border-[var(--rm-text)] text-[var(--rm-text)] hover:bg-[var(--rm-text)]/5">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Documentación de APIs
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </motion.div>
   );
