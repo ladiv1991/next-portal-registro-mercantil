@@ -518,7 +518,9 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
         )}
 
         {/* Calculadora de Costos Registrales */}
-        <TaxCalculator />
+        <div className="mb-8">
+          <TaxCalculator />
+        </div>
 
         {/* Certificaciones y Verificación */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
