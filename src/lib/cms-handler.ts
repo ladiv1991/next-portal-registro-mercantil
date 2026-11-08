@@ -4,6 +4,7 @@ import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin-check';
 import { forceRebuildIndex, buildKnowledgeIndex } from '@/lib/chat-knowledge';
 import { CMS_SCHEMAS } from '@/lib/cms-schemas';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 // Rebuild chatbot knowledge index after content changes
 async function rebuildChatIndex() {
@@ -100,6 +101,12 @@ export async function handleCMSGet(request: NextRequest, modelPath: string) {
     const items = await modelDb.findMany({ orderBy });
     return NextResponse.json({ success: true, data: items });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
@@ -121,6 +128,14 @@ export async function handleCMSPost(request: NextRequest, modelPath: string) {
       return NextResponse.json({ success: false, error: validation.error }, { status: 400 });
     }
     body = validation.data;
+
+    // Sanitize HTML content fields to prevent XSS
+    const htmlFields = ['content', 'description', 'summary', 'message', 'steps', 'requirements', 'answer'];
+    for (const field of htmlFields) {
+      if (body[field] && typeof body[field] === 'string') {
+        body[field] = sanitizeHtml(body[field]);
+      }
+    }
 
     // For bot-config, use upsert with a fixed ID
     if (model === 'botConfig') {
@@ -147,6 +162,12 @@ export async function handleCMSPost(request: NextRequest, modelPath: string) {
     await rebuildChatIndex();
     return NextResponse.json({ success: true, data: item }, { status: 201 });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
@@ -163,6 +184,12 @@ export async function handleCMSGetOne(modelPath: string, id: string) {
     }
     return NextResponse.json({ success: true, data: item });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
@@ -185,6 +212,14 @@ export async function handleCMSPut(request: NextRequest, modelPath: string, id: 
     }
     body = validation.data;
 
+    // Sanitize HTML content fields to prevent XSS
+    const htmlFields = ['content', 'description', 'summary', 'message', 'steps', 'requirements', 'answer'];
+    for (const field of htmlFields) {
+      if (body[field] && typeof body[field] === 'string') {
+        body[field] = sanitizeHtml(body[field]);
+      }
+    }
+
     const existing = await modelDb.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ success: false, error: 'No encontrado' }, { status: 404 });
@@ -194,6 +229,12 @@ export async function handleCMSPut(request: NextRequest, modelPath: string, id: 
     await rebuildChatIndex();
     return NextResponse.json({ success: true, data: item });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
@@ -217,6 +258,12 @@ export async function handleCMSDelete(request: NextRequest, modelPath: string, i
     await rebuildChatIndex();
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }

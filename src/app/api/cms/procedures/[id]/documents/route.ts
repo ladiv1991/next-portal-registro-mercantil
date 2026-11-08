@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth, requireAdmin } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { maxUploadBytes, sanitizeUploadFilename, validateUpload } from '@/lib/upload-security';
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    await requireAdmin();
     const { id } = await params;
 
     const formData = await request.formData();

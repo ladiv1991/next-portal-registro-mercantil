@@ -554,6 +554,48 @@ Si alguna capa falla, el cambio NO está terminado. No se omite ninguna capa, in
 
 ---
 
+## QA Testing (Visual Functional Tests)
+
+**Fecha última actualización:** 2026-11-08
+
+### Visual Testing Results (Browser Automation)
+
+#### Secciones testeadas
+| Sección | Estado | Detalle |
+|---------|--------|---------|
+| Home / Portada | ✓ OK | Servicios principales, noticias, footer |
+| Consultas | ✓ OK | Búsqueda y filtros operativos |
+| Trámites | ✓ OK | Lista de procedimientos visible |
+| Normatividad | ✓ OK | Marco legal y documentos |
+| Estadísticas | ✓ OK | Gráficos renderizados |
+| Asistencia | ✓ OK | Guías, tutoriales, contacto |
+| Acceso | ✓ OK | Login form, CAPTCHA, validación |
+
+#### Consola del navegador
+- **401 Unauthorized** en `/api/portal/auth/me` — esperado (usuario no autenticado)
+- Sin errores JavaScript críticos
+- Sin violaciones CSP
+- Sin 404 en recursos estáticos
+
+#### Accesibilidad (WCAG 2.1 AA)
+- Home: 88% | Trámites/Normatividad/Consultas/Asistencia: 96%
+- Issues: button-name, color-contrast, label-content-name-mismatch, target-size
+
+#### Funcionalidad verificada
+- Navegación entre secciones: ✓
+- Login modal: ✓ renderiza
+- CAPTCHA generación: ✓ funcional
+- Chatbot flotante: ✓ visible
+- Búsqueda: ✓ operativa
+
+### Pruebas Incorporadas
+- Visual testing automatizado ejecutado
+- Screenshots guardados como evidencia
+- Console error tracking activo
+- Navegación multi-sección verificada
+
+---
+
 ## Archivos de referencia
 
 | Archivo | Propósito |

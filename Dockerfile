@@ -20,6 +20,16 @@ COPY --chown=nextjs:nodejs public ./public
 COPY --chown=nextjs:nodejs prisma ./prisma
 COPY --chown=nextjs:nodejs package.json ./package.json
 
+# Copy full node_modules since Turbopack externalizes many modules and standalone
+# doesn't properly bundle transitive dependencies for isomorphic-dompurify/jsdom
+COPY --chown=nextjs:nodejs node_modules ./node_modules
+
+# Fix: Turbopack externalizes jsdom with hash "jsdom-5c8b869800590804"
+# Create a minimal package entry to resolve this external module ID
+RUN mkdir -p /app/node_modules/jsdom-5c8b869800590804 && \
+    echo '{"name":"jsdom-5c8b869800590804","main":"./index.js","type":"commonjs"}' > /app/node_modules/jsdom-5c8b869800590804/package.json && \
+    echo 'module.exports = require("jsdom");' > /app/node_modules/jsdom-5c8b869800590804/index.js
+
 # Turbopack externaliza @prisma/client con un id con hash (p.ej. @prisma/client-<hash>);
 # se crea el alias para que require() lo resuelva dentro del contenedor.
 RUN for id in $(grep -rhoE '@prisma/client-[a-f0-9]+' .next/server/chunks | sort -u); do \

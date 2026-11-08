@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth, requireAdmin } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { createPortalUserSchema } from '@/lib/cms-schemas';
 import bcrypt from 'bcryptjs';
 import { checkOrigin } from '@/lib/origin-check';
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAuth();
+    await requireAdmin();
+    console.log('[DEBUG] requireAdmin succeeded');
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search');
@@ -21,10 +22,12 @@ export async function GET(request: NextRequest) {
             { name: { contains: search, mode: 'insensitive' } },
           ],
         },
+        omit: { passwordHash: true },
         orderBy: { createdAt: 'desc' },
       });
     } else {
       users = await db.portalUser.findMany({
+        omit: { passwordHash: true },
         orderBy: { createdAt: 'desc' },
         take: 100,
       });
@@ -32,6 +35,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: users });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
@@ -80,6 +89,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: user }, { status: 201 });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }

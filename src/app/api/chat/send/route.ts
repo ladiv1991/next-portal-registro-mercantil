@@ -108,7 +108,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'messages es requerido' }, { status: 400 });
     }
 
-    const lastUserMsg = messages.filter(m => m.role === 'user').pop()?.content || '';
+    // FIX 4: Filter messages to only allow role === 'user' for safety
+    const userMessages = messages.filter(m => m.role === 'user');
+    if (userMessages.length === 0) {
+      return NextResponse.json({ success: false, error: 'No hay mensajes de usuario válidos' }, { status: 400 });
+    }
+    const lastUserMsg = userMessages[userMessages.length - 1].content || '';
+
+    // FIX 4: Rate limit simple in-memory (5 req/min per IP)
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+                     request.headers.get('x-real-ip') ||
+                     'unknown';
+    const now = Date.now();
+    const windowMs = 60_000; // 1 minute
+    const maxRequests = 5;
+    
+    // In-memory store (resets on server restart - acceptable for basic protection)
+    const rateLimitStore = globalThis.__chatRateLimitStore || (globalThis.__chatRateLimitStore = new Map<string, number[]>());
+    const requests = rateLimitStore.get(clientIp) || [];
+    const recentRequests = requests.filter(ts => now - ts < windowMs);
+    
+    if (recentRequests.length >= maxRequests) {
+      return NextResponse.json({ success: false, error: 'Demasiadas solicitudes. Intente de nuevo en un minuto.' }, { status: 429 });
+    }
+    
+    recentRequests.push(now);
+    rateLimitStore.set(clientIp, recentRequests);
 
     // ═══════════════════════════════════════════════
     // FASE 1: Extraer contexto de la BD

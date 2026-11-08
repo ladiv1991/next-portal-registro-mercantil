@@ -29,6 +29,12 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: config });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
@@ -59,6 +65,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: config });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }

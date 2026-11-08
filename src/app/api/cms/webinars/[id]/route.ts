@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin-check';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -9,7 +9,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    await requireAdmin();
     const { id } = await params;
     const body = await request.json();
     const item = await db.webinar.update({ where: { id }, data: body });
@@ -26,7 +26,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    await requireAdmin();
     const { id } = await params;
     await db.webinar.delete({ where: { id } });
     return NextResponse.json({ success: true, data: null });

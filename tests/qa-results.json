@@ -1,0 +1,227 @@
+{
+  "total": 43,
+  "timestamp": "2026-11-08T03:21:14Z",
+  "base_url": "http://localhost:3003",
+  "tests": [
+    {
+      "evidence": "Homepage carga (SSR cliente-side)",
+      "status": "PASS",
+      "test": "GET / homepage"
+    },
+    {
+      "evidence": "sliders=4, services=8, news=5, procedures=4, regulations=6, faqs=13, guides=4, webinars=2, contacts=4",
+      "status": "PASS",
+      "test": "GET /api/public/content"
+    },
+    {
+      "evidence": "React SSR: anchors rendered client-side, no server HTML IDs",
+      "status": "SKIP",
+      "test": "Nav anchors (client-side)"
+    },
+    {
+      "evidence": "Regulations data present (6 items: DL 226, Res 230, Res 51, DL 133, DL 120)",
+      "status": "PASS",
+      "test": "Normatividad sections"
+    },
+    {
+      "evidence": "Total FAQs: 13",
+      "status": "PASS",
+      "test": "FAQAccordion data"
+    },
+    {
+      "evidence": "Present via Res 51 regulation with tariff data",
+      "status": "PASS",
+      "test": "TaxCalculator reference"
+    },
+    {
+      "evidence": "DL 226 Gaceta references in regulation content",
+      "status": "PASS",
+      "test": "ForeignInvestment links"
+    },
+    {
+      "evidence": "Present",
+      "status": "PASS",
+      "test": "Header X-Frame-Options"
+    },
+    {
+      "evidence": "Present",
+      "status": "PASS",
+      "test": "Header X-Content-Type-Options"
+    },
+    {
+      "evidence": "Present",
+      "status": "PASS",
+      "test": "Header Strict-Transport-Security"
+    },
+    {
+      "evidence": "Present",
+      "status": "PASS",
+      "test": "Header Referrer-Policy"
+    },
+    {
+      "evidence": "Present",
+      "status": "PASS",
+      "test": "Header Permissions-Policy"
+    },
+    {
+      "evidence": "Present",
+      "status": "PASS",
+      "test": "Header Content-Security-Policy"
+    },
+    {
+      "evidence": "token=5f68cd4228fe5ec3155a0a57976790fa, type=alphanum, length=6",
+      "status": "PASS",
+      "test": "CAPTCHA generate"
+    },
+    {
+      "evidence": "Answer verified",
+      "status": "PASS",
+      "test": "CAPTCHA verify correct"
+    },
+    {
+      "evidence": "Replayed token rejected",
+      "status": "PASS",
+      "test": "CAPTCHA anti-replay"
+    },
+    {
+      "evidence": "Wrong answer rejected",
+      "status": "PASS",
+      "test": "CAPTCHA wrong answer"
+    },
+    {
+      "evidence": "HTTP 200 for nonexistent token",
+      "status": "200",
+      "test": "CAPTCHA invalid token"
+    },
+    {
+      "evidence": "role=admin",
+      "status": "PASS",
+      "test": "CMS login admin"
+    },
+    {
+      "evidence": "role=editor",
+      "status": "PASS",
+      "test": "CMS login editor"
+    },
+    {
+      "evidence": null,
+      "status": "FAIL",
+      "test": "GET services admin"
+    },
+    {
+      "evidence": null,
+      "status": "FAIL",
+      "test": "GET services editor"
+    },
+    {
+      "evidence": null,
+      "status": "FAIL",
+      "test": "POST services admin"
+    },
+    {
+      "evidence": null,
+      "status": "FAIL",
+      "test": "POST services editor"
+    },
+    {
+      "evidence": "Status 500 (should be 401/403, not 500)",
+      "status": "FAIL",
+      "test": "CMS no-auth returns 401"
+    },
+    {
+      "evidence": "users=0, passwords=0",
+      "status": "PASS",
+      "test": "Portal users no passwordHash"
+    },
+    {
+      "evidence": "blocked: Error interno del servidor. Por favor, int├⌐ntelo m├ís tarde.",
+      "status": "PASS",
+      "test": "Portal users editor blocked"
+    },
+    {
+      "evidence": "blocked: ",
+      "status": "PASS",
+      "test": "Bot config editor blocked"
+    },
+    {
+      "evidence": null,
+      "status": "FAIL",
+      "test": "Bot config admin"
+    },
+    {
+      "evidence": "Reply present",
+      "status": "PASS",
+      "test": "Chat normal request"
+    },
+    {
+      "evidence": "No system leak",
+      "status": "PASS",
+      "test": "Prompt injection protection"
+    },
+    {
+      "evidence": "Limited at req 0: 200,200,200,429",
+      "status": "PASS",
+      "test": "Chatbot rate limit"
+    },
+    {
+      "evidence": "success=True, results=1",
+      "status": "200",
+      "test": "Search with captcha"
+    },
+    {
+      "evidence": "{\"success\":true,\"data\":{\"provinces\":[\"La Habana\",\"Matanzas\",\"Santiago de Cuba\"],\"types\":[\"Cooperativa\",\"Sociedad An├│nima\",\"SRL\"],\"statuses\":[\"Vigente\"]}}",
+      "status": "200",
+      "test": "Search distinct categories"
+    },
+    {
+      "evidence": "Returns 401",
+      "status": "PASS",
+      "test": "Upload no auth"
+    },
+    {
+      "evidence": "Extensi├│n .prisma no permitida para categor├¡a file",
+      "status": "FAIL",
+      "test": "Upload with admin"
+    },
+    {
+      "evidence": null,
+      "status": "FAIL",
+      "test": "Create news CMS"
+    },
+    {
+      "evidence": "Validation: Email y contrase├▒a son requeridos",
+      "status": "PASS",
+      "test": "Portal auth empty body"
+    },
+    {
+      "evidence": "{\"success\":false,\"error\":\"No autenticado\"}401",
+      "status": "{\"success\":false,\"error\":\"No autenticado\"}401",
+      "test": "Portal auth me no session"
+    },
+    {
+      "evidence": "Same msg: 'Usuario no encontrado'",
+      "status": "PASS",
+      "test": "Portal enumeration resistance"
+    },
+    {
+      "evidence": null,
+      "status": "SKIP",
+      "test": "XSS sanitization"
+    },
+    {
+      "evidence": "Status: 500 (logs show Unauthorized caught as 500)",
+      "status": "FAIL",
+      "test": "CMS 401 not 500"
+    },
+    {
+      "evidence": "Status: 401",
+      "status": "PASS",
+      "test": "Upload 401 not 500"
+    }
+  ],
+  "pass": 31,
+  "skip": 2,
+  "fail": 9,
+  "missing": 0,
+  "status": "complete"
+}

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin-check';
 
 export async function GET() {
   try {
-    await requireAuth();
+    await requireAdmin();
     let config = await db.botConfig.findUnique({ where: { id: 'default' } });
 
     // Create default config if it doesn't exist
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    await requireAdmin();
     const body = await request.json();
 
     const config = await db.botConfig.upsert({

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { checkOrigin } from '@/lib/origin-check';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -9,12 +9,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    await requireAdmin();
     const { id } = await params;
     const body = await request.json();
     const item = await db.sitePage.update({ where: { id }, data: body });
     return NextResponse.json({ success: true, data: item });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }
@@ -26,11 +32,17 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ success: false, error: 'Origen no permitido' }, { status: 403 });
     }
 
-    await requireAuth();
+    await requireAdmin();
     const { id } = await params;
     await db.sitePage.delete({ where: { id } });
     return NextResponse.json({ success: true, data: null });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === 'Forbidden') {
+      return NextResponse.json({ success: false, error: 'Permiso denegado' }, { status: 403 });
+    }
     console.error('[API] Internal error:', error);
     return NextResponse.json({ success: false, error: 'Error interno del servidor. Por favor, inténtelo más tarde.' }, { status: 500 });
   }

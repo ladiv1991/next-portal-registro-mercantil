@@ -1,0 +1,282 @@
+{
+  "run_id": "sec-audit-20261108-001",
+  "repo": "next-portal-registro-mercantil",
+  "source_ref": "35e1585",
+  "profile": "standard",
+  "scope_paths": ["src/app/api/**", "src/components/portal/**", "src/lib/**", "middleware.ts", "next.config.ts"],
+  "findings": [
+    {
+      "id": "C-001",
+      "title": "PasswordHash exposure in GET /api/cms/portal-users",
+      "severity": "critical",
+      "status": "confirmed",
+      "category": "A01:Broken Access Control",
+      "location": "src/app/api/cms/portal-users/route.ts:10,33",
+      "evidence": "requireAuth() instead of requireAdmin(); db.portalUser.findMany() returns full model including passwordHash",
+      "boundary": "CMS editor (lower trust) → reads all portal users' bcrypt hashes (higher sensitivity resource)",
+      "fix": "Change to requireAdmin(); add select: { passwordHash: false } to Prisma query",
+      "reproduction": "curl -H 'Cookie: rmc-token=<editor_token>' http://localhost:3003/api/cms/portal-users"
+    },
+    {
+      "id": "C-002",
+      "title": "CMS authorization bypass - 12 routes use requireAuth() instead of requireAdmin()",
+      "severity": "critical",
+      "status": "confirmed",
+      "category": "A01:Broken Access Control",
+      "location": "src/app/api/cms/faqs/route.ts, /faqs/[id], /site-pages/*, /webinars/[id], /enzona-config/[id], /inquiries, /portal-users, /procedures/[id]/documents*, /user-roles, /bot-config",
+      "evidence": "grep shows requireAuth() in 12 route files; requireAuth() only validates JWT signature, not role='admin'",
+      "boundary": "CMS editor token → write/delete any CMS content, read bot config with API keys, list portal users with hashes",
+      "fix": "Replace all requireAuth() with requireAdmin() in /api/cms/** routes"
+    },
+    {
+      "id": "C-003",
+      "title": "Prompt injection + DoS in public /api/chat/send",
+      "severity": "critical",
+      "status": "confirmed",
+      "category": "A03:Injection / A04:Insecure Design",
+      "location": "src/app/api/chat/send/route.ts:105,421,444",
+      "evidence": "messages array spread directly to LLM without filtering role; no rate limit/CAPTCHA/Guardian on paid LLM endpoint",
+      "boundary": "Anonymous attacker → injects system messages to override prompt, exhausts LLM quota",
+      "fix": "Filter messages to only role:'user'; add rate limit + CAPTCHA + Guardian; sanitize knowledgeContext"
+    },
+    {
+      "id": "H-001",
+      "title": "Stored XSS via NewsArticle.content in HomeSection ReactMarkdown",
+      "severity": "high",
+      "status": "confirmed",
+      "category": "A03:Injection (XSS)",
+      "location": "src/components/portal/sections/HomeSection.tsx:993",
+      "evidence": "<ReactMarkdown>{selectedNews.content}</ReactMarkdown> with no sanitization; CMS accepts HTML in content field",
+      "boundary": "CMS admin (trusted but compromised) → stores <img src=x onerror=alert(1)> → executes in every visitor's browser",
+      "fix": "Add rehype-sanitize plugin to ReactMarkdown or pre-sanitize with sanitizeHtml()"
+    },
+    {
+      "id": "H-002",
+      "title": "CSP in production without real nonce or strict-dynamic",
+      "severity": "high",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "middleware.ts, next.config.ts",
+      "evidence": "Middleware generates nonce in x-rmc-nonce header but CSP script-src uses 'unsafe-inline' without nonce; strict-dynamic absent",
+      "boundary": "Any XSS (like H-001) executes despite CSP; no defense-in-depth",
+      "fix": "Inject nonce into script-src directive; enable strict-dynamic; deploy report-only first"
+    },
+    {
+      "id": "H-003",
+      "title": "serverActions.allowedOrigins missing (documented regression)",
+      "severity": "high",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "next.config.ts",
+      "evidence": "AGENTS.md documents this fix but next.config.ts lacks serverActions.allowedOrigins key",
+      "boundary": "Attacker tricks victim into POST to Server Action from malicious origin → CSRF on Server Actions",
+      "fix": "Add serverActions: { allowedOrigins: ['https://registro-mercantil.xetid.cu', ...] }"
+    },
+    {
+      "id": "H-004",
+      "title": "poweredByHeader not disabled (documented regression)",
+      "severity": "high",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "next.config.ts",
+      "evidence": "AGENTS.md documents poweredByHeader: false but next.config.ts lacks it; default true leaks Next.js version",
+      "boundary": "Passive fingerprinting → targeted exploits for known version vulnerabilities",
+      "fix": "Add poweredByHeader: false"
+    },
+    {
+      "id": "H-005",
+      "title": "User enumeration in /api/portal/auth/login",
+      "severity": "high",
+      "status": "confirmed",
+      "category": "A07:Identification and Authentication Failures",
+      "location": "src/app/api/portal/auth/login/route.ts:54-70",
+      "evidence": "Returns 'Usuario no encontrado' vs 'Contraseña incorrecta' — different messages reveal account existence",
+      "boundary": "Anonymous attacker → enumerates registered portal users (registradores)",
+      "fix": "Unify to generic 'Credenciales inválidas' (matching CMS login behavior)"
+    },
+    {
+      "id": "M-001",
+      "title": "JWT type confusion - requireAuth() doesn't validate payload.type",
+      "severity": "medium",
+      "status": "confirmed",
+      "category": "A01:Broken Access Control",
+      "location": "src/lib/api-auth.ts:11-14",
+      "evidence": "JWTPayload has type?: 'portal'|'cms'; requireAuth() accepts any valid token regardless of type",
+      "boundary": "Portal user token (type:portal) accepted in CMS routes (and vice versa); lateral privilege escalation",
+      "fix": "requireAuth() validates type === 'cms'; create requirePortalAuth() for type === 'portal'"
+    },
+    {
+      "id": "M-002",
+      "title": "Portal login missing CAPTCHA and Guardian (vs CMS login)",
+      "severity": "medium",
+      "status": "confirmed",
+      "category": "A07:Identification and Authentication Failures",
+      "location": "src/app/api/portal/auth/login/route.ts",
+      "evidence": "CMS login has rate limit + CAPTCHA v2 + Guardian; portal login only has rate limit; AGENTS.md claims both have it",
+      "boundary": "Brute force on portal credentials easier than CMS; no behavioral analysis",
+      "fix": "Reuse CAPTCHA + Guardian logic in portal login route"
+    },
+    {
+      "id": "M-003",
+      "title": "IDOR + Mass Assignment in /api/cms/faqs/[id] PUT/DELETE",
+      "severity": "medium",
+      "status": "confirmed",
+      "category": "A01:Broken Access Control / A03:Injection",
+      "location": "src/app/api/cms/faqs/[id]/route.ts",
+      "evidence": "requireAuth() not requireAdmin(); db.fAQ.update({ data: body }) accepts any field from body",
+      "boundary": "Editor token → modifies/deletes any FAQ by ID; injects arbitrary fields (visible, order, etc.)",
+      "fix": "requireAdmin() + validate body with CMS_SCHEMAS['faqs'].update"
+    },
+    {
+      "id": "M-004",
+      "title": "Bot config editable by non-admin (prompt injection persistent + API key leak)",
+      "severity": "medium",
+      "status": "confirmed",
+      "category": "A01:Broken Access Control",
+      "location": "src/app/api/bot-config/route.ts:8,37",
+      "evidence": "GET/POST use requireAuth(); editor can read/modify systemPrompt, apiKey, apiUrl, model",
+      "boundary": "Editor → persistent prompt injection affecting all chat users; extracts LLM API keys",
+      "fix": "Change to requireAdmin()"
+    },
+    {
+      "id": "M-005",
+      "title": "AuthZ errors masked as 500 in cms-handler",
+      "severity": "medium",
+      "status": "confirmed",
+      "category": "A09:Security Logging and Monitoring Failures",
+      "location": "src/lib/cms-handler.ts",
+      "evidence": "requireAdmin() throws 'Unauthorized'/'Forbidden' caught by generic handler returning 500",
+      "boundary": "SIEM/logs cannot distinguish auth failures from server errors; attack detection impaired",
+      "fix": "Catch specific error messages and return 401/403 status codes"
+    },
+    {
+      "id": "M-006",
+      "title": "origin-check ALLOWED_ORIGINS computed at module init (static)",
+      "severity": "medium",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "src/lib/origin-check.ts:46",
+      "evidence": "const ALLOWED_ORIGINS = getAllowedOrigins() evaluated once; runtime env changes not reflected",
+      "boundary": "Low practical risk (env immutable in deploy), but violates least-surprise; stale allowlist possible in long-running containers",
+      "fix": "Move getAllowedOrigins() call inside checkOrigin() or use cached getter with invalidation"
+    },
+    {
+      "id": "M-007",
+      "title": "TypeScript ignoreBuildErrors allows unsafe code to production",
+      "severity": "medium",
+      "status": "confirmed",
+      "category": "A06:Vulnerable and Outdated Components (build config)",
+      "location": "next.config.ts:31",
+      "evidence": "typescript: { ignoreBuildErrors: true } — build passes with type errors",
+      "boundary": "Type errors in validation/auth logic could reach production undetected",
+      "fix": "Set to false; fix genuine type errors; use // @ts-expect-error for false positives"
+    },
+    {
+      "id": "L-001",
+      "title": "dangerouslyAllowSVG not explicitly set to false",
+      "severity": "low",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "next.config.ts",
+      "evidence": "images config lacks dangerouslyAllowSVG; default false in Next 16 but not explicit",
+      "fix": "Add dangerouslyAllowSVG: false to images config"
+    },
+    {
+      "id": "L-002",
+      "title": "images.remotePatterns not configured (default 'self' is safe)",
+      "severity": "low",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "next.config.ts",
+      "evidence": "No remotePatterns key; Next defaults to 'self' only — safe but not explicit",
+      "fix": "Configure explicit allowlist if external images needed; otherwise document intentional default"
+    },
+    {
+      "id": "L-003",
+      "title": "Middleware matcher excludes /api/* — static CSP fallback applies",
+      "severity": "low",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "middleware.ts",
+      "evidence": "matcher excludes api/, _next/static, etc.; these routes get static CSP with 'unsafe-inline'",
+      "fix": "Acceptable (API returns JSON), but document rationale"
+    },
+    {
+      "id": "L-004",
+      "title": "Server-generated CAPTCHA SVG rendered via dangerouslySetInnerHTML (trusted)",
+      "severity": "info",
+      "status": "confirmed",
+      "category": "A03:Injection (XSS)",
+      "location": "Multiple files (reset-password, AccesoSection, ConsultasSection, ContactForm, ForgotPasswordSection)",
+      "evidence": "captchaSvg generated server-side with no user input; rendered via dangerouslySetInnerHTML",
+      "fix": "No action needed — server-generated, not user-controlled"
+    },
+    {
+      "id": "L-005",
+      "title": "Chatbot LLM responses properly sanitized before render",
+      "severity": "info",
+      "status": "confirmed",
+      "category": "A03:Injection (XSS)",
+      "location": "src/components/portal/layout/FloatingChatbot.tsx:254,259,264",
+      "evidence": "sanitizeLine() and sanitizeHtml() (DOMPurify) applied to all LLM output before dangerouslySetInnerHTML",
+      "fix": "Correct implementation — no action needed"
+    },
+    {
+      "id": "L-006",
+      "title": "File upload validation robust (magic bytes, path traversal, extension allowlist)",
+      "severity": "info",
+      "status": "confirmed",
+      "category": "A10:SSRF / A01:Broken Access Control",
+      "location": "src/app/api/upload/route.ts, /upload/serve/[id]/route.ts",
+      "evidence": "verifyMagicBytes, path normalization, ALLOWED_EXTENSIONS allowlist, requireAdmin on serve",
+      "fix": "Correct implementation — no action needed"
+    },
+    {
+      "id": "L-007",
+      "title": "Origin check uses closed allowlist, rejects missing Origin",
+      "severity": "info",
+      "status": "confirmed",
+      "category": "A05:Security Misconfiguration",
+      "location": "src/lib/origin-check.ts",
+      "evidence": "ALLOWED_ORIGINS built from NEXT_PUBLIC_APP_URL, PORTAL_DOMAINS, localhost ports; checkOrigin returns false if no Origin header",
+      "fix": "Correct implementation — no action needed"
+    },
+    {
+      "id": "L-008",
+      "title": "Critical dependencies patched (next 16.4.3, next-auth 4.24.15, sharp 0.35.5)",
+      "severity": "info",
+      "status": "confirmed",
+      "category": "A06:Vulnerable and Outdated Components",
+      "location": "package.json",
+      "evidence": "Ranges satisfy minimum versions for CVE-2026-96889, GHSA-673q-mjm6-r5xr, GHSA-p293-qw3h-jr36, GHSA-7rqj-j65f-68wh, CVE-2026-94545",
+      "fix": "Verify lockfile resolves to patched versions; monitor for new CVEs"
+    }
+  ],
+  "needs_validation": [
+    {
+      "id": "NV-001",
+      "hypothesis": "Rate limit uses x-forwarded-for which is spoofable without trusted proxy",
+      "blocker": "No access to Traefik/Caddy config to verify header overwrite",
+      "plan": "Verify load balancer overwrites X-Forwarded-For with real client IP"
+    },
+    {
+      "id": "NV-002",
+      "hypothesis": "HSTS preload enabled but not all PORTAL_DOMAINS subdomains may have valid HTTPS",
+      "blocker": "No access to DNS/SSL for production domains",
+      "plan": "Verify valid certs on all domains before preload; remove preload if any subdomain lacks HTTPS"
+    },
+    {
+      "id": "NV-003",
+      "hypothesis": "isomorphic-dompurify@4.6.0 requires Node >=24.15; current 24.14.1 (EBADENGINE warning)",
+      "blocker": "Node version in Docker container",
+      "plan": "Update Dockerfile Node to >=24.15 or downgrade DOMPurify to compatible version"
+    }
+  ],
+  "coverage": {
+    "api_routes_analyzed": 72,
+    "components_analyzed": 45,
+    "lib_modules_analyzed": 12,
+    "config_files_analyzed": 3,
+    "attack_classes_covered": ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10"]
+  }
+}

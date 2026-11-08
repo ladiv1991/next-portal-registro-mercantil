@@ -1,0 +1,190 @@
+{
+  "audit_date": "2026-11-08",
+  "scope": "Portal Registro Mercantil Cuba - CMS content rendered in public portal",
+  "sanitizer": "src/lib/sanitize-html.ts (DOMPurify with ALLOWED_TAGS: b,i,u,em,strong,a,p,br,ul,ol,li,h1-h6,blockquote,code,pre,hr; ALLOWED_ATTR: href,title,target,rel)",
+  "vectors": [
+    {
+      "component": "src/components/portal/sections/HomeSection.tsx",
+      "line": 993,
+      "field": "news.content (NewsArticle.content)",
+      "sink": "ReactMarkdown",
+      "sanitized": false,
+      "payload_test": "<img src=x onerror=alert(1)> — ReactMarkdown by default renders raw HTML unless configured with remark-gfm + rehype-sanitize. Default behavior: ALLOWS raw HTML. HIGH RISK.",
+      "severity": "high"
+    },
+    {
+      "component": "src/components/portal/sections/normatividad/LegalFramework.tsx",
+      "line": 83,
+      "field": "regulation.content (Regulation.content)",
+      "sink": "JSX text interpolation ({item.content})",
+      "sanitized": false,
+      "payload_test": "<img src=x onerror=alert(1)> — Rendered as plain text via {item.content}. React auto-escapes JSX text. NO XSS via innerHTML. Risk: LOW (safe by React default).",
+      "severity": "low"
+    },
+    {
+      "component": "src/components/portal/sections/asistencia/GuidesSection.tsx",
+      "line": 135,
+      "field": "guide.steps (Guide.steps) -> step.description",
+      "sink": "JSX text interpolation ({step.description})",
+      "sanitized": false,
+      "payload_test": "<img src=x onerror=alert(1)> — Rendered as plain text via {step.description}. React auto-escapes. NO XSS. Risk: LOW.",
+      "severity": "low"
+    },
+    {
+      "component": "src/components/portal/layout/FloatingChatbot.tsx",
+      "line": 254,
+      "field": "LLM response (markdown-like parsing via renderBotText)",
+      "sink": "dangerouslySetInnerHTML with sanitizeLine()",
+      "sanitized": true,
+      "payload_test": "<img src=x onerror=alert(1)> — sanitized by sanitizeLine() -> DOMPurify strips onerror. PASS.",
+      "severity": "low"
+    },
+    {
+      "component": "src/components/portal/layout/FloatingChatbot.tsx",
+      "line": 259,
+      "field": "LLM response (## headings)",
+      "sink": "dangerouslySetInnerHTML with sanitizeLine()",
+      "sanitized": true,
+      "payload_test": "<img src=x onerror=alert(1)> — sanitized by sanitizeLine(). PASS.",
+      "severity": "low"
+    },
+    {
+      "component": "src/components/portal/layout/FloatingChatbot.tsx",
+      "line": 264,
+      "field": "LLM response (general markdown blocks)",
+      "sink": "dangerouslySetInnerHTML with sanitizeHtml()",
+      "sanitized": true,
+      "payload_test": "<img src=x onerror=alert(1)> — sanitized by sanitizeHtml(). PASS.",
+      "severity": "low"
+    },
+    {
+      "component": "src/app/api/chat/send/route.ts",
+      "line": 430,
+      "field": "LLM reply (reply variable)",
+      "sink": "JSON response -> FloatingChatbot renderBotText -> dangerouslySetInnerHTML (sanitized)",
+      "sanitized": true,
+      "payload_test": "LLM returns <script>alert(1)</script> -> chat sends JSON -> FloatingChatbot sanitizes via sanitizeHtml() before dangerouslySetInnerHTML. PASS.",
+      "severity": "low"
+    },
+    {
+      "component": "src/app/api/chat/send/route.ts",
+      "line": 430",
+      "field": "LLM reply via /api/chat/search -> buildKnowledgeResponse",
+      "sink": "JSON response -> FloatingChatbot renderBotText -> dangerouslySetInnerHTML (sanitized)",
+      "sanitized": true,
+      "payload_test": "Knowledge base entry contains XSS payload -> buildKnowledgeResponse returns markdown -> FloatingChatbot sanitizes. PASS.",
+      "severity": "low"
+    },
+    {
+      "component": "src/components/portal/sections/ConsultasSection.tsx",
+      "line": 270,
+      "field": "captchaSvg (server-generated SVG)",
+      "sink": "dangerouslySetInnerHTML={{ __html: captchaSvg }}",
+      "sanitized": "N/A (server-generated, not CMS)",
+      "payload_test": "N/A - server controlled. Not a CMS vector.",
+      "severity": "info"
+    },
+    {
+      "component": "src/components/portal/sections/ConsultasSection.tsx",
+      "line": 378,
+      "field": "captchaSvg (server-generated SVG)",
+      "sink": "dangerouslySetInnerHTML={{ __html: captchaSvg }}",
+      "sanitized": "N/A (server-generated, not CMS)",
+      "payload_test": "N/A - server controlled. Not a CMS vector.",
+      "severity": "info"
+    },
+    {
+      "component": "src/components/portal/sections/AccesoSection.tsx",
+      "line": 163,
+      "field": "captchaSvg (server-generated SVG)",
+      "sink": "dangerouslySetInnerHTML={{ __html: captchaSvg }}",
+      "sanitized": "N/A (server-generated, not CMS)",
+      "payload_test": "N/A - server controlled. Not a CMS vector.",
+      "severity": "info"
+    },
+    {
+      "component": "src/components/portal/sections/ForgotPasswordSection.tsx",
+      "line": 146,
+      "field": "captchaSvg (server-generated SVG)",
+      "sink": "dangerouslySetInnerHTML={{ __html: captchaSvg }}",
+      "sanitized": "N/A (server-generated, not CMS)",
+      "payload_test": "N/A - server controlled. Not a CMS vector.",
+      "severity": "info"
+    },
+    {
+      "component": "src/components/portal/sections/asistencia/ContactForm.tsx",
+      "line": 250,
+      "field": "captchaSvg (server-generated SVG)",
+      "sink": "dangerouslySetInnerHTML={{ __html: captchaSvg }}",
+      "sanitized": "N/A (server-generated, not CMS)",
+      "payload_test": "N/A - server controlled. Not a CMS vector.",
+      "severity": "info"
+    },
+    {
+      "component": "src/components/ui/chart.tsx",
+      "line": 83,
+      "field": "Chart theme CSS (programmatic)",
+      "sink": "dangerouslySetInnerHTML with generated CSS",
+      "sanitized": "N/A (not CMS content)",
+      "payload_test": "N/A - generated from config. Not a CMS vector.",
+      "severity": "info"
+    },
+    {
+      "component": "src/app/layout.tsx",
+      "line": 91,
+      "field": "JSON-LD structured data (static)",
+      "sink": "dangerouslySetInnerHTML with JSON.stringify",
+      "sanitized": "N/A (not CMS content)",
+      "payload_test": "N/A - static config. Not a CMS vector.",
+      "severity": "info"
+    },
+    {
+      "component": "src/components/portal/auth/AuthenticationModal.tsx",
+      "line": "N/A",
+      "field": "portal user login fields (not CMS)",
+      "sink": "N/A",
+      "sanitized": "N/A",
+      "payload_test": "Not reviewed - out of CMS scope.",
+      "severity": "info"
+    }
+  ],
+  "cms_fields_exposed_via_api_public_content": [
+    "Slider: title, subtitle, message",
+    "Service: title, description",
+    "Statistic: label, value, suffix",
+    "NewsArticle: title, summary, content, category, source",
+    "Procedure: title, description, icon, time, cost, requirements, steps",
+    "Regulation: title, type, number, description, content, fileUrl, effectiveDate, category",
+    "FAQ: question, answer, category",
+    "VideoTutorial: title, description, duration, category, videoUrl, thumbnailUrl",
+    "Webinar: title, description, date, time, location, status",
+    "ContactChannel: type, label, value, icon",
+    "Guide: title, description, icon, steps (JSON string)"
+  ],
+  "fields_rendered_unsafe": [
+    "NewsArticle.content -> ReactMarkdown (HomeSection.tsx:993) — NO sanitization",
+    "Regulation.content -> JSX text (LegalFramework.tsx:83) — SAFE (React escapes)",
+    "Guide.steps[].description -> JSX text (GuidesSection.tsx:135) — SAFE (React escapes)",
+    "Procedure.requirements, Procedure.steps -> NOT directly rendered in portal sections reviewed (used in ProcedureCard static data only)",
+    "FAQ.answer -> NOT rendered in portal (only static FAQAccordion fallback)",
+    "NewsArticle.summary -> JSX text (HomeSection.tsx:867) — SAFE",
+    "Regulation.description -> JSX text (LegalFramework.tsx:79) — SAFE",
+    "Service.description -> JSX text (HomeSection.tsx:646) — SAFE"
+  ],
+  "summary": {
+    "total_cms_fields_in_public_api": 38,
+    "dangerouslySetInnerHTML_usages": 12,
+    "cms_content_vectors_found": 1,
+    "high_severity": 1,
+    "medium_severity": 0,
+    "low_severity": 9,
+    "info": 3
+  },
+  "critical_finding": "NewsArticle.content (rich text from CMS) is rendered via ReactMarkdown WITHOUT sanitization in HomeSection.tsx:993. ReactMarkdown by default allows raw HTML passthrough. An admin creating a news article with <img src=x onerror=alert(1)> would achieve stored XSS on the public portal.",
+  "recommended_fixes": [
+    "HomeSection.tsx:993 - Add rehype-sanitize to ReactMarkdown: <ReactMarkdown components={{}} rehypePlugins={[rehypeSanitize]}>{content}</ReactMarkdown> OR pre-sanitize with sanitizeHtml() from '@/lib/sanitize-html'",
+    "Consider wrapping ALL CMS rich-text fields (NewsArticle.content, Regulation.content, Procedure.requirements, Procedure.steps, Guide.steps, FAQ.answer) with sanitizeHtml() before rendering, even if currently rendered as JSX text (defense in depth)",
+    "Add unit test for sanitizeHtml() with XSS payloads",
+    "Audit any future components that may render CMS rich-text content"
+  ]
+}

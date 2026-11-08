@@ -19,7 +19,13 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { id, answer } = body as { id?: string; answer?: string };
-    const ok = verifyCaptchaV2(id ?? '', answer ?? '');
+    if (!id || !answer) {
+      return NextResponse.json(
+        { success: false, error: 'Parámetros inválidos: se requiere id y answer' },
+        { status: 400 },
+      );
+    }
+    const ok = verifyCaptchaV2(id, answer);
     return NextResponse.json({ success: true, valid: ok });
   } catch {
     return NextResponse.json(

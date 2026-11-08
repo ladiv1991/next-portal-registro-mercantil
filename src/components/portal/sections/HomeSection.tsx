@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import ReactMarkdown from 'react-markdown';
+import rehypeSanitize from 'rehype-sanitize';
 import {
   Search, FileText, Building2, PenTool, Globe2,
   Award, ArrowRight, Star, FileCheck, Eye, Shield,
@@ -990,7 +991,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
           </DialogHeader>
           <div className="prose prose-sm max-w-none text-muted-foreground">
             {selectedNews?.content ? (
-              <ReactMarkdown>{selectedNews.content}</ReactMarkdown>
+              <ReactMarkdown rehypePlugins={[rehypeSanitize]}>{selectedNews.content}</ReactMarkdown>
             ) : (
               <p>{selectedNews?.summary || 'Contenido no disponible.'}</p>
             )}
