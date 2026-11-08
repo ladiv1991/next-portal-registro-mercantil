@@ -91,8 +91,8 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
       }`}
       style={{
         background: scrolled
-          ? 'linear-gradient(180deg, #121212 0%, var(--rm-text) 100%)'
-          : 'linear-gradient(180deg, #111111 0%, #1E1E1E 100%)',
+          ? 'linear-gradient(180deg, var(--c-navy, #1A1A1A) 0%, var(--c-navy-light, #2D2D2D) 100%)'
+          : 'linear-gradient(180deg, var(--c-navy, #1A1A1A) 0%, var(--c-navy-light, #2D2D2D) 100%)',
       }}
     >
       {/* Cuban flag stripe */}
@@ -120,7 +120,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
             </div>
             <div className="hidden sm:block">
               <div className="text-white font-bold text-sm leading-tight tracking-wide">Registro Mercantil</div>
-              <div className="text-xs text-gray-300 font-medium">República de Cuba</div>
+              <div className="text-xs text-white/70 font-medium">República de Cuba</div>
             </div>
           </button>
 
@@ -142,16 +142,16 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                     }`}
                     style={{
                       background: isActive
-                        ? 'linear-gradient(135deg, rgba(158, 58, 46, 0.9) 0%, rgba(122, 42, 30, 0.9) 100%)'
+                        ? 'linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-dark) 100%)'
                         : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
                       boxShadow: isActive
-                        ? '0 2px 12px rgba(158, 58, 46, 0.3), inset 0 1px 0 rgba(255,255,255,0.1)'
+                        ? '0 2px 12px color-mix(in srgb, var(--c-accent) 30%, transparent), inset 0 1px 0 rgba(255,255,255,0.1)'
                         : 'none',
                     }}
                   />
                   <span
                     className={`relative z-10 flex items-center gap-2 transition-colors duration-300 ${
-                      isActive ? 'text-white' : 'text-gray-300 hover:text-gray-100'
+                      isActive ? 'text-white' : 'text-white/75 hover:text-white'
                     }`}
                   >
                     {IconComponent && <IconComponent className="w-4 h-4 shrink-0" />}
@@ -176,7 +176,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg"
+                  className="text-white/75 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg"
                 >
                   <Bell className="w-4 h-4" />
                 </Button>
@@ -187,7 +187,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-300 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg"
+              className="text-white/75 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg"
               onClick={() => handleNavClick('consultas')}
             >
               <Search className="w-4 h-4" />
@@ -197,7 +197,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
               <Button
                 variant="ghost"
                 size="sm"
-                className="hidden sm:flex transition-all duration-300 rounded-lg text-gray-300 hover:text-white hover:bg-white/5"
+                className="hidden sm:flex transition-all duration-300 rounded-lg text-white/75 hover:text-white hover:bg-white/5"
               >
                 <Building2 className="w-4 h-4 mr-1" />
                 Acceder al SGR
@@ -223,7 +223,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-300 hover:text-white lg:hidden transition-colors rounded-lg"
+                  className="text-white/75 hover:text-white lg:hidden transition-colors rounded-lg"
                 >
                   <Menu className="w-5 h-5" />
                 </Button>
@@ -232,7 +232,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 side="right"
                 className="w-80 p-0 border-l border-white/10"
                 style={{
-                  background: 'linear-gradient(180deg, #111111 0%, var(--rm-text) 100%)',
+                  background: 'linear-gradient(180deg, var(--c-navy, #1A1A1A) 0%, var(--c-navy-light, #2D2D2D) 100%)',
                 }}
               >
                 <SheetHeader className="p-6 border-b border-white/10">
@@ -255,13 +255,13 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-300 ${
                             isActive
                               ? 'text-white shadow-lg'
-                              : 'text-gray-300 hover:bg-white/5 hover:text-gray-100'
+                              : 'text-white/75 hover:bg-white/5 hover:text-white'
                           }`}
                           style={
                             isActive
                               ? {
-                                  background: 'linear-gradient(135deg, rgba(158,58,46,0.8) 0%, rgba(122,42,30,0.8) 100%)',
-                                  boxShadow: '0 2px 12px rgba(158,58,46,0.25)',
+                                  background: 'linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-dark) 100%)',
+                                  boxShadow: '0 2px 12px color-mix(in srgb, var(--c-accent) 25%, transparent)',
                                 }
                               : {}
                           }

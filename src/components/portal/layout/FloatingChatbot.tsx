@@ -306,12 +306,12 @@ export default function FloatingChatbot() {
                 </div>
                 <div>
                   <p className="text-white font-semibold text-sm">Asistente Virtual</p>
-                  <p className="text-gray-300 text-xs">Registro Mercantil de Cuba</p>
+                  <p className="text-white/70 text-xs">Registro Mercantil de Cuba</p>
                 </div>
               </div>
               <button
                 onClick={() => setChatOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-colors"
+                className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
                 aria-label="Cerrar chat"
               >
                 <X className="w-4 h-4" />
@@ -462,7 +462,7 @@ export default function FloatingChatbot() {
                       )}
 
                       <div className="mt-2.5">
-                        <p className="text-[10px] font-semibold text-gray-300 mb-1.5 flex items-center gap-1">
+                        <p className="text-[10px] font-semibold text-muted-foreground mb-1.5 flex items-center gap-1">
                           <span>📎</span> General
                         </p>
                         <div className="flex flex-wrap gap-1.5">
@@ -483,7 +483,7 @@ export default function FloatingChatbot() {
 
                 <button
                   onClick={() => setShowMoreTags(!showMoreTags)}
-                  className="text-[10px] text-gray-300 hover:text-[var(--rm-primary)] transition-colors mt-2 text-left w-full flex items-center gap-0.5"
+                  className="text-[10px] text-muted-foreground hover:text-[var(--rm-primary)] transition-colors mt-2 text-left w-full flex items-center gap-0.5"
                 >
                   {showMoreTags ? (
                     <><span className="text-[9px]">▴</span> Ver menos opciones</>
@@ -521,7 +521,7 @@ export default function FloatingChatbot() {
                   )}
                 </button>
               </div>
-              <p className="text-[10px] text-gray-300 mt-2 text-center">
+              <p className="text-[10px] text-muted-foreground mt-2 text-center">
                 Asistente virtual con fines informativos. No sustituye el asesoramiento jurídico profesional.
               </p>
             </div>

@@ -346,7 +346,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                             {slide.title}
                           </h1>
                           {slide.message && (
-                            <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mb-6 sm:mb-8 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                            <p className="text-sm sm:text-base md:text-lg text-white/80 max-w-2xl mb-6 sm:mb-8 leading-relaxed line-clamp-3 sm:line-clamp-none">
                               {slide.message}
                             </p>
                           )}
@@ -426,7 +426,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                   <br />
                   de Cuba
                 </h1>
-                <p className="text-sm sm:text-lg md:text-xl text-gray-300 max-w-2xl mb-6 sm:mb-8 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                <p className="text-sm sm:text-lg md:text-xl text-white/80 max-w-2xl mb-6 sm:mb-8 leading-relaxed line-clamp-3 sm:line-clamp-none">
                   Plataforma digital para la gestión integral del Registro Mercantil.
                   Transformación digital al servicio de la seguridad jurídica y el desarrollo económico.
                 </p>
@@ -888,7 +888,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-white">¿Por qué elegir nuestro portal?</h2>
-            <p className="text-gray-300 mt-2">Beneficios de la plataforma digital del Registro Mercantil</p>
+            <p className="text-white/80 mt-2">Beneficios de la plataforma digital del Registro Mercantil</p>
           </div>
           <motion.div
             variants={staggerContainer}
