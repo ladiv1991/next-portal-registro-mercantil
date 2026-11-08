@@ -29,7 +29,7 @@ interface KnowledgeEntry {
 // Cache the index in memory (regenerated on demand)
 let knowledgeIndex: KnowledgeEntry[] | null = null;
 let lastBuildTime = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 60 * 1000; // 1 minute — rebuilds instantly after CMS content changes
 
 export async function buildKnowledgeIndex(): Promise<KnowledgeEntry[]> {
   const now = Date.now();

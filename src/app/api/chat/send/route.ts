@@ -123,14 +123,18 @@ export async function POST(request: NextRequest) {
       const config = await db.botConfig.findUnique({ where: { id: 'default' } });
       if (config?.systemPrompt) botConfigPrompt = config.systemPrompt;
 
-      // All content in parallel
-      const [faqs, procedures, regulations, services, guides, contactChannels] = await Promise.all([
+      // All content in parallel — covers every model creatable from CMS
+      const [faqs, procedures, regulations, services, guides, contactChannels, news, webinars, videoTutorials, statistics] = await Promise.all([
         db.fAQ.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
         db.procedure.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
         db.regulation.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
         db.service.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
         db.guide.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
         db.contactChannel.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
+        db.newsArticle.findMany({ where: { published: true }, orderBy: { order: 'asc' } }),
+        db.webinar.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
+        db.videoTutorial.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
+        db.statistic.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }),
       ]);
 
       const parts: string[] = [];
@@ -196,6 +200,50 @@ export async function POST(request: NextRequest) {
         parts.push('## CANALES DE CONTACTO');
         for (const ch of contactChannels) {
           parts.push(`- ${ch.label} (${ch.type}): ${ch.value}`);
+          dbContent.push(`CONTACT|${ch.label}|${ch.value}`);
+        }
+        parts.push('');
+      }
+
+      // News articles — published only
+      if (news.length > 0) {
+        parts.push('## NOTICIAS RECENTES (Sección: Inicio → #home)');
+        for (const n of news) {
+          const summary = n.summary || n.content?.substring(0, 120) || '';
+          parts.push(`**${n.title}**: ${summary}${n.category ? ` [${n.category}]` : ''}`);
+          dbContent.push(`NEWS|${n.title}|${n.summary} ${n.content || ''}`);
+        }
+        parts.push('');
+      }
+
+      // Webinars
+      if (webinars.length > 0) {
+        parts.push('## WEBINARS Y EVENTOS (Sección: Asistencia → #asistencia)');
+        for (const w of webinars) {
+          const dateStr = w.date && w.time ? `${w.date} ${w.time}` : (w.date || 'Por confirmar');
+          parts.push(`**${w.title}**: ${w.description || ''} | Fecha: ${dateStr}${w.location ? ` | Lugar: ${w.location}` : ''}`);
+          dbContent.push(`WEBINAR|${w.title}|${w.description} fecha ${w.date} lugar ${w.location || ''}`);
+        }
+        parts.push('');
+      }
+
+      // Video Tutorials
+      if (videoTutorials.length > 0) {
+        parts.push('## VIDEO-TUTORIALES (Sección: Asistencia → #asistencia)');
+        for (const t of videoTutorials) {
+          const dur = t.duration ? ` | Duración: ${t.duration}` : '';
+          parts.push(`**${t.title}**: ${t.description || ''}${dur}${t.category ? ` [${t.category}]` : ''}`);
+          dbContent.push(`TUTORIAL|${t.title}|${t.description} ${t.category || ''} duración ${t.duration || ''}`);
+        }
+        parts.push('');
+      }
+
+      // Statistics
+      if (statistics.length > 0) {
+        parts.push('## ESTADÍSTICAS DEL REGISTRO (Sección: Estadísticas → #estadisticas)');
+        for (const s of statistics) {
+          parts.push(`**${s.label}**: ${s.value}${s.suffix ? ` ${s.suffix}` : ''}`);
+          dbContent.push(`STAT|${s.label}|${s.value}${s.suffix || ''}`);
         }
         parts.push('');
       }
