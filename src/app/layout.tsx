@@ -47,18 +47,29 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Portal del Registro Mercantil de Cuba",
     description:
-      "Portal oficial del Registro Mercantil de la República de Cuba. Acceda a consultas, trámites y servicios en línea.",
+      "Portal del Registro Mercantil de Cuba. Consultas públicas, trámites en línea, normativas y servicios de solicitud de Primera Inscripción.",
     type: "website",
     siteName: "Registro Mercantil de Cuba",
     locale: "es_CU",
+    url: "https://registro-mercantil.xetid.cu",
+    images: [{ url: "https://registro-mercantil.xetid.cu/og-image.png", width: 1200, height: 630, alt: "Registro Mercantil de Cuba" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Portal del Registro Mercantil de Cuba",
     description:
       "Portal oficial del Registro Mercantil de Cuba. Consultas, trámites y servicios en línea.",
+    images: ["https://registro-mercantil.xetid.cu/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "https://registro-mercantil.xetid.cu",
+  },
 };
 
 export default function RootLayout({
