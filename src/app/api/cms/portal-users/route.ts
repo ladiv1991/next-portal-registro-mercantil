@@ -56,6 +56,11 @@ export async function POST(request: NextRequest) {
 
     const data = validation.data;
 
+    const roleExists = await db.userRole.findUnique({ where: { name: data.role } });
+    if (!roleExists) {
+      return NextResponse.json({ success: false, error: 'Rol no existe' }, { status: 400 });
+    }
+
     const existing = await db.portalUser.findUnique({ where: { email: data.email } });
     if (existing) {
       return NextResponse.json({ success: false, error: 'Ya existe un usuario con ese email' }, { status: 409 });

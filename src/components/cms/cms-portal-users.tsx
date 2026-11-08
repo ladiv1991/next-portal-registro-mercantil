@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, Edit2, Trash2, Loader2, Shield, Mail, Phone, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -45,6 +45,9 @@ export default function CmsPortalUsers() {
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
   const [createErrors, setCreateErrors] = React.useState<Record<string, string>>({});
   const [formErrors, setFormErrors] = React.useState<Record<string, string>>({});
+  const [rolesLoading, setRolesLoading] = useState(true);
+  const newUserRef = useRef(newUser);
+  newUserRef.current = newUser;
 
   const clearError = (field: string) => {
     setFieldErrors(prev => { const next = { ...prev }; delete next[field]; return next; });
@@ -70,14 +73,17 @@ export default function CmsPortalUsers() {
   };
 
   const fetchRoles = async () => {
+    setRolesLoading(true);
     try {
       const res = await fetch('/api/cms/user-roles');
       if (res.ok) {
         const data = await res.json();
         setRoles(data.data || []);
+        setRolesLoading(false);
       }
     } catch (error) {
       console.error('Error fetching roles:', error);
+      setRolesLoading(false);
     }
   };
 
@@ -409,14 +415,17 @@ export default function CmsPortalUsers() {
               </div>
               <div>
                 <Label htmlFor="edit-role">Rol</Label>
-                <Select value={editRole} onValueChange={(val) => { setEditRole(val); clearError('role'); }}>
+                <Select value={editRole} onValueChange={(val) => { setEditRole(val); clearError('role'); }} disabled={rolesLoading}>
                   <SelectTrigger id="edit-role">
-                    <SelectValue />
+                    <SelectValue placeholder={rolesLoading ? 'Cargando roles...' : 'Seleccionar rol'} />
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map(role => (
                       <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
                     ))}
+                    {!rolesLoading && roles.length === 0 && (
+                      <SelectItem value="user" disabled>No hay roles disponibles</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
                 {fieldErrors.role && <p className="text-sm text-red-600 mt-1">{fieldErrors.role}</p>}
@@ -443,13 +452,13 @@ export default function CmsPortalUsers() {
           <form onSubmit={(e) => { e.preventDefault(); handleCreateUser(); }} className="space-y-4">
             <div>
               <Label>Email *</Label>
-              <Input type="email" value={newUser.email} onChange={(e) => { setNewUser({ ...newUser, email: e.target.value }); setFormErrors(p => { const n = { ...p }; delete n.email; return n; }); }} />
+              <Input type="email" value={newUser.email} onChange={(e) => { setNewUser({ ...newUser, email: e.target.value }); setFormErrors(p => { const n = { ...p }; delete n.email; return n; }); }} onBlur={(e) => { if (e.target.value.trim()) { const val = e.target.value; if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { setFormErrors(p => ({ ...p, email: 'Email inválido' })); } else if (!val.trim()) { setFormErrors(p => ({ ...p, email: 'El email es requerido' })); } } }} />
               {formErrors.email && <p className="text-sm text-red-600 mt-1">{formErrors.email}</p>}
               {createErrors.general && <p className="text-sm text-red-600 mt-1">{createErrors.general}</p>}
             </div>
             <div>
               <Label>Contraseña *</Label>
-              <PasswordInput value={newUser.password} onChange={(v) => { setNewUser({ ...newUser, password: v }); setFormErrors(p => { const n = { ...p }; delete n.password; return n; }); }} placeholder="Mín. 8 chars, mayúscula, número, especial" />
+              <PasswordInput value={newUser.password} onChange={(v) => { setNewUser({ ...newUser, password: v }); setFormErrors(p => { const n = { ...p }; delete n.password; return n; }); }} onBlur={(e) => { const val = e.target.value; if (val) { if (val.length < 8) { setFormErrors(p => ({ ...p, password: 'Mínimo 8 caracteres' })); } else if (!/[A-Z]/.test(val)) { setFormErrors(p => ({ ...p, password: 'Debe tener al menos una mayúscula' })); } else if (!/[0-9]/.test(val)) { setFormErrors(p => ({ ...p, password: 'Debe tener al menos un número' })); } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(val)) { setFormErrors(p => ({ ...p, password: 'Debe tener al menos un carácter especial' })); } } }} placeholder="Mín. 8 chars, mayúscula, número, especial" />
               {formErrors.password && <p className="text-sm text-red-600 mt-1">{formErrors.password}</p>}
             </div>
             <div>
@@ -458,17 +467,22 @@ export default function CmsPortalUsers() {
             </div>
             <div>
               <Label>Teléfono</Label>
-              <Input value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} placeholder="+53 5XXXXXXX" />
+              <Input value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} onBlur={(e) => { if (e.target.value.trim() && !/^(?:\+53|5)[0-9]{7}$/.test(e.target.value)) { setFormErrors(p => ({ ...p, phone: 'Teléfono cubano inválido (ej: +53 5XXXXXXX)' })); } }} placeholder="+53 5XXXXXXX" />
               {formErrors.phone && <p className="text-sm text-red-600 mt-1">{formErrors.phone}</p>}
             </div>
             <div>
               <Label>Rol</Label>
-              <Select value={newUser.role} onValueChange={(val) => setNewUser({ ...newUser, role: val })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select value={newUser.role} onValueChange={(val) => { setNewUser({ ...newUser, role: val }); setFormErrors(p => { const n = { ...p }; delete n.role; return n; }); }}>
+                <SelectTrigger disabled={rolesLoading}>
+                  <SelectValue placeholder={rolesLoading ? 'Cargando roles...' : 'Seleccionar rol'} />
+                </SelectTrigger>
                 <SelectContent>
                   {roles.map(role => (
                     <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
                   ))}
+                  {!rolesLoading && roles.length === 0 && (
+                    <SelectItem value="user" disabled>No hay roles disponibles</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>

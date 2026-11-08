@@ -27,6 +27,12 @@ export async function PUT(
     }
 
     const data = { ...validation.data } as Record<string, unknown>;
+    if (data.role) {
+      const roleExists = await db.userRole.findUnique({ where: { name: data.role as string } });
+      if (!roleExists) {
+        return NextResponse.json({ success: false, error: 'Rol no existe' }, { status: 400 });
+      }
+    }
     if (data.password) {
       data.passwordHash = await bcrypt.hash(data.password as string, 10);
       delete data.password;
