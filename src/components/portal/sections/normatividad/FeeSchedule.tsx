@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import GacetaLink from './GacetaLink';
 
 const TARIFAS = [
   { num: "1", acto: "Asiento de presentación, examen y calificación — Primera inscripción de sujetos y contratos AEI", tarifa: "900.00 CUP" },
@@ -50,9 +51,11 @@ export default function FeeSchedule() {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
-          Conforme a la Resolución No. 51/2021 del Ministerio de Justicia,
+          Conforme a la{' '}
+          <GacetaLink name="Resolución No. 51/2021" gacetaId="res-51-2021" plain /> del Ministerio de Justicia,
           en ejercicio de la facultad conferida por el inciso c) del Artículo 28
-          del Decreto-Ley No. 226/2001 del Registro Mercantil.
+          del{' '}
+          <GacetaLink name="Decreto-Ley No. 226/2001" gacetaId="dl-226-2001" plain /> del Registro Mercantil.
         </p>
         <div className="glass-card-inner overflow-x-auto">
           <Table>
@@ -76,22 +79,36 @@ export default function FeeSchedule() {
         </div>
         <div className="mt-6 space-y-3">
           <p className="text-xs text-muted-foreground">
-            <strong>Exenciones (Sexto de la Res. 51/2021):</strong> Certificaciones
-            o notas simples solicitadas por mandamiento judicial, solicitud del Fiscal,
-            del Ministerio de Justicia o de la Administración cuando requieran sustanciar
-            de oficio un hecho.
+            <strong>
+              Exenciones ({' '}
+              <GacetaLink name="Resolución No. 51/2021" gacetaId="res-51-2021" plain /> Art. Sexto
+              {' '})
+              : Certificaciones o notas simples solicitadas por mandamiento judicial, solicitud del Fiscal,
+              del Ministerio de Justicia o de la Administración cuando requieran sustanciar de oficio un hecho.
+            </strong>
           </p>
           <p className="text-xs text-muted-foreground">
-            <strong>Recargos (Art. 27, DL 226/2001):</strong> El incumplimiento de los
-            términos para la inscripción genera un recargo del 30% del valor del acto
-            inscriptible.
+            <strong>
+              Recargos (Art. 27,{' '}
+              <GacetaLink name="Decreto-Ley No. 226/2001" gacetaId="dl-226-2001" plain />
+              {' '})
+              : El incumplimiento de los términos para la inscripción genera un recargo del 30% del valor del acto inscriptible.
+            </strong>
           </p>
           <p className="text-xs text-muted-foreground">
-            <strong>Tipo de certificaciones (Art. 75, DL 226/2001):</strong> Literal
-            (copia fiel del asiento, 900 CUP), En relación (extremos determinados, 600 CUP),
-            Negativa (datos no constan en el Registro, 600 CUP), Nota Simple Informativa
-            (resumen de datos públicos, 300 CUP). Requieren legitimación del solicitante
-            conforme al Art. 82 del Reglamento (Res. 230/2002).
+            <strong>
+              Tipo de certificaciones (Art. 75,{' '}
+              <GacetaLink name="Decreto-Ley No. 226/2001" gacetaId="dl-226-2001" plain />
+              {'), Reglamento ('}
+              <GacetaLink name="Resolución No. 230/2002" gacetaId="res-230-2002" plain />
+              {'):'}
+              Copia fiel del asiento (900 CUP), En relación con extremos determinados (600 CUP),
+              Negativa (datos no constan en el Registro, 600 CUP), Nota Simple Informativa
+              (resumen de datos públicos, 300 CUP). Requieren legitimación del solicitante
+              conforme al Art. 82 del Reglamento ({' '}
+              <GacetaLink name="Resolución No. 230/2002" gacetaId="res-230-2002" plain />
+              {' '}).
+            </strong>
           </p>
         </div>
       </CardContent>

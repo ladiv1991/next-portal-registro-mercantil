@@ -11,6 +11,7 @@ import FeeSchedule from './normatividad/FeeSchedule';
 import DownloadableForms from './normatividad/DownloadableForms';
 import GacetaSection from './normatividad/GacetaSection';
 import Glossary from './normatividad/Glossary';
+import GacetaLink from './normatividad/GacetaLink';
 
 interface RegulationItem {
   id: string;
@@ -98,7 +99,7 @@ export default function NormatividadSection() {
           <AlertTriangle className="w-5 h-5 text-[var(--rm-primary)] flex-shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold text-[var(--rm-primary)]">
-              Nueva Norma: Decreto-Ley 133/2026 — Modifica DL 88, 89 y 90 sobre Inversión Extranjera
+              Nueva Norma: <GacetaLink name="Decreto-Ley No. 133/2026" gacetaId="dl-133-2026" /> — Modifica DL 88, 89 y 90 sobre Inversión Extranjera
             </p>
             <p className="text-sm text-[var(--rm-muted)] mt-1">
               Publicado en Gaceta Oficial No. 71 Ordinaria de 2026. Revisa los cambios en el marco legal de inversión extranjera.
@@ -118,7 +119,7 @@ export default function NormatividadSection() {
           <AlertTriangle className="w-5 h-5 text-[var(--rm-primary)] flex-shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold text-[var(--rm-primary)]">
-              Nueva Norma: Decreto-Ley 120/2026 — Actualización del Marco Normativo Registral
+              Nueva Norma: <GacetaLink name="Decreto-Ley No. 120/2026" gacetaId="dl-120-2026" /> — Actualización del Marco Normativo Registral
             </p>
             <p className="text-sm text-[var(--rm-muted)] mt-1">
               En desarrollo. Información complementaria disponible próximamente en la Gaceta Oficial.

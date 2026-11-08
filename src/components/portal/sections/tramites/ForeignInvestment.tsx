@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ExternalLink, Globe2, Info, MapPin, Phone, Mail } from "lucide-react";
+import GacetaLink from '../normatividad/GacetaLink';
 
 export default function ForeignInvestment() {
   return (
@@ -22,10 +23,12 @@ export default function ForeignInvestment() {
             <div className="flex-1">
               <h4 className="font-semibold text-[var(--rm-text)] mb-1">Ventanilla Única de Comercio Exterior (VUCE)</h4>
               <p className="text-sm text-[var(--rm-muted)] mb-4">
-                Conforme a la Disposición Especial Primera del Decreto-Ley 226/2001,
+                Conforme a la Disposición Especial Primera del{' '}
+                <GacetaLink name="Decreto-Ley No. 226/2001" gacetaId="dl-226-2001" plain />,
                 los trámites de inversión extranjera —empresas mixtas y empresas de capital totalmente
                 extranjero (sucursales y filiales)— se gestionan ante la VUCE. La inscripción registral posterior
-                se realiza ante el Registro Mercantil Central (Art. 27, DL 226/2001).
+                se realiza ante el Registro Mercantil Central (Art. 27,{' '}
+                <GacetaLink name="Decreto-Ley No. 226/2001" gacetaId="dl-226-2001" plain />).
               </p>
               <a
                 href="https://home.vucecuba.mincex.gob.cu/"
@@ -106,9 +109,9 @@ export default function ForeignInvestment() {
           <p className="text-sm text-[var(--rm-muted)]">
             <strong>Nota:</strong> El Registro Mercantil no gestiona directamente
             los trámites de inversión extranjera. Conforme a la Disposición
-            Transitoria Tercera del DL 226, el traspaso del Registro de Inversiones
-            Extranjeras desde la Cámara de Comercio al Ministerio de Justicia se
-            completó. La solicitud de autorización se realiza ante VUINEX o VUCE según corresponda.
+            Transitoria Tercera del{' '}
+            <GacetaLink name="Decreto-Ley No. 226/2001" gacetaId="dl-226-2001" plain />,
+            el traspaso del Registro de Inversiones Extranjeras desde la Cámara de Comercio al Ministerio de Justicia se completó. La solicitud de autorización se realiza ante VUINEX o VUCE según corresponda.
           </p>
         </div>
       </CardContent>

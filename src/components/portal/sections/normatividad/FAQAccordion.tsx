@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import GacetaLink from './GacetaLink';
 
 const FAQ_DATA = [
   {
@@ -26,7 +27,13 @@ const FAQ_DATA = [
   {
     category: 'Costos y Pagos',
     questions: [
-      { q: '¿Cuál es el costo de constituir una sociedad?', a: 'La Resolución 51/2021 unifica la tarifa: presentación de primera inscripción 900 CUP y asiento de primera inscripción 1,200 CUP. La reserva de denominación cuesta 600 CUP. Las tarifas no incluyen impuestos.' },
+      { q: '¿Cuál es el costo de constituir una sociedad?', a: (
+        <span>
+          La{' '}
+          <GacetaLink name="Resolución No. 51/2021" gacetaId="res-51-2021" plain />
+          {' '}unifica la tarifa: presentación de primera inscripción 900 CUP y asiento de primera inscripción 1,200 CUP. La reserva de denominación cuesta 600 CUP. Las tarifas no incluyen impuestos.
+        </span>
+      )},
       { q: '¿Cómo puedo realizar el pago de los aranceles?', a: 'Los pagos pueden realizarse en línea a través de la plataforma mediante transferencia bancaria o en las oficinas del Registro Mercantil en efectivo o con tarjeta.' },
     ],
   },

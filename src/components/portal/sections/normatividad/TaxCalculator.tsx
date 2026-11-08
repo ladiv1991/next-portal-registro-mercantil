@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calculator, AlertCircle, CheckCircle2, RotateCcw, Building2, TrendingUp, ArrowLeftRight, PenTool, FileText, FileBarChart, Globe } from 'lucide-react';
+import GacetaLink from './GacetaLink';
 
 // ── Tarifas Registrales (Resolución 51/2021) ─────────────────────────────────
 const REGISTRATION_FEES: Array<{
@@ -220,7 +221,9 @@ export default function TaxCalculator() {
           <Badge variant="outline" className="text-xs">Res. 51/2021</Badge>
         </div>
         <CardDescription>
-          Estime los derechos registrales (Res. 51/2021) y los impuestos ONAT vigentes en 2026 (Ley 181).
+          Estime los derechos registrales{' '}
+          <GacetaLink name="Resolución No. 51/2021" gacetaId="res-51-2021" plain /> y los impuestos ONAT vigentes en 2026{' '}
+          <GacetaLink name="Ley No. 181" gacetaId="ley-181-2026" plain />.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -304,7 +307,10 @@ export default function TaxCalculator() {
 
             {/* Document tax info */}
             <div className="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-200">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Impuesto sobre Documentos (Anexo No. 4, DL 21/2020)</p>
+              <p className="text-xs font-semibold text-slate-700 mb-2">
+                Impuesto sobre Documentos (Anexo No. 4,{' '}
+                <GacetaLink name="Decreto-Ley No. 21/2020" gacetaId="dl-21-2020" plain />)
+              </p>
               {DOC_TAX_GROUPS.map((g) => (
                 <div key={g.grupo} className="text-xs text-slate-600 space-y-0.5">
                   <p><strong>{g.grupo}</strong> — {g.descripcion}</p>
@@ -326,7 +332,11 @@ export default function TaxCalculator() {
               </div>
               {hasLateFee && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Exención (Art. Sexto, Res. 51/2021)</span>
+                  <span className="text-muted-foreground">
+                    Exención ({' '}
+                    <GacetaLink name="Resolución No. 51/2021" gacetaId="res-51-2021" plain /> Art. Sexto
+                    {' '})
+                  </span>
                   <span className="font-medium text-green-600">0 CUP</span>
                 </div>
               )}
@@ -388,7 +398,8 @@ export default function TaxCalculator() {
                   ))}
                 </ul>
                 <p className="text-xs text-blue-500 mt-2">
-                  Fuente: Ley 181 "Del Presupuesto del Estado para el año 2026" (Gaceta Oficial No. 99 Ordinaria, 29/12/2025)
+                  Fuente:{' '}
+                  <GacetaLink name="Ley No. 181" gacetaId="ley-181-2026" plain />
                 </p>
               </div>
             </div>
