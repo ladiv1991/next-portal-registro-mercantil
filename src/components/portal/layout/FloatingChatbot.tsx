@@ -71,6 +71,25 @@ export default function FloatingChatbot() {
     return () => window.removeEventListener('open-chatbot', handleOpen);
   }, []);
 
+  // Open chatbot with pre-filled search from GacetaLink clicks
+  useEffect(() => {
+    const handleSearch = (e: CustomEvent<string>) => {
+      const lawName = e.detail;
+      if (lawName) {
+        setChatOpen(true);
+        // Pre-fill the input with a question about the law
+        const message = `¿Qué dice ${lawName} sobre el Registro Mercantil?`;
+        setChatInput(message);
+        // Small delay to ensure chat is open and input is focused
+        setTimeout(() => {
+          send(message);
+        }, 400);
+      }
+    };
+    window.addEventListener('chatbot-search', handleSearch as EventListener);
+    return () => window.removeEventListener('chatbot-search', handleSearch as EventListener);
+  }, [send]);
+
   // ─── Fetch data immediately on mount (not on chat open) ───
   useEffect(() => {
     const load = async () => {

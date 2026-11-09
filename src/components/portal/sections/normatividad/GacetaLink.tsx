@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { useCallback } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { findGaceta, GacetaEntry } from '@/data/gaceta-registry';
 
@@ -17,7 +17,7 @@ interface GacetaLinkProps {
 
 /**
  * Componente que convierte el nombre de una norma, resolución o ley en un
- * enlace a su entrada correspondiente en la Gaceta Oficial del sitio.
+ * enlace que abre el chatbot con búsqueda pre-rellenada sobre esa norma.
  *
  * Uso:
  *   <GacetaLink name="Resolución No. 51/2021" />
@@ -27,11 +27,15 @@ export default function GacetaLink({ name, gacetaId, className = '', plain = fal
   const entry: GacetaEntry | undefined = gacetaId ? findGaceta(gacetaId) : findGacetaByName(name);
 
   if (!entry) {
-    // Si no hay entrada registrada, mostrar como texto plano con el número de gaceta si se conoce
     return <span className={className}>{name}</span>;
   }
 
-  const href = `#normatividad?gaceta=${entry.id}`;
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent('chatbot-search', { detail: entry.name }));
+  }, [entry.name]);
+
   const label = plain ? entry.name : (
     <span className="flex items-center gap-1">
       {entry.name}
@@ -40,12 +44,12 @@ export default function GacetaLink({ name, gacetaId, className = '', plain = fal
   );
 
   return (
-    <Link
-      href={href}
-      className={`text-[var(--rm-primary)] hover:underline font-medium transition-colors ${className}`}
-      title={`Ver en Gaceta Oficial: ${entry.gaceta}`}
+    <span
+      onClick={handleClick}
+      className={`text-[var(--rm-primary)] hover:underline font-medium transition-colors cursor-pointer ${className}`}
+      title={`Consultar en chatbot: ${entry.name}`}
     >
       {label}
-    </Link>
+    </span>
   );
 }
