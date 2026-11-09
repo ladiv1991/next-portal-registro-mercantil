@@ -18,6 +18,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { usePortalAuth } from '@/hooks/use-portal-auth';
+import { toast } from 'sonner';
 import CompanyProfile from './consultas/CompanyProfile';
 import TaxCalculator from './normatividad/TaxCalculator';
 import AuthenticationModal from '@/components/portal/auth/AuthenticationModal';
@@ -69,9 +70,11 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
   const [captchaSvg, setCaptchaSvg] = useState<string>('');
   const [captchaId, setCaptchaId] = useState<string>('');
   const [captchaAnswer, setCaptchaAnswer] = useState<string>('');
+  const [captchaComplete, setCaptchaComplete] = useState(false);
   const [searchError, setSearchError] = useState('');
 
   const fetchCaptcha = () => {
+    setCaptchaComplete(false);
     fetch('/api/captcha/new')
       .then((res) => res.json())
       .then((json) => {
@@ -87,8 +90,16 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
 
   const refreshCaptcha = () => {
     setCaptchaAnswer('');
+    setCaptchaComplete(false);
     setSearchError('');
     fetchCaptcha();
+  };
+
+  const handleCaptchaChange = (value: string) => {
+    setCaptchaAnswer(value);
+    setSearchError('');
+    // Captcha is 5-6 chars - consider complete when length matches expected
+    setCaptchaComplete(value.length >= 5);
   };
 
   useEffect(() => {
@@ -128,8 +139,8 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
       setHasSearched(false);
       return;
     }
-    if (!captchaAnswer.trim()) {
-      setSearchError('Complete la verificación de seguridad.');
+    if (!captchaComplete || !captchaAnswer.trim()) {
+      toast.error('Complete la verificación de seguridad (CAPTCHA).');
       return;
     }
     setSearching(true);
@@ -149,23 +160,23 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
           // Refresh captcha after successful search
           fetchCaptcha();
         } else {
-          setSearchError(json.error || 'Error en la búsqueda');
+          toast.error(json.error || 'Error en la búsqueda');
           if (json.error?.includes('seguridad') || json.error?.includes('CAPTCHA')) {
             refreshCaptcha();
           }
         }
       } else if (res.status === 429) {
-        setSearchError('Demasiadas búsquedas. Espere un momento e intente de nuevo.');
+        toast.error('Demasiadas búsquedas. Espere un momento e intente de nuevo.');
       } else {
-        setSearchError('Error en la búsqueda. Intente nuevamente.');
+        toast.error('Error en la búsqueda. Intente nuevamente.');
       }
     } catch {
       setSearchResults([]);
-      setSearchError('Error de conexión. Intente nuevamente.');
+      toast.error('Error de conexión. Intente nuevamente.');
     } finally {
       setSearching(false);
     }
-  }, [selectedProvince, selectedType, selectedStatus, captchaId, captchaAnswer]);
+  }, [selectedProvince, selectedType, selectedStatus, captchaId, captchaAnswer, captchaComplete]);
 
   // Execute search automatically if initialQuery is provided
   useEffect(() => {
@@ -243,75 +254,77 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
               </TabsList>
 
               <TabsContent value="denominacion">
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="Ingrese la denominación o parte de ella..."
-                    className="flex-1 h-12"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <Button
-                    className="bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 h-12 px-8"
-                    onClick={handleSearchClick}
-                    disabled={searching || !captchaAnswer.trim()}
-                    title={!captchaAnswer.trim() ? 'Complete el CAPTCHA para buscar' : undefined}
-                  >
-                    {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
-                    {searching ? 'Buscando...' : 'Buscar'}
-                  </Button>
-                </div>
-                {/* CAPTCHA for search */}
-                <div className="mt-3 p-4 rounded-lg bg-secondary/50 border space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-4 h-4 text-[var(--rm-primary)] shrink-0" />
-                    <div
-                      className="border rounded bg-white inline-block p-1"
-                      dangerouslySetInnerHTML={{ __html: captchaSvg }}
-                      aria-label="Imagen CAPTCHA para búsqueda"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-3">
+                  <div className="flex gap-3">
                     <Input
-                      type="text"
-                      placeholder="Escriba los caracteres de la imagen…"
-                      className="flex-1 max-w-xs h-10 font-mono tracking-widest"
-                      value={captchaAnswer}
-                      onChange={(e) => { setCaptchaAnswer(e.target.value); setSearchError(''); }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          if (!searching && searchQuery.trim() && captchaAnswer.trim()) {
-                            performSearch(searchQuery);
-                          }
-                        }
-                      }}
-                      maxLength={8}
-                      disabled={searching}
-                      autoComplete="off"
-                      autoCorrect="off"
-                      spellCheck={false}
-                      aria-label="Respuesta del CAPTCHA de búsqueda"
+                      placeholder="Ingrese la denominación o parte de ella..."
+                      className="flex-1 h-12"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={handleKeyDown}
                     />
                     <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-10 px-3 shrink-0"
-                      onClick={refreshCaptcha}
-                      disabled={searching}
-                      title="Actualizar CAPTCHA"
-                      aria-label="Actualizar imagen CAPTCHA"
+                      className="bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 h-12 px-8"
+                      onClick={handleSearchClick}
+                      disabled={searching || !captchaComplete}
+                      title={!captchaComplete ? 'Complete el CAPTCHA para buscar' : undefined}
                     >
-                      <RefreshCw className="w-4 h-4 mr-1" /> Actualizar
+                      {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
+                      {searching ? 'Buscando...' : 'Buscar'}
                     </Button>
                   </div>
-                  {searchError && (
-                    <p className="text-xs text-red-500 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3 shrink-0" />{searchError}
-                    </p>
-                  )}
-                  <p className="text-xs text-muted-foreground">Máximo 3 búsquedas por minuto. Escriba los caracteres que ve en la imagen.</p>
+                  {/* CAPTCHA for search — vertical stack below input */}
+                  <div className="p-4 rounded-lg bg-secondary/50 border space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Shield className="w-4 h-4 text-[var(--rm-primary)] shrink-0" />
+                      <div
+                        className="border rounded bg-white inline-block p-1"
+                        dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                        aria-label="Imagen CAPTCHA para búsqueda"
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Input
+                        type="text"
+                        placeholder="Escriba los caracteres de la imagen…"
+                        className="flex-1 max-w-xs h-10 font-mono tracking-widest"
+                        value={captchaAnswer}
+                        onChange={(e) => handleCaptchaChange(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (!searching && searchQuery.trim() && captchaComplete) {
+                              performSearch(searchQuery);
+                            }
+                          }
+                        }}
+                        maxLength={8}
+                        disabled={searching}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        aria-label="Respuesta del CAPTCHA de búsqueda"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-10 px-3 shrink-0"
+                        onClick={refreshCaptcha}
+                        disabled={searching}
+                        title="Actualizar CAPTCHA"
+                        aria-label="Actualizar imagen CAPTCHA"
+                      >
+                        <RefreshCw className="w-4 h-4 mr-1" /> Actualizar
+                      </Button>
+                    </div>
+                    {searchError && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />{searchError}
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">Máximo 3 búsquedas por minuto. Escriba los caracteres que ve en la imagen (distinga mayúsculas/minúsculas).</p>
+                  </div>
                 </div>
               </TabsContent>
 <TabsContent value="avanzada">
@@ -350,84 +363,86 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                     </Select>
                   </div>
                 </div>
-                <div className="flex gap-3 flex-wrap">
-                  <Input
-                    placeholder="Actividad económica, palabras clave..."
-                    className="flex-1 min-w-0 h-12"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <Button
-                    className="bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 h-12 px-8"
-                    onClick={handleSearchClick}
-                    disabled={searching || !captchaAnswer.trim()}
-                    title={!captchaAnswer.trim() ? 'Complete el CAPTCHA para buscar' : undefined}
-                  >
-                    {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
-                    {searching ? 'Buscando...' : 'Buscar'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="h-12 gap-2 border-muted-foreground/30"
-                    onClick={handleResetFilters}
-                    disabled={searching}
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    Limpiar
-                  </Button>
-                </div>
-                {/* CAPTCHA for advanced search */}
-                <div className="mt-3 p-4 rounded-lg bg-secondary/50 border space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-4 h-4 text-[var(--rm-primary)] shrink-0" />
-                    <div
-                      className="border rounded bg-white inline-block p-1"
-                      dangerouslySetInnerHTML={{ __html: captchaSvg }}
-                      aria-label="Imagen CAPTCHA para búsqueda avanzada"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-3">
+                  <div className="flex gap-3 flex-wrap">
                     <Input
-                      type="text"
-                      placeholder="Escriba los caracteres de la imagen…"
-                      className="flex-1 max-w-xs h-10 font-mono tracking-widest"
-                      value={captchaAnswer}
-                      onChange={(e) => { setCaptchaAnswer(e.target.value); setSearchError(''); }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          if (!searching && searchQuery.trim() && captchaAnswer.trim()) {
-                            performSearch(searchQuery);
-                          }
-                        }
-                      }}
-                      maxLength={8}
-                      disabled={searching}
-                      autoComplete="off"
-                      autoCorrect="off"
-                      spellCheck={false}
-                      aria-label="Respuesta del CAPTCHA de búsqueda avanzada"
+                      placeholder="Actividad económica, palabras clave..."
+                      className="flex-1 min-w-0 h-12"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={handleKeyDown}
                     />
                     <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-10 px-3 shrink-0"
-                      onClick={refreshCaptcha}
-                      disabled={searching}
-                      title="Actualizar CAPTCHA"
-                      aria-label="Actualizar imagen CAPTCHA"
+                      className="bg-[var(--rm-text)] hover:bg-[var(--rm-text)]/90 h-12 px-8"
+                      onClick={handleSearchClick}
+                      disabled={searching || !captchaComplete}
+                      title={!captchaComplete ? 'Complete el CAPTCHA para buscar' : undefined}
                     >
-                      <RefreshCw className="w-4 h-4 mr-1" /> Actualizar
+                      {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
+                      {searching ? 'Buscando...' : 'Buscar'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="h-12 gap-2 border-muted-foreground/30"
+                      onClick={handleResetFilters}
+                      disabled={searching}
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Limpiar
                     </Button>
                   </div>
-                  {searchError && (
-                    <p className="text-xs text-red-500 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3 shrink-0" />{searchError}
-                    </p>
-                  )}
-                  <p className="text-xs text-muted-foreground">Máximo 3 búsquedas por minuto. Escriba los caracteres que ve en la imagen.</p>
+                  {/* CAPTCHA for advanced search — vertical stack below input */}
+                  <div className="p-4 rounded-lg bg-secondary/50 border space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Shield className="w-4 h-4 text-[var(--rm-primary)] shrink-0" />
+                      <div
+                        className="border rounded bg-white inline-block p-1"
+                        dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                        aria-label="Imagen CAPTCHA para búsqueda avanzada"
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Input
+                        type="text"
+                        placeholder="Escriba los caracteres de la imagen…"
+                        className="flex-1 max-w-xs h-10 font-mono tracking-widest"
+                        value={captchaAnswer}
+                        onChange={(e) => handleCaptchaChange(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (!searching && searchQuery.trim() && captchaComplete) {
+                              performSearch(searchQuery);
+                            }
+                          }
+                        }}
+                        maxLength={8}
+                        disabled={searching}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        aria-label="Respuesta del CAPTCHA de búsqueda avanzada"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-10 px-3 shrink-0"
+                        onClick={refreshCaptcha}
+                        disabled={searching}
+                        title="Actualizar CAPTCHA"
+                        aria-label="Actualizar imagen CAPTCHA"
+                      >
+                        <RefreshCw className="w-4 h-4 mr-1" /> Actualizar
+                      </Button>
+                    </div>
+                    {searchError && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />{searchError}
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">Máximo 3 búsquedas por minuto. Escriba los caracteres que ve en la imagen (distinga mayúsculas/minúsculas).</p>
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>
