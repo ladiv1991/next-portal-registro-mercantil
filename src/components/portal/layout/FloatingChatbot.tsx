@@ -88,6 +88,10 @@ export default function FloatingChatbot() {
       }
     };
     load();
+
+    // Auto-refresh every 30s so CMS content changes appear without page reload
+    const interval = setInterval(load, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   // Normalize accents for matching: "trámite" → "tramite"

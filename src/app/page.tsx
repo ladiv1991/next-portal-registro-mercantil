@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'framer-motion';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -82,6 +82,10 @@ function SectionSkeleton() {
 export default function Home() {
   const [activeSection, setActiveSection] = useState(() => {
     if (typeof window === 'undefined') return 'home';
+    // Restore from persistent session storage (survives page reloads)
+    const persisted = sessionStorage.getItem('activeSection');
+    if (persisted && persisted !== 'home') return persisted;
+    // Fallback: one-time pending redirect (e.g. from /acceso deep link)
     const pending = sessionStorage.getItem('navigateToSection');
     if (pending) {
       sessionStorage.removeItem('navigateToSection');
@@ -89,6 +93,20 @@ export default function Home() {
     }
     return 'home';
   });
+
+  // ---- Restore scroll position on mount (single-fire per session) ----
+  const hasRestoredRef = useRef(false);
+  useEffect(() => {
+    if (hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+    const scrollY = sessionStorage.getItem('scrollY');
+    if (scrollY) {
+      const y = parseInt(scrollY, 10);
+      if (!isNaN(y)) {
+        setTimeout(() => window.scrollTo(0, y), 0);
+      }
+    }
+  }, []);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [cmsUser, setCmsUser] = useState<CmsUser | null>(null);
   const [loginError, setLoginError] = useState('');
@@ -97,7 +115,11 @@ export default function Home() {
 
   // ---- Scroll detection ----
   useEffect(() => {
-    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+      // Store scroll position for reload recovery
+      sessionStorage.setItem('scrollY', String(window.scrollY));
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -105,6 +127,10 @@ export default function Home() {
   // ---- Navigation ----
   const handleNavClick = useCallback((sectionId: string, query?: string) => {
     setActiveSection(sectionId);
+    // Persist active section for page reload recovery
+    sessionStorage.setItem('activeSection', sectionId);
+    // Also persist scroll position for potential restoration
+    sessionStorage.setItem('scrollY', String(window.scrollY));
     if (query !== undefined) {
       setSearchQuery(query);
     }
