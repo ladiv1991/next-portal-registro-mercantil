@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Shield,
   Share2,
@@ -20,122 +20,55 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { useTheme } from './ThemeSwitcher';
 import ObfuscatedContact from './ObfuscatedContact';
+import { toast } from 'sonner';
 
 interface PortalFooterProps {
   onNavigate: (sectionId: string) => void;
 }
 
 const FOOTER_PHONE = '(+53) 7 862-3456';
+const FOOTER_PHONE_CLEAN = '+5378623456';
 const FOOTER_EMAIL = 'info@registromercantil.cu';
 
-// Minimal placeholder QR SVG — visual decoration only. To encode real data, swap in qrcode.react or a build-time generator.
-function QrCode() {
-  return (
-    <svg
-      viewBox="0 0 21 21"
-      width={64}
-      height={64}
-      aria-label="Código QR del portal"
-      role="img"
-      className="text-white/80"
-    >
-      {/* Three finder patterns */}
-      {[
-        [0, 0],
-        [14, 0],
-        [0, 14],
-      ].map(([cx, cy], idx) => (
-        <g key={idx}>
-          <rect x={cx} y={cy} width="7" height="7" fill="currentColor" />
-          <rect
-            x={cx + 1}
-            y={cy + 1}
-            width="5"
-            height="5"
-            fill="var(--footer-bg, #0f172a)"
-          />
-          <rect
-            x={cx + 2}
-            y={cy + 2}
-            width="3"
-            height="3"
-            fill="currentColor"
-          />
-        </g>
-      ))}
-      {/* Data modules — deterministic pattern for visual QR feel */}
-      <g fill="currentColor">
-        <rect x="8" y="0" width="1" height="1" />
-        <rect x="11" y="0" width="2" height="1" />
-        <rect x="17" y="0" width="1" height="1" />
-        <rect x="19" y="0" width="1" height="1" />
-        <rect x="0" y="8" width="1" height="1" />
-        <rect x="2" y="8" width="2" height="1" />
-        <rect x="6" y="8" width="1" height="1" />
-        <rect x="10" y="8" width="1" height="1" />
-        <rect x="13" y="8" width="2" height="1" />
-        <rect x="18" y="8" width="1" height="1" />
-        <rect x="1" y="10" width="1" height="1" />
-        <rect x="4" y="10" width="2" height="1" />
-        <rect x="8" y="10" width="1" height="1" />
-        <rect x="11" y="10" width="1" height="1" />
-        <rect x="15" y="10" width="2" height="1" />
-        <rect x="19" y="10" width="1" height="1" />
-        <rect x="0" y="12" width="1" height="1" />
-        <rect x="3" y="12" width="1" height="1" />
-        <rect x="7" y="12" width="2" height="1" />
-        <rect x="12" y="12" width="1" height="1" />
-        <rect x="16" y="12" width="1" height="1" />
-        <rect x="19" y="12" width="1" height="1" />
-        <rect x="1" y="14" width="1" height="1" />
-        <rect x="4" y="14" width="1" height="1" />
-        <rect x="8" y="14" width="1" height="1" />
-        <rect x="13" y="14" width="2" height="1" />
-        <rect x="17" y="14" width="1" height="1" />
-        <rect x="0" y="16" width="2" height="1" />
-        <rect x="5" y="16" width="1" height="1" />
-        <rect x="9" y="16" width="1" height="1" />
-        <rect x="14" y="16" width="2" height="1" />
-        <rect x="18" y="16" width="1" height="1" />
-        <rect x="1" y="18" width="1" height="1" />
-        <rect x="4" y="18" width="2" height="1" />
-        <rect x="8" y="18" width="1" height="1" />
-        <rect x="11" y="18" width="1" height="1" />
-        <rect x="15" y="18" width="1" height="1" />
-        <rect x="19" y="18" width="1" height="1" />
-        <rect x="0" y="19" width="1" height="1" />
-        <rect x="3" y="19" width="1" height="1" />
-        <rect x="7" y="19" width="2" height="1" />
-        <rect x="12" y="19" width="1" height="1" />
-        <rect x="16" y="19" width="2" height="1" />
-        <rect x="19" y="19" width="1" height="1" />
-        <rect x="6" y="10" width="1" height="1" />
-        <rect x="17" y="10" width="1" height="1" />
-        <rect x="9" y="8" width="1" height="1" />
-        <rect x="16" y="14" width="1" height="1" />
-        <rect x="12" y="16" width="1" height="1" />
-        <rect x="5" y="18" width="1" height="1" />
-        <rect x="18" y="15" width="1" height="1" />
-        <rect x="2" y="15" width="1" height="1" />
-        <rect x="10" y="17" width="1" height="1" />
-        <rect x="19" y="17" width="1" height="1" />
-      </g>
-    </svg>
+/** Gather OpenGraph-style metadata from the current page. */
+function getPageMetadata() {
+  if (typeof document === 'undefined') return { title: '', description: '', url: '' };
+  const title = document.title;
+  const url = window.location.href;
+  const descEl = document.querySelector<HTMLMetaElement>(
+    'meta[property="og:description"], meta[name="description"]'
   );
+  const description = descEl?.content ?? '';
+  return { title, description, url };
 }
 
 export default function PortalFooter({ onNavigate }: PortalFooterProps) {
   const { theme } = useTheme();
   const [copiedMsg, setCopiedMsg] = useState('');
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const qrInitialized = useRef(false);
+
+  // Generate QR code on client mount only
+  useEffect(() => {
+    if (qrInitialized.current) return;
+    qrInitialized.current = true;
+    // Dynamic import avoids SSR issues with the qrcode package
+    import('qrcode').then(({ toDataURL }) => {
+      const url = typeof window !== 'undefined' ? window.location.href : '';
+      if (!url) return;
+      toDataURL(url, { width: 120, margin: 1, color: { dark: '#1F2937', light: '#ffffff' } })
+        .then(setQrDataUrl)
+        .catch(() => {});
+    });
+  }, []);
 
   // ─── Share ───────────────────────────────────────────────────────
   const handleShare = useCallback(async () => {
-    const url = typeof window !== 'undefined' ? window.location.href : '';
-    const title = document.title;
+    const { title, description, url } = getPageMetadata();
 
     if (navigator.share) {
       try {
-        await navigator.share({ title, url });
+        await navigator.share({ title, url, text: description || undefined });
         return;
       } catch {
         // User cancelled — fall through to clipboard
@@ -143,10 +76,12 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
     }
 
     try {
-      await navigator.clipboard.writeText(`${title} — ${url}`);
-      setCopiedMsg('Enlace copiado al portapapeles');
+      await navigator.clipboard.writeText(url);
+      toast.success('Enlace copiado al portapapeles');
+      setCopiedMsg('Enlace copiado');
       setTimeout(() => setCopiedMsg(''), 2000);
     } catch {
+      toast.error('No se pudo compartir');
       setCopiedMsg('No se pudo compartir');
       setTimeout(() => setCopiedMsg(''), 2000);
     }
@@ -166,11 +101,8 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
     onNavigate(sectionId);
   };
 
-  const portalUrl =
-    typeof window !== 'undefined' ? window.location.origin : 'https://registro-mercantil.xetid.cu';
-
   return (
-    <footer className="footer-gradient" style={{ backgroundColor: theme.colors.dark }}>
+    <footer className="footer-gradient">
       <div className="multicolor-stripe" />
       {/* Accent gradient line */}
       <div
@@ -195,7 +127,8 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
                 { icon: Share2, tip: 'Compartir página', action: handleShare },
                 { icon: Megaphone, tip: 'Redes Sociales', action: () => {} },
                 { icon: Mail, tip: 'Contacto', action: () => {
-                  window.location.href = `mailto:${FOOTER_EMAIL}?subject=${encodeURIComponent('Consulta Portal Registro Mercantil')}&body=${encodeURIComponent('Hola,\n\nMe comunico desde el portal web del Registro Mercantil de Cuba.')}`;
+                  const subject = encodeURIComponent('Consulta desde Portal Registro Mercantil');
+                  window.location.href = `mailto:${FOOTER_EMAIL}?subject=${subject}`;
                 }},
               ].map(({ icon: Icon, tip, action }) => (
                 <Tooltip key={tip}>
@@ -250,53 +183,45 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
                 <span className="text-white/70">Calle Obispo No. 154, La Habana Vieja</span>
               </li>
-              <li className="flex items-start gap-2.5 relative">
+              <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
-                <a
-                  href={`tel:${FOOTER_PHONE.replace(/[^\d+]/g, '')}`}
-                  className="inline-flex"
-                  aria-label={`Llamar a ${FOOTER_PHONE}`}
-                >
-                  <ObfuscatedContact
-                    fullValue={FOOTER_PHONE.replace(/[() ]/g, '-')}
-                    type="phone"
-                    label={FOOTER_PHONE}
-                    className="py-0.5"
-                  />
+                <a href={`tel:${FOOTER_PHONE_CLEAN}`} className="text-white/70 hover:text-white transition-colors">
+                  {FOOTER_PHONE}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
-                <a
-                  href={`mailto:${FOOTER_EMAIL}?subject=${encodeURIComponent('Consulta Portal Registro Mercantil')}&body=${encodeURIComponent('Hola,\n\nMe comunico desde el portal web del Registro Mercantil de Cuba.\n\n')}`}
-                  className="text-white/70 hover:text-white transition-colors"
-                  aria-label={`Enviar correo a ${FOOTER_EMAIL}`}
-                >
-                  <ObfuscatedContact
-                    fullValue={FOOTER_EMAIL}
-                    type="email"
-                    label={FOOTER_EMAIL}
-                    className="py-0.5"
-                  />
-                </a>
+                <ObfuscatedContact
+                  fullValue={FOOTER_EMAIL}
+                  type="email"
+                  label={FOOTER_EMAIL}
+                  className="py-0.5"
+                />
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
                 <span className="text-white/70">Lun-Vie: 8:30 AM - 4:30 PM</span>
               </li>
-              {/* QR code */}
-              <li className="flex items-start gap-2.5 pt-2 border-t border-white/10 mt-1">
-                <QrCode />
-                <span className="text-xs text-white/50 leading-relaxed">
-                  Escanea para acceder<br />al portal ({portalUrl})
-                </span>
-              </li>
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* QR Code + Legal */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wide">Información Legal</h3>
+            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wide">Info Legal</h3>
+            {qrDataUrl ? (
+              <div className="mb-4 flex justify-center">
+                <img
+                  src={qrDataUrl}
+                  alt="Código QR de esta página"
+                  className="w-28 h-28 rounded-lg border-2 border-white/20 bg-white p-1"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div className="mb-4 flex justify-center">
+                <div className="w-28 h-28 rounded-lg border-2 border-white/10 bg-white/5 animate-pulse" />
+              </div>
+            )}
             <ul className="space-y-2.5">
               {['Aviso Legal', 'Política de Privacidad', 'Accesibilidad', 'Mapa del Sitio', 'Sugerencias'].map((link) => (
                 <li key={link}>

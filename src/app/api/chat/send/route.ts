@@ -443,7 +443,7 @@ DATOS DE CONTACTO (siempre disponibles):
           model: config.model || 'gpt-3.5-turbo',
           messages: [
             { role: 'system', content: fullSystemPrompt },
-            ...messages,
+            ...userMessages,
           ],
           max_tokens: config.maxTokens || 2048,
           temperature: config.temperature || 0.7,
@@ -466,7 +466,7 @@ DATOS DE CONTACTO (siempre disponibles):
         const completion = await zai.chat.completions.create({
           messages: [
             { role: 'system', content: fullSystemPrompt },
-            ...messages,
+            ...userMessages,
           ],
         });
 

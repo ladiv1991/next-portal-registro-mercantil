@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, error: 'Usuario no encontrado' },
+        { success: false, error: 'Credenciales inválidas' },
         { status: 401 }
       );
     }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     if (!isValidPassword) {
       return NextResponse.json(
-        { success: false, error: 'Contraseña incorrecta' },
+        { success: false, error: 'Credenciales inválidas' },
         { status: 401 }
       );
     }

@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
 
   compress: true,
 
+  poweredByHeader: false,
+
   async headers() {
     const isDev = process.env.NODE_ENV !== 'production';
     // CSP: dev needs 'unsafe-inline' + 'unsafe-eval' for Turbopack/React dev features.
@@ -35,6 +37,7 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,
+    dangerouslyAllowSVG: false,
   },
 
   experimental: {
