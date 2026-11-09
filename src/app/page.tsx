@@ -11,7 +11,7 @@ import CmsLayout from '@/components/cms/cms-layout';
 import { login as cmsLogin, logout as cmsLogout } from '@/components/cms/cms-api';
 import type { User as CmsUser } from '@/components/cms/cms-types';
 
-import { PortalHeader, PortalFooter, ScrollToTop } from '@/components/portal/layout';
+import { PortalHeader, PortalFooter, ScrollToTop, TextToSpeechButton } from '@/components/portal/layout';
 
 const STORAGE_KEYS = {
   ACTIVE_SECTION: 'portal-active-section',
@@ -230,7 +230,7 @@ export default function Home() {
       <div className="min-h-screen flex flex-col">
         <PortalHeader activeSection={activeSection} onNavigate={handleNavClick} />
 
-        <main id="main-content" className="flex-1">
+        <main id="main-content" className="flex-1" data-active-section={activeSection}>
           <AnimatePresence mode="wait">
             {activeSection === 'home' && <HomeSection key="home" onNavigate={handleNavClick} />}
             {activeSection === 'consultas' && <ConsultasSection key="consultas" initialQuery={searchQuery} />}
@@ -250,6 +250,7 @@ export default function Home() {
 
         <PortalFooter onNavigate={handleNavClick} />
         <ScrollToTop visible={showScrollTop} />
+        <TextToSpeechButton />
         <Suspense fallback={null}>
           <FloatingChatbot />
         </Suspense>
