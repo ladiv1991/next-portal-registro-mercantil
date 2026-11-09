@@ -97,7 +97,7 @@ export function generateCaptchaV2(): CaptchaResult {
   const bgDots = Array.from({ length: 80 }, () => {
     const cx = randInt(0, W), cy = randInt(0, H);
     const r = rand(0.3, 0.8);
-    return svgCircle(cx, cy, r, '#c0c8d4', rand(0.08, 0.18));
+    return svgCircle(cx, cy, r, '#c0c8d4', rand(0.05, 0.12));
   }).join('\n    ');
 
   // ---- Individual character elements with per-char distortion ----
@@ -109,8 +109,8 @@ export function generateCaptchaV2(): CaptchaResult {
     const fs = baseFontSize + randInt(-5, 5);  // size variation
     const opacity = rand(0.65, 1.0);
     const fillHue = randInt(0, 360);
-    const fillSat = randInt(40, 80);
-    const fillLight = randInt(15, 38);
+    const fillSat = randInt(50, 90);
+    const fillLight = randInt(10, 28);
     const fontWeight = randInt(400, 900);
 
     // X position: spread chars across the width with some overlap

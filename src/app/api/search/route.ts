@@ -13,6 +13,38 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const captchaId = searchParams.get('captchaId') || '';
     const captchaAnswer = searchParams.get('captchaAnswer') || '';
+    const includeDistinct = searchParams.get('includeDistinct') === 'true';
+
+    // If only fetching distinct filter options, skip captcha and rate limiting
+    if (includeDistinct && !rawQuery && !province && !type && !status) {
+      const [provinces, types, statuses] = await Promise.all([
+        db.$queryRaw<{ province: string }[]>`
+          SELECT DISTINCT province FROM "SearchableName"
+          WHERE visible = true AND province IS NOT NULL AND province != ''
+          ORDER BY province
+        `,
+        db.$queryRaw<{ type: string }[]>`
+          SELECT DISTINCT type FROM "SearchableName"
+          WHERE visible = true ORDER BY type
+        `,
+        db.$queryRaw<{ status: string }[]>`
+          SELECT DISTINCT status FROM "SearchableName"
+          WHERE visible = true ORDER BY status
+        `,
+      ]);
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          results: [],
+          filterOptions: {
+            provinces: provinces.map(r => r.province),
+            types: types.map(r => r.type),
+            statuses: statuses.map(r => r.status),
+          },
+        },
+      });
+    }
 
     // CAPTCHA verification
     if (!verifyCaptchaV2(captchaId, captchaAnswer)) {
@@ -68,6 +100,37 @@ export async function GET(request: NextRequest) {
       ORDER BY "createdAt" DESC
       LIMIT 50
     `);
+
+    // Optionally include distinct filter values in search response
+    if (includeDistinct) {
+      const [provinces, types, statuses] = await Promise.all([
+        db.$queryRaw<{ province: string }[]>`
+          SELECT DISTINCT province FROM "SearchableName"
+          WHERE visible = true AND province IS NOT NULL AND province != ''
+          ORDER BY province
+        `,
+        db.$queryRaw<{ type: string }[]>`
+          SELECT DISTINCT type FROM "SearchableName"
+          WHERE visible = true ORDER BY type
+        `,
+        db.$queryRaw<{ status: string }[]>`
+          SELECT DISTINCT status FROM "SearchableName"
+          WHERE visible = true ORDER BY status
+        `,
+      ]);
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          results,
+          filterOptions: {
+            provinces: provinces.map(r => r.province),
+            types: types.map(r => r.type),
+            statuses: statuses.map(r => r.status),
+          },
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, data: { results } });
   } catch (error) {

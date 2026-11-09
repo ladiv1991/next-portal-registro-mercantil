@@ -116,11 +116,11 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
 
   const { hasActiveSubscription, showPremiumModal } = usePortalAuth();
 
-  // Fetch distinct filter values from DB
+  // Fetch distinct filter values from DB (combined with search endpoint to avoid extra request)
   useEffect(() => {
-    fetch('/api/search/distinct')
+    fetch('/api/search?includeDistinct=true')
       .then(r => r.ok ? r.json() : null)
-      .then(json => json?.success && setFilterOptions(json.data))
+      .then(json => json?.success && setFilterOptions(json.data?.filterOptions || { provinces: [], types: [], statuses: [] }))
       .catch(() => {});
   }, []);
 
@@ -300,8 +300,8 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                         }}
                         maxLength={8}
                         disabled={searching}
-                        autoComplete="off"
-                        autoCorrect="off"
+                        autoComplete="new-password"
+                        autoCapitalize="none"
                         spellCheck={false}
                         aria-label="Respuesta del CAPTCHA de búsqueda"
                       />
@@ -324,6 +324,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground">Máximo 3 búsquedas por minuto. Escriba los caracteres que ve en la imagen (distinga mayúsculas/minúsculas).</p>
+                    <p className="text-xs text-[var(--rm-primary)]/70 font-medium">Escriba exactamente como aparece, incluyendo mayúsculas y minúsculas.</p>
                   </div>
                 </div>
               </TabsContent>
@@ -418,8 +419,8 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                         }}
                         maxLength={8}
                         disabled={searching}
-                        autoComplete="off"
-                        autoCorrect="off"
+                        autoComplete="new-password"
+                        autoCapitalize="none"
                         spellCheck={false}
                         aria-label="Respuesta del CAPTCHA de búsqueda avanzada"
                       />
@@ -442,6 +443,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground">Máximo 3 búsquedas por minuto. Escriba los caracteres que ve en la imagen (distinga mayúsculas/minúsculas).</p>
+                    <p className="text-xs text-[var(--rm-primary)]/70 font-medium">Escriba exactamente como aparece, incluyendo mayúsculas y minúsculas.</p>
                   </div>
                 </div>
               </TabsContent>
