@@ -31,7 +31,7 @@ export default function ConstitutionSteps() {
               </div>
               <div className="mt-2">
                 <step.icon className="w-6 h-6 text-[var(--rm-text)] mb-2" />
-                <h4 className="font-semibold text-[var(--rm-text)]">{step.title}</h4>
+                <h3 className="font-semibold text-[var(--rm-text)]">{step.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{step.description}</p>
                 <p className="text-xs text-[var(--rm-primary)] mt-2 flex items-center gap-1">
                   <Clock className="w-3 h-3" /> {step.time}

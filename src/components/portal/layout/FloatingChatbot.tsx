@@ -88,10 +88,6 @@ export default function FloatingChatbot() {
       }
     };
     load();
-
-    // Auto-refresh every 30s so CMS content changes appear without page reload
-    const interval = setInterval(load, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   // Normalize accents for matching: "trámite" → "tramite"
@@ -317,12 +313,12 @@ export default function FloatingChatbot() {
                 </div>
                 <div>
                   <p className="text-white font-semibold text-sm">Asistente Virtual</p>
-                  <p className="text-white/70 text-xs">Registro Mercantil de Cuba</p>
+                  <p className="text-white/80 text-xs">Registro Mercantil de Cuba</p>
                 </div>
               </div>
               <button
                 onClick={() => setChatOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
+                className="min-w-[44px] min-h-[44px] rounded-full hover:bg-white/10 flex items-center justify-center text-white/90 hover:text-white transition-colors"
                 aria-label="Cerrar chat"
               >
                 <X className="w-4 h-4" />

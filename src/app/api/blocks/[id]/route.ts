@@ -43,9 +43,15 @@ export async function PUT(
       );
     }
 
+    // Filter null values to avoid Prisma type errors (null is not a valid string update)
+    const data: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(parsed.data)) {
+      if (v !== undefined) data[k] = v;
+    }
+
     const block = await db.block.update({
       where: { id },
-      data: parsed.data,
+      data,
     });
 
     return NextResponse.json({ success: true, data: block });

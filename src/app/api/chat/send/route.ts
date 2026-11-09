@@ -138,6 +138,7 @@ export async function POST(request: NextRequest) {
     // ═══════════════════════════════════════════════
     // FASE 1: Extraer contexto de la BD
     // ═══════════════════════════════════════════════
+    // Knowledge base refreshed from DB on every request - no caching
     let botConfigPrompt = '';
     let knowledgeContext = '';
     let knowledgeSources = '';

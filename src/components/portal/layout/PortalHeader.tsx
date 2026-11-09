@@ -120,7 +120,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
             </div>
             <div className="hidden sm:block">
               <div className="text-white font-bold text-sm leading-tight tracking-wide">Registro Mercantil</div>
-              <div className="text-xs text-white/70 font-medium">República de Cuba</div>
+              <div className="text-xs text-white/90 font-medium">República de Cuba</div>
             </div>
           </button>
 
@@ -176,7 +176,8 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white/75 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg"
+                  className="text-white/75 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg min-w-[44px] min-h-[44px]"
+                  aria-label="Notificaciones"
                 >
                   <Bell className="w-4 h-4" />
                 </Button>
@@ -187,8 +188,9 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
             <Button
               variant="ghost"
               size="icon"
-              className="text-white/75 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg"
+              className="text-white/75 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg min-w-[44px] min-h-[44px]"
               onClick={() => handleNavClick('consultas')}
+              aria-label="Buscar sociedades"
             >
               <Search className="w-4 h-4" />
             </Button>
@@ -223,7 +225,8 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white/75 hover:text-white lg:hidden transition-colors rounded-lg"
+                  className="text-white/75 hover:text-white lg:hidden transition-colors rounded-lg min-w-[44px] min-h-[44px]"
+                  aria-label="Abrir menú de navegación"
                 >
                   <Menu className="w-5 h-5" />
                 </Button>

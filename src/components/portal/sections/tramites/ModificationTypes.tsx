@@ -28,7 +28,7 @@ export default function ModificationTypes() {
                 <mod.icon className="w-5 h-5 text-[var(--rm-text)]" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm text-[var(--rm-text)]">{mod.title}</h4>
+                <h3 className="font-semibold text-sm text-[var(--rm-text)]">{mod.title}</h3>
                 <p className="text-xs text-muted-foreground mt-1">{mod.description}</p>
               </div>
             </CardContent>

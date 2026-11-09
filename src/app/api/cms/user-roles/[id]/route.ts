@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireAuth, requireAdmin } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { updateUserRoleSchema } from '@/lib/cms-schemas';
 import { checkOrigin } from '@/lib/origin-check';
 

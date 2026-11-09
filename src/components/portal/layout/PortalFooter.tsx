@@ -119,7 +119,7 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
               <Shield className="w-6 h-6" style={{ color: theme.colors.warm }} />
               <span className="text-white font-bold text-base">Registro Mercantil</span>
             </div>
-            <p className="text-sm text-white/70 leading-relaxed">
+            <p className="text-sm text-white/80 leading-relaxed">
               Portal oficial del Registro Mercantil de la República de Cuba, dependiente del Ministerio de Justicia.
             </p>
             <div className="flex items-center gap-3 mt-4">
@@ -136,7 +136,7 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
                     <button
                       type="button"
                       onClick={action}
-                      className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+                      className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
                       style={{
                         backgroundColor: theme.colors.accent + '20',
                         color: theme.colors.warm,
@@ -165,7 +165,7 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
                 <li key={link}>
                   <button
                     onClick={() => handleQuickLinkClick(link)}
-                    className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1.5 group"
+                    className="text-sm text-white/80 hover:text-white transition-colors flex items-center gap-1.5 group"
                   >
                     <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" style={{ color: theme.colors.accent }} />
                     <span>{link}</span>
@@ -181,11 +181,11 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
-                <span className="text-white/70">Calle Obispo No. 154, La Habana Vieja</span>
+                <span className="text-white/80">Calle Obispo No. 154, La Habana Vieja</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
-                <a href={`tel:${FOOTER_PHONE_CLEAN}`} className="text-white/70 hover:text-white transition-colors">
+                <a href={`tel:${FOOTER_PHONE_CLEAN}`} className="text-white/80 hover:text-white transition-colors">
                   {FOOTER_PHONE}
                 </a>
               </li>
@@ -200,7 +200,7 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
-                <span className="text-white/70">Lun-Vie: 8:30 AM - 4:30 PM</span>
+                <span className="text-white/80">Lun-Vie: 8:30 AM - 4:30 PM</span>
               </li>
             </ul>
           </div>
@@ -223,11 +223,26 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
               </div>
             )}
             <ul className="space-y-2.5">
-              {['Aviso Legal', 'Política de Privacidad', 'Accesibilidad', 'Mapa del Sitio', 'Sugerencias'].map((link) => (
-                <li key={link}>
-                  <button className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1.5 group">
+              {[
+                { label: 'Aviso Legal', slug: 'aviso-legal' },
+                { label: 'Política de Privacidad', slug: 'politica-privacidad' },
+                { label: 'Accesibilidad', slug: 'accesibilidad' },
+                { label: 'Mapa del Sitio', slug: 'mapa-sitio' },
+                { label: 'Sugerencias', slug: 'sugerencias' },
+              ].map((item) => (
+                <li key={item.slug}>
+                  <button
+                    onClick={() => {
+                      onNavigate('legal');
+                      setTimeout(() => {
+                        const el = document.getElementById(`legal-${item.slug}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }}
+                    className="text-sm text-white/80 hover:text-white transition-colors flex items-center gap-1.5 group"
+                  >
                     <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" style={{ color: theme.colors.accent }} />
-                    <span>{link}</span>
+                    <span>{item.label}</span>
                   </button>
                 </li>
               ))}
@@ -240,7 +255,7 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
           style={{ backgroundColor: theme.colors.accent + '20' }}
         />
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/80">
           <p>© 2026 Registro Mercantil de Cuba — Ministerio de Justicia. Todos los derechos reservados.</p>
           <div className="flex items-center w-40 h-20">
             <img src="/marca-pais.jpg" alt="Cuba" className="object-contain" />

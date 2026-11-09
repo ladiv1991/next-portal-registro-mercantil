@@ -897,7 +897,7 @@ export default function HomeSection({ onNavigate }: { onNavigate: (id: string, q
                 <div className="p-6 glass-card-dark multicolor-shimmer">
                   <benefit.icon className="w-8 h-8 text-[var(--rm-primary)] mb-4" />
                   <h3 className="text-white font-semibold mb-2">{benefit.title}</h3>
-                  <p className="text-sm text-gray-600">{benefit.description}</p>
+                  <p className="text-sm text-white/80">{benefit.description}</p>
                 </div>
               </motion.div>
             ))}

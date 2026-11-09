@@ -18,7 +18,7 @@ const CHART_CONST_CANCEL = [
 
 export default function ConstitutionsBarChart() {
   return (
-    <Card className="glass-card overflow-hidden">
+    <Card className="glass-card overflow-hidden" role="img" aria-label="Gráfico de barras de constituciones y cancelaciones por año">
       <CardHeader>
         <div className="flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-[var(--rm-primary)]" />

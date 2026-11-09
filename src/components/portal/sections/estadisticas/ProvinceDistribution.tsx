@@ -24,7 +24,7 @@ const PROVINCES_DATA = [
 
 export default function ProvinceDistribution() {
   return (
-    <Card className="glass-card overflow-hidden">
+    <Card className="glass-card overflow-hidden" role="img" aria-label="Distribución territorial de sociedades por provincia">
       <CardHeader>
         <div className="flex items-center gap-2">
           <MapIcon className="w-5 h-5 text-[var(--rm-primary)]" />
@@ -42,7 +42,7 @@ export default function ProvinceDistribution() {
                   <span className="text-[var(--rm-text)] font-medium">{prov.province}</span>
                   <span className="text-muted-foreground">{prov.count.toLocaleString('es-ES')}</span>
                 </div>
-                <Progress value={width} className="h-2" />
+                <Progress value={width} className="h-2" aria-label={`Progreso para ${prov.province}: ${width.toFixed(0)}%`} />
               </div>
             );
           })}

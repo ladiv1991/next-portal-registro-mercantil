@@ -233,7 +233,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
             Consultas Públicas
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Búsqueda de Sujetos</h1>
-          <p className="text-white/70 max-w-2xl mx-auto">
+          <p className="text-white/90 max-w-2xl mx-auto">
             Consulte sociedades, documentos y estado registral de manera pública.
           </p>
         </div>
@@ -646,7 +646,7 @@ export default function ConsultasSection({ initialQuery = '' }: { initialQuery?:
               ].map((cert) => (
                 <motion.div key={cert.title} variants={fadeInUp}>
                   <div className="glass-card-inner p-4 hover:border-[var(--rm-primary)]/30">
-                    <h4 className="font-semibold text-[var(--rm-text)] text-sm">{cert.title}</h4>
+                    <h3 className="font-semibold text-[var(--rm-text)] text-sm">{cert.title}</h3>
                     <p className="text-xs text-muted-foreground mt-1">{cert.desc}</p>
                     <p className="text-sm font-bold text-[var(--rm-primary)] mt-2">{cert.cost}</p>
                   </div>

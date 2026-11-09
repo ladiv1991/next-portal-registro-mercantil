@@ -131,7 +131,7 @@ export default function AsistenciaSection() {
             Asistencia y Formación
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Centro de Ayuda</h1>
-          <p className="text-white/70 max-w-2xl mx-auto">
+          <p className="text-white/90 max-w-2xl mx-auto">
             Guías paso a paso, tutoriales, webinars y asistencia personalizada para todos los usuarios.
           </p>
         </div>
@@ -225,14 +225,12 @@ export default function AsistenciaSection() {
                         <Mail className="w-5 h-5 text-[var(--rm-primary)] shrink-0" />
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-[var(--rm-text)]">Correo Electrónico</p>
-                          <a href="mailto:soporte@registromercantil.cu" className="block mt-0.5">
-                            <ObfuscatedContact
-                              fullValue="soporte@registromercantil.cu"
-                              type="email"
-                              label="soporte@registromercantil.cu"
-                              className="py-0.5"
-                            />
-                          </a>
+                          <ObfuscatedContact
+                            fullValue="soporte@registromercantil.cu"
+                            type="email"
+                            label="soporte@registromercantil.cu"
+                            className="py-0.5"
+                          />
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary">
@@ -261,7 +259,7 @@ export default function AsistenciaSection() {
                 <div className="w-16 h-16 rounded-2xl bg-[var(--rm-primary)]/20 flex items-center justify-center mx-auto mb-4">
                   <Bot className="w-8 h-8 text-[var(--rm-primary)]" />
                 </div>
-                <h3 className="font-bold text-[var(--rm-text)] mb-2">Asistente Virtual</h3>
+                <h2 className="font-bold text-[var(--rm-text)] mb-2">Asistente Virtual</h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   Nuestro asistente virtual está disponible 24/7 para responder sus preguntas frecuentes sobre trámites y servicios del Registro Mercantil.
                 </p>

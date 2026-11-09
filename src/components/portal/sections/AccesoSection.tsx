@@ -94,7 +94,7 @@ export default function AccesoSection({ onLogin, loginError, onForgotPassword }:
             Acceso Registradores
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Portal de Registradores</h1>
-          <p className="text-white/70 max-w-2xl mx-auto">
+          <p className="text-white/90 max-w-2xl mx-auto">
             Acceso exclusivo para funcionarios del Registro Mercantil. Sistema de Gestión Registral.
           </p>
         </div>
@@ -268,7 +268,7 @@ export default function AccesoSection({ onLogin, loginError, onForgotPassword }:
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <BarChart3 className="w-4 h-4 text-[var(--rm-primary)]" />
-                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Estadísticas Internas</h4>
+                    <h2 className="font-semibold text-sm text-[var(--rm-text)]">Estadísticas Internas</h2>
                   </div>
                   <p className="text-xs text-muted-foreground">Dashboard de métricas de gestión, productividad y carga de trabajo.</p>
                 </CardContent>
@@ -277,7 +277,7 @@ export default function AccesoSection({ onLogin, loginError, onForgotPassword }:
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <FolderOpen className="w-4 h-4 text-[var(--rm-primary)]" />
-                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Gestión Documental</h4>
+                    <h2 className="font-semibold text-sm text-[var(--rm-text)]">Gestión Documental</h2>
                   </div>
                   <p className="text-xs text-muted-foreground">Archivo digital, búsqueda avanzada y gestión de expedientes.</p>
                 </CardContent>
@@ -286,7 +286,7 @@ export default function AccesoSection({ onLogin, loginError, onForgotPassword }:
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <MessageCircle className="w-4 h-4 text-[var(--rm-primary)]" />
-                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Comunicación Interna</h4>
+                    <h2 className="font-semibold text-sm text-[var(--rm-text)]">Comunicación Interna</h2>
                   </div>
                   <p className="text-xs text-muted-foreground">Mensajería y notificaciones entre registradores y oficinas.</p>
                 </CardContent>
@@ -295,7 +295,7 @@ export default function AccesoSection({ onLogin, loginError, onForgotPassword }:
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <UserCog className="w-4 h-4 text-[var(--rm-primary)]" />
-                    <h4 className="font-semibold text-sm text-[var(--rm-text)]">Administración</h4>
+                    <h2 className="font-semibold text-sm text-[var(--rm-text)]">Administración</h2>
                   </div>
                   <p className="text-xs text-muted-foreground">Gestión de usuarios, permisos y configuración del sistema.</p>
                 </CardContent>

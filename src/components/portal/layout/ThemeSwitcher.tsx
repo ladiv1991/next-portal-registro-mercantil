@@ -155,8 +155,9 @@ export default function ThemeSwitcher() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 rounded-full hover:bg-gray-100"
+                  className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 min-w-[44px] min-h-[44px]"
                   onClick={() => setOpen(false)}
+                  aria-label="Cerrar selector de tema"
                 >
                   ✕
                 </Button>

@@ -17,7 +17,7 @@ const CHART_SOCIEDADES = [
 
 export default function SocietiesPieChart() {
   return (
-    <Card className="glass-card overflow-hidden">
+    <Card className="glass-card overflow-hidden" role="img" aria-label="Gráfico circular de sociedades activas por tipo">
       <CardHeader>
         <div className="flex items-center gap-2">
           <PieChartIcon className="w-5 h-5 text-[var(--rm-primary)]" />

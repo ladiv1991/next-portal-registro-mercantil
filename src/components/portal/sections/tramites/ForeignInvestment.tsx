@@ -21,7 +21,7 @@ export default function ForeignInvestment() {
               <Globe2 className="w-6 h-6 text-[var(--rm-primary)]" />
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-[var(--rm-text)] mb-1">Ventanilla Única de Comercio Exterior (VUCE)</h4>
+              <h3 className="font-semibold text-[var(--rm-text)] mb-1">Ventanilla Única de Comercio Exterior (VUCE)</h3>
               <p className="text-sm text-[var(--rm-muted)] mb-4">
                 Conforme a la Disposición Especial Primera del{' '}
                 <GacetaLink name="Decreto-Ley No. 226/2001" gacetaId="dl-226-2001" plain />,
@@ -50,7 +50,7 @@ export default function ForeignInvestment() {
               <MapPin className="w-6 h-6 text-[var(--rm-primary)]" />
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-[var(--rm-text)] mb-1">Ventanilla Única de Inversión Extranjera (VUINEX)</h4>
+              <h3 className="font-semibold text-[var(--rm-text)] mb-1">Ventanilla Única de Inversión Extranjera (VUINEX)</h3>
               <p className="text-sm text-[var(--rm-muted)] mb-3">
                 VUINEX centraliza y agiliza los trámites de autorización para la inversión extranjera en Cuba.
                 El Registro Mercantil Central inscribe los actos societarios una vez autorizada la inversión
@@ -81,7 +81,7 @@ export default function ForeignInvestment() {
               <Globe2 className="w-6 h-6 text-[var(--rm-primary)]" />
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-[var(--rm-text)] mb-1">Zona Especial de Desarrollo Mariel (ZED Mariel)</h4>
+              <h3 className="font-semibold text-[var(--rm-text)] mb-1">Zona Especial de Desarrollo Mariel (ZED Mariel)</h3>
               <p className="text-sm text-[var(--rm-muted)] mb-3">
                 Para inversiones dentro de la Zona Especial de Desarrollo Mariel, los trámites se realizan
                 a través de su sistema de ventanilla única.

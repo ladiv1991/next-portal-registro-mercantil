@@ -8,6 +8,7 @@ export { default as AsistenciaSection } from './AsistenciaSection';
 export { default as AccesoSection } from './AccesoSection';
 export { default as ForgotPasswordSection } from './ForgotPasswordSection';
 export { default as RefreshCw } from './RefreshCw';
+export { default as SitePagesSection } from './SitePagesSection';
 
 // Sub-components
 export { default as CompanyProfile } from './consultas/CompanyProfile';

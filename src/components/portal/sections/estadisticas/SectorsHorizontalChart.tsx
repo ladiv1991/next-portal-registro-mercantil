@@ -22,7 +22,7 @@ const CHART_SECTORES = [
 
 export default function SectorsHorizontalChart() {
   return (
-    <Card className="glass-card overflow-hidden">
+    <Card className="glass-card overflow-hidden" role="img" aria-label="Gráfico de barras horizontales de sectores económicos más dinámicos">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Activity className="w-5 h-5 text-[var(--rm-primary)]" />

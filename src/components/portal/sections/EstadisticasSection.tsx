@@ -108,7 +108,7 @@ export default function EstadisticasSection() {
             Estadísticas
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text-primary-light mb-3">Panel de Estadísticas</h1>
-          <p className="text-white/70 max-w-2xl mx-auto">
+          <p className="text-white/90 max-w-2xl mx-auto">
             Datos estadísticos del Registro Mercantil. Transparencia y acceso a la información registral.
           </p>
         </div>

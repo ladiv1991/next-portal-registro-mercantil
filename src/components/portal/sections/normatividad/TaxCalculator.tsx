@@ -323,7 +323,7 @@ export default function TaxCalculator() {
 
         {/* Fee breakdown */}
         <div className="glass-card-inner p-4 space-y-2">
-          <h4 className="text-sm font-semibold text-[var(--rm-text)] mb-3">Desglose de Tarifas</h4>
+          <h3 className="text-sm font-semibold text-[var(--rm-text)] mb-3">Desglose de Tarifas</h3>
           {selectedScenario === 'certification' ? (
             <>
               <div className="flex justify-between text-sm">

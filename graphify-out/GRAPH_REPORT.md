@@ -1,17 +1,17 @@
-# Graph Report - next-portal-registro-mercantil  (2026-11-08)
+# Graph Report - next-portal-registro-mercantil  (2026-11-09)
 
 ## Corpus Check
-- 306 files · ~242,135 words
+- 309 files · ~244,924 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 16 file(s) not represented in the graph (top: (none) 7, .example 2, .woff2 2)
 
 ## Summary
-- 2290 nodes · 6577 edges · 131 communities (121 shown, 10 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 88 edges (avg confidence: 0.94)
+- 2360 nodes · 6654 edges · 150 communities (139 shown, 11 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 91 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `35e1585b`
+- Built from commit: `d03ae697`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -23,9 +23,9 @@
 - PremiumFeaturesExample.tsx
 - cms-handler.ts
 - cms-schemas.ts
-- cn
+- menubar.tsx
 - package.json
-- CardHeader
+- cms-regulations.tsx
 - upload/route.ts
 - Constitución del Portal del Registro Mercantil de Cuba
 - portal-auth.ts
@@ -40,7 +40,7 @@
 - RESOLUCIÓN 51 DEL MINISTRO DE JUSTICIA
 - scripts
 - worklog.md
-- cms-types.ts
+- Estado: EN PROGRESO
 - portal-data.ts
 - Registro Mercantil de Cuba — Índice del Proyecto
 - OpenSpec — Especificaciones (OBLIGATORIO)
@@ -49,7 +49,7 @@
 - cms-enzona-config.tsx
 - RESOLUCIÓN No. 230 DEL MINISTRO DE JUSTICIA
 - components.json
-- react
+- cms-services.tsx
 - cms-api.ts
 - resizable.tsx
 - carousel.tsx
@@ -85,7 +85,7 @@
 - 10. CALIFICACIÓN Y RECURSOS
 - 8. EL REGISTRADOR MERCANTIL
 - card.tsx
-- cmsGetAll
+- react
 - 🚀 Instalación y configuración
 - requireAuth
 - 4. PROCESO DE INSCRIPCIÓN
@@ -95,7 +95,7 @@
 - 🚀 Instalación y Configuración
 - 🚀 Despliegue con Docker
 - run-migrations.js
-- cmsCreate
+- cms-faq.tsx
 - 11. PUBLICIDAD E INFORMACIÓN REGISTRAL
 - 14. INSCRIPCIÓN DE SOCIEDADES MERCANTILES
 - 18. PERSONAS NATURALES EXTRANJERAS (Arts. 178-184)
@@ -108,8 +108,8 @@
 - portal-functional-tests.mjs
 - devDependencies
 - deploy.sh
-- cms-dashboard.tsx
-- handleResponse
+- PortalHeader.tsx
+- cms-procedures.tsx
 - chat-knowledge.ts
 - 10. INTERACCIÓN CON TERCEROS
 - 11. SANCIONES (Art. 27)
@@ -120,15 +120,15 @@
 - 3. SISTEMA DEL REGISTRO MERCANTIL
 - 💾 Backups y restauración de la base de datos
 - 🚀 Características Principales
-- 📜 Logs
+- WCAG 2.1 AA Accessibility Audit Report
 - backup-db.sh
 - prepare-preprod-env.sh
-- Hallazgos detallados
+- api/auth/login/route.ts
 - 15. REQUISITOS TÉCNICOS PARA EL PORTAL DIGITAL
 - 18. NOTAS ADICIONALES
 - 5. CALIFICACIÓN REGISTRAL Y RECURSOS (Art. 9)
 - 21. DENOMINACIONES (Arts. 194-199)
-- 🧠 Grafo de Conocimiento (Graphify)
+- dropdown-menu.tsx
 - ✅ Usuarios por defecto y autenticación
 - fix-old-colors.sh
 - postcss.config.mjs
@@ -139,10 +139,29 @@
 - Files Created/Modified
 - Visual Testing Results (Browser Automation)
 - Plan de actualización normativa del Portal
-- Plan de mejora y remediación priorizado
-- calendar.tsx
-- Task ID: api-routes-rebuild - Main Agent
+- captcha-v2.ts
+- guardian.ts
+- verifyCaptchaV2
 - verify-fixes.sh
+- FloatingChatbot.tsx
+- pagination.tsx
+- Artículo VI: Despliegue y Docker
+- JsonFieldEditor.tsx
+- ObfuscatedContact.tsx
+- POST
+- cms-search-names.tsx
+- Artículo IV: Estándares de API
+- Artículo V: Base de Datos y Migraciones
+- 🟠 Hallazgos ALTOS
+- FileUpload.tsx
+- popover.tsx
+- Artículo II: Accesibilidad WCAG 2.1 AA
+- Artículo III: Arquitectura Next.js App Router
+- Artículo VII: Convenciones de Código
+- guardian/route.ts
+- knowledge/route.ts
+- Task ID: 3b - glass-tramites
+- Task ID: 3c - Main Agent
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 244 edges
@@ -152,7 +171,7 @@
 5. `Card()` - 106 edges
 6. `Button()` - 104 edges
 7. `CardContent()` - 104 edges
-8. `requireAdmin()` - 99 edges
+8. `requireAdmin()` - 101 edges
 9. `lucide-react` - 92 edges
 10. `Input()` - 68 edges
 
@@ -171,7 +190,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (131 total, 10 thin omitted)
+## Communities (150 total, 11 thin omitted)
 
 ### Community 0 - "handleCMSPut"
 Cohesion: 0.07
@@ -179,19 +198,19 @@ Nodes (46): DELETE(), GET(), PUT(), DELETE(), GET(), PUT(), DELETE(), GET() (+38
 
 ### Community 1 - "checkOrigin"
 Cohesion: 0.06
-Nodes (69): bcryptjs, zod, POST(), DELETE(), PUT(), updateBlockSchema, PUT(), reorderMenuSchema (+61 more)
+Nodes (67): bcryptjs, zod, GET(), schema, DELETE(), PUT(), updateBlockSchema, PUT() (+59 more)
 
 ### Community 2 - "dependencies"
 Cohesion: 0.03
-Nodes (74): dependencies, bcryptjs, class-variance-authority, clsx, cmdk, date-fns, @dnd-kit/core, @dnd-kit/sortable (+66 more)
+Nodes (75): dependencies, bcryptjs, class-variance-authority, clsx, cmdk, date-fns, @dnd-kit/core, @dnd-kit/sortable (+67 more)
 
 ### Community 3 - "next"
 Cohesion: 0.07
-Nodes (6): nextConfig, next, GET(), GET(), getAuthUser(), TAG_MAP
+Nodes (5): nextConfig, next, POST(), POST(), TAG_MAP
 
 ### Community 4 - "PremiumFeaturesExample.tsx"
-Cohesion: 0.22
-Nodes (11): metadata, PremiumDemoPage(), PremiumFeaturesExample(), PremiumGateButton(), PremiumGateButtonProps, PremiumGateWrapper(), PremiumGateWrapperProps, FeatureAccessOptions (+3 more)
+Cohesion: 0.18
+Nodes (13): metadata, PremiumDemoPage(), PremiumFeaturesExample(), PremiumGateButton(), PremiumGateButtonProps, PremiumGateWrapper(), PremiumGateWrapperProps, CompanyProfile() (+5 more)
 
 ### Community 5 - "cms-handler.ts"
 Cohesion: 0.09
@@ -201,29 +220,29 @@ Nodes (43): DELETE(), GET(), PUT(), GET(), POST(), GET(), POST(), GET() (+35 mor
 Cohesion: 0.03
 Nodes (57): RFC-5322, BOT_CONFIG_SCHEMA, BOT_PROVIDERS, CMS_SCHEMAS, CONTACT_SCHEMA, CONTACT_TYPES, createBotConfigSchema, createContactSchema (+49 more)
 
-### Community 7 - "cn"
-Cohesion: 0.05
-Nodes (47): cmdk, @radix-ui/react-avatar, @radix-ui/react-dropdown-menu, Avatar(), AvatarFallback(), AvatarImage(), CardAction(), Command() (+39 more)
+### Community 7 - "menubar.tsx"
+Cohesion: 0.12
+Nodes (13): @radix-ui/react-menubar, Menubar(), MenubarCheckboxItem(), MenubarContent(), MenubarItem(), MenubarLabel(), MenubarPortal(), MenubarRadioItem() (+5 more)
 
 ### Community 8 - "package.json"
 Cohesion: 0.04
 Nodes (45): name, prisma, seed, private, version, bun-types, date-fns, eslint (+37 more)
 
-### Community 9 - "CardHeader"
-Cohesion: 0.17
-Nodes (24): Secciones del Portal, framer-motion, ResetPasswordPage(), CmsDashboard(), AccesoSection(), AccesoSectionProps, ConstitutionsBarChart(), SectorsHorizontalChart() (+16 more)
+### Community 9 - "cms-regulations.tsx"
+Cohesion: 0.07
+Nodes (41): framer-motion, sonner, deleteNewsArticle(), getRegulations(), EMPTY, FormData, ICONS, CATEGORIES (+33 more)
 
 ### Community 10 - "upload/route.ts"
 Cohesion: 0.06
-Nodes (37): __dirname, eslintConfig, __filename, eslint-config-next, sharp, fs, main(), parseArgs() (+29 more)
+Nodes (36): __dirname, eslintConfig, __filename, eslint-config-next, sharp, fs, main(), parseArgs() (+28 more)
 
 ### Community 11 - "Constitución del Portal del Registro Mercantil de Cuba"
-Cohesion: 0.04
-Nodes (47): 1.1 Credenciales y secretos, 1.2 Autenticación y autorización, 1.3 Protección de datos, 1.4 Same-Origin Enforcement (CSRF en Route Handlers), 1.5 Límites de subida de archivos, 2.1 Compromiso obligatorio, 2.2 Contraste de colores, 2.3 Navegación por teclado (+39 more)
+Cohesion: 0.14
+Nodes (12): 1.1 Credenciales y secretos, 1.2 Autenticación y autorización, 1.3 Protección de datos, 1.4 Same-Origin Enforcement (CSRF en Route Handlers), 1.5 Límites de subida de archivos, 8.1 Grafo de conocimiento (Graphify), 8.2 Memoria persistente (Engram), 8.3 Documentación de librerías (Context7) (+4 more)
 
 ### Community 12 - "portal-auth.ts"
-Cohesion: 0.13
-Nodes (18): M-001: Type Confusion JWT — `requireAuth()` no valida `type` del payload, jsonwebtoken, GET(), ALLOWED_ENZONA_HOSTS, createPaymentSchema, POST(), POST(), GET() (+10 more)
+Cohesion: 0.14
+Nodes (17): M-001: Type Confusion JWT — `requireAuth()` no valida `type` del payload, GET(), ALLOWED_ENZONA_HOSTS, createPaymentSchema, POST(), POST(), GET(), GET() (+9 more)
 
 ### Community 13 - "toggle-group.tsx"
 Cohesion: 0.29
@@ -234,28 +253,28 @@ Cohesion: 0.08
 Nodes (35): @radix-ui/react-toast, geistMono, geistSans, metadata, RootLayout(), Toast, ToastAction, ToastActionElement (+27 more)
 
 ### Community 15 - "forgot-password/route.ts"
-Cohesion: 0.05
-Nodes (63): main(), nodemailer, POST(), schema, loginSchema, POST(), POST(), schema (+55 more)
+Cohesion: 0.19
+Nodes (12): nodemailer, POST(), schema, EmailOptions, getTransporter(), sendEmail(), COLORS, escapeHtml() (+4 more)
 
 ### Community 16 - "ConsultasSection.tsx"
-Cohesion: 0.12
-Nodes (33): CMS ↔ Portal unificado, @radix-ui/react-tabs, DashboardUser, InformationRequest, PortalDashboard(), UserProcedure, ContactForm(), FormData (+25 more)
+Cohesion: 0.13
+Nodes (32): DashboardUser, InformationRequest, PortalDashboard(), UserProcedure, ContactForm(), FormData, FormErrors, ConsultasSection() (+24 more)
 
 ### Community 17 - "FAQAccordion.tsx"
-Cohesion: 0.23
-Nodes (15): FAQ_DATA, FAQAccordion(), GacetaLink(), GacetaLinkProps, FALLBACK_FRAMEWORK, LegalFramework(), RegulationItem, Accordion() (+7 more)
+Cohesion: 0.12
+Nodes (25): DownloadableForms(), FORMS, FAQ_DATA, FAQAccordion(), FeeSchedule(), TARIFAS, GacetaLink(), GacetaLinkProps (+17 more)
 
 ### Community 18 - "EXTRACTO ESTADÍSTICO DEL SISTEMA INFORMATIVO DEL REGISTRO MERCANTIL"
 Cohesion: 0.06
 Nodes (31): 10. INDICADORES CLAVE DE DESEMPEÑO (KPI), 11. ANÁLISIS COMPARATIVO POR TIPO DE SUJETO, 12.1 Del Resumen Ejecutivo, 12.2 De las Verificaciones, 12.3 De los Ingresos, 12. OBSERVACIONES Y COMENTARIOS, 13. DEFINICIONES DE LOS INDICADORES ESTADÍSTICOS, 1. DATOS GENERALES DEL MODELO (+23 more)
 
 ### Community 19 - "Revisión de seguridad del portal: front-end, back-end y despliegue"
-Cohesion: 0.13
-Nodes (14): Acción inmediata derivada de la revalidación, Alcance revisado, Cambios aplicados en esta ejecución, Checklist de cumplimiento mínimo antes de producción, Evidencia de hallazgos, Hallazgos principales, Pruebas HTTP realizadas sobre la app activa, Recomendación de priorización (+6 more)
+Cohesion: 0.06
+Nodes (30): 10) Carencia de rate limiting y protección anti-bruta, 1) JWT con secreto por defecto y fallback inseguro, 2) Login del portal usa contraseña fija y no autenticación real, 3) Credenciales default exponiendo acceso administrativo, 4) Upload sin validación ni control de contenido, 5) XSS por renderizado de contenido HTML no sanitizado, 6) Falta de cabeceras de seguridad en la app, 7) Autorización débil y no consistente (+22 more)
 
 ### Community 20 - "utils.ts"
 Cohesion: 0.07
-Nodes (17): clsx, input-otp, @radix-ui/react-checkbox, @radix-ui/react-hover-card, @radix-ui/react-popover, @radix-ui/react-radio-group, @radix-ui/react-slider, tailwind-merge (+9 more)
+Nodes (18): clsx, input-otp, @radix-ui/react-hover-card, @radix-ui/react-progress, @radix-ui/react-radio-group, @radix-ui/react-slider, react-day-picker, tailwind-merge (+10 more)
 
 ### Community 21 - "RESOLUCIÓN 51 DEL MINISTRO DE JUSTICIA"
 Cohesion: 0.07
@@ -266,12 +285,12 @@ Cohesion: 0.08
 Nodes (24): scripts, app:configure-domains, auth:check, auth:reset-admin, build, db:backup, db:backup:daily, db:generate (+16 more)
 
 ### Community 23 - "worklog.md"
-Cohesion: 0.09
-Nodes (22): AnimatedCounter(), Task ID: 3b - glass-tramites, Task ID: 3c - Main Agent, Task ID: 3d - Main Agent, Task ID: 3e - Main Agent, Task ID: cms-components-rebuild - Main Agent, Task ID: portal-sections-rebuild - Main Agent, Task ID: seed-update - seed-writer (+14 more)
+Cohesion: 0.10
+Nodes (19): AnimatedCounter(), Task ID: 3d - Main Agent, Task ID: 3e - Main Agent, Task ID: api-routes-rebuild - Main Agent, Task ID: cms-components-rebuild - Main Agent, Task ID: portal-sections-rebuild - Main Agent, Task ID: seed-update - seed-writer, Work Summary (+11 more)
 
-### Community 24 - "cms-types.ts"
-Cohesion: 0.17
-Nodes (20): Contenido del Portal, Block, BLOCK_TYPES, BotConfig, ContactChannel, FAQItem, Guide, MenuItem (+12 more)
+### Community 24 - "Estado: EN PROGRESO"
+Cohesion: 0.05
+Nodes (40): A1. ObfuscatedContact - Clipboard, tel:, mailto:, A2. Captcha Búsqueda - Layout y UX, A3. Navegación Persistente (localStorage), A4. Calculadora Costos - Estado Inicial, A5. Footer - QR Code + Share + Contact Links, Agentes Despachados, B1. Rutas CMS: requireAuth() → requireAdmin(), B2. GET /api/cms/portal-users - passwordHash (+32 more)
 
 ### Community 25 - "portal-data.ts"
 Cohesion: 0.18
@@ -279,7 +298,7 @@ Nodes (20): BENEFITS, CHART_CONST_CANCEL, CHART_SECTORES, CHART_SOCIEDADES, CONS
 
 ### Community 26 - "Registro Mercantil de Cuba — Índice del Proyecto"
 Cohesion: 0.06
-Nodes (32): 🌐 API Routes, 🏗️ Arquitectura del Proyecto, Autenticación, Autenticación, 🔐 Autenticación, Base de Datos, 🎯 Características Principales, CMS (22 componentes) (+24 more)
+Nodes (34): 🌐 API Routes, 🏗️ Arquitectura del Proyecto, Autenticación, Autenticación, 🔐 Autenticación, Autenticación y CMS, Base de Datos, 🎯 Características Principales (+26 more)
 
 ### Community 27 - "OpenSpec — Especificaciones (OBLIGATORIO)"
 Cohesion: 0.40
@@ -287,15 +306,15 @@ Nodes (5): Artefactos requeridos (spec-driven schema), Comandos básicos, Flujo 
 
 ### Community 28 - "CardContent"
 Cohesion: 0.17
-Nodes (15): buildEmailTokens(), buildPhoneTokens(), ObfuscatedContact(), Props, TokenSource, VIDEO_TUTORIALS, VideoTutorials(), WEBINARS (+7 more)
+Nodes (19): Secciones del Portal, ResetPasswordPage(), AccesoSection(), AccesoSectionProps, VIDEO_TUTORIALS, VideoTutorials(), WEBINARS, WebinarsSection() (+11 more)
 
 ### Community 29 - "compilerOptions"
 Cohesion: 0.10
 Nodes (20): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+12 more)
 
 ### Community 30 - "cms-enzona-config.tsx"
-Cohesion: 0.24
-Nodes (12): PortalLoginPage(), createEnzonaConfig(), getEnzonaConfig(), testEnzonaConnection(), updateEnzonaConfig(), CmsEnzonaConfig(), EnzonaConfig, CmsUserRoles() (+4 more)
+Cohesion: 0.22
+Nodes (13): lucide-react, PortalLoginPage(), getEnzonaConfig(), testEnzonaConnection(), CmsEnzonaConfig(), EnzonaConfig, AVAILABLE_PERMISSIONS, CmsUserRoles() (+5 more)
 
 ### Community 31 - "RESOLUCIÓN No. 230 DEL MINISTRO DE JUSTICIA"
 Cohesion: 0.11
@@ -305,13 +324,13 @@ Nodes (18): 16. EMPRESAS MIXTAS (Arts. 175-176), 17. CONTRATOS DE ASOCIACIÓN EC
 Cohesion: 0.11
 Nodes (17): aliases, components, hooks, lib, ui, utils, iconLibrary, rsc (+9 more)
 
-### Community 33 - "react"
-Cohesion: 0.08
-Nodes (150): react, sonner, SgrPage(), deleteBlock(), deleteMenu(), deletePage(), deleteProcedureDocument(), getPages() (+142 more)
+### Community 33 - "cms-services.tsx"
+Cohesion: 0.25
+Nodes (60): createMenu(), deleteMenu(), getMenus(), updateMenu(), CmsBlocks(), CmsContacts(), EMPTY, FormData (+52 more)
 
 ### Community 34 - "cms-api.ts"
-Cohesion: 0.10
-Nodes (33): cmsDelete(), cmsGetOne(), cmsUpdate(), cmsUrl(), deleteBotConfig(), deleteContactChannel(), deleteFAQ(), deleteGuide() (+25 more)
+Cohesion: 0.04
+Nodes (91): Contenido del Portal, cmsCreate(), cmsDelete(), cmsGetAll(), cmsGetOne(), cmsUpdate(), cmsUrl(), createBlock() (+83 more)
 
 ### Community 35 - "resizable.tsx"
 Cohesion: 0.40
@@ -322,16 +341,16 @@ Cohesion: 0.17
 Nodes (14): embla-carousel-react, Carousel(), CarouselApi, CarouselContent(), CarouselContext, CarouselContextProps, CarouselItem(), CarouselNext() (+6 more)
 
 ### Community 37 - "app/page.tsx"
-Cohesion: 0.09
-Nodes (36): 🟢 Hallazgos BAJOS / INFORMACIÓN, Layout (Portal Público), isomorphic-dompurify, AccesoSection, AsistenciaSection, ConsultasSection, EstadisticasSection, FloatingChatbot (+28 more)
+Cohesion: 0.12
+Nodes (26): AccesoSection, AsistenciaSection, ConsultasSection, EstadisticasSection, FloatingChatbot, ForgotPasswordSection, Home(), HomeSection (+18 more)
 
 ### Community 38 - "form.tsx"
-Cohesion: 0.10
-Nodes (19): @radix-ui/react-label, @radix-ui/react-slot, react-hook-form, BreadcrumbEllipsis(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage() (+11 more)
+Cohesion: 0.19
+Nodes (12): @radix-ui/react-label, react-hook-form, FormControl(), FormDescription(), FormFieldContext, FormFieldContextValue, FormItem(), FormItemContext (+4 more)
 
 ### Community 39 - "PortalHeader.tsx"
-Cohesion: 0.07
-Nodes (49): PortalFooter(), PortalFooterProps, ICON_MAP, NAV_ITEMS_CONFIG, PortalHeader(), PortalHeaderProps, useTheme(), Separator() (+41 more)
+Cohesion: 0.06
+Nodes (53): cmdk, @radix-ui/react-avatar, @radix-ui/react-slot, AlertTitle(), Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis() (+45 more)
 
 ### Community 40 - "@prisma/client"
 Cohesion: 0.16
@@ -342,16 +361,16 @@ Cohesion: 0.17
 Nodes (12): 10. Skills locales del proyecto, 1. Taste Skill (`design-taste-frontend`), 2. UI UX Pro Max (`ui-ux-pro-max`), 3. Caveman (22 sub-skills), 4. Karpathy Guidelines (`karpathy-guidelines`), 5. Matt Pocock Skills (38+ skills), 6. Anthropic Skills (19+ skills), 7. Skills de Seguridad Globales (30+ skills) (+4 more)
 
 ### Community 42 - "Lecciones aprendidas"
-Cohesion: 0.17
-Nodes (12): CMS Form Validation (Oct 2026), CSP + Next.js App Router (crítico), Docker + Bun, Docker Push to Harbor Corporate Registry, Enzona desactivado visualmente, Fix botón "Autenticarse" (Oct 2026), Lecciones aprendidas, Multi-dominio para despliegue (+4 more)
+Cohesion: 0.15
+Nodes (13): CMS Form Validation (Oct 2026), CMS ↔ Portal unificado, CSP + Next.js App Router (crítico), Docker + Bun, Docker Push to Harbor Corporate Registry, Enzona desactivado visualmente, Fix botón "Autenticarse" (Oct 2026), Lecciones aprendidas (+5 more)
 
 ### Community 43 - "GuideStepsEditor.tsx"
 Cohesion: 0.15
 Nodes (19): @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities, GuideStepData, GuideStepsEditor(), GuideStepsEditorProps, parseGuideSteps(), serializeGuideSteps() (+11 more)
 
 ### Community 44 - "Portal del Registro Mercantil de Cuba"
-Cohesion: 0.17
-Nodes (12): Comandos frecuentes, 🤖 Configuración del chatbot IA, 🤝 Contribución, 🏃 Desarrollo local, 📁 Estructura del Proyecto, 🛠️ Herramientas de Desarrollo (MCP), 📄 Licencia, 🧱 Migraciones y semillas (+4 more)
+Cohesion: 0.11
+Nodes (19): Comandos frecuentes, 🤖 Configuración del chatbot IA, 🤝 Contribución, 🏃 Desarrollo local, Diagnóstico rápido de autenticación, 📁 Estructura del Proyecto, 🧠 Grafo de Conocimiento (Graphify), 🛠️ Herramientas de Desarrollo (MCP) (+11 more)
 
 ### Community 45 - "drawer.tsx"
 Cohesion: 0.20
@@ -394,8 +413,8 @@ Cohesion: 0.22
 Nodes (9): 9.1 Libros obligatorios (Art. 45), 9.2 Habilitación de libros (Art. 46), 9.3 Diligencia de apertura (Art. 47), 9.4 Características físicas de los libros (Arts. 48-49), 9.5 Cierre de libros (Art. 50), 9.6 Conservación y destrucción (Arts. 51-53), 9.7 Índice de los libros (Art. 56), 9.8 Sistema de inscripción (Art. 58) (+1 more)
 
 ### Community 55 - "HomeSection.tsx"
-Cohesion: 0.14
-Nodes (13): embla-carousel-autoplay, react-markdown, rehype-sanitize, FloatingParticle(), iconMap, NewsItem, PublicContent, SearchResult (+5 more)
+Cohesion: 0.10
+Nodes (21): embla-carousel-autoplay, react-dom, react-markdown, rehype-sanitize, getDefaultPlans(), iconMap, PremiumModal(), PremiumModalProps (+13 more)
 
 ### Community 56 - "manifest.json"
 Cohesion: 0.22
@@ -430,8 +449,8 @@ Cohesion: 0.43
 Nodes (7): ask(), check(), DATABASE_URL, die(), info(), deploy-preprod.sh script, step()
 
 ### Community 64 - "sections/index.ts"
-Cohesion: 0.11
-Nodes (22): lucide-react, react-dom, getDefaultPlans(), iconMap, PremiumModal(), PremiumModalProps, getDefaultPlans(), PricingPlan (+14 more)
+Cohesion: 0.22
+Nodes (12): RefreshCw(), CONSTITUTION_STEPS, ConstitutionSteps(), ForeignInvestment(), MODIFICATION_TYPES, ModificationTypes(), ProcedureCard(), ProcedureCardProps (+4 more)
 
 ### Community 65 - "7. DATOS ESPECÍFICOS POR TIPO DE SUJETO"
 Cohesion: 0.29
@@ -446,28 +465,28 @@ Cohesion: 0.29
 Nodes (7): 8.1 Requisitos para ser Registrador (Art. 36), 8.2 Prohibiciones (Art. 37), 8.3 Causales de cese (Art. 39), 8.4 Funciones del Registrador (Art. 40), 8.5 Sustituto del Registrador (Art. 43), 8.6 Sustitución por más de 30 días (Art. 44), 8. EL REGISTRADOR MERCANTIL
 
 ### Community 68 - "card.tsx"
-Cohesion: 0.17
-Nodes (13): recharts, CHART_CONST_CANCEL, ProvinceDistribution(), PROVINCES_DATA, CHART_SECTORES, CHART_SOCIEDADES, ConstitutionsBarChart, EstadisticasSection() (+5 more)
+Cohesion: 0.18
+Nodes (18): recharts, CmsDashboard(), CHART_CONST_CANCEL, ConstitutionsBarChart(), ProvinceDistribution(), PROVINCES_DATA, CHART_SECTORES, SectorsHorizontalChart() (+10 more)
 
-### Community 69 - "cmsGetAll"
-Cohesion: 0.13
-Nodes (15): cmsGetAll(), getBotConfig(), getContactChannels(), getFAQs(), getGuides(), getNewsArticles(), getProcedures(), getRegulations() (+7 more)
+### Community 69 - "react"
+Cohesion: 0.11
+Nodes (28): react, SgrPage(), createBotConfig(), getBotConfig(), testBotConnection(), updateBotConfig(), CmsBotConfig(), FormData (+20 more)
 
 ### Community 70 - "🚀 Instalación y configuración"
 Cohesion: 0.29
 Nodes (7): 1) Clonar y preparar el entorno, 2) Variables de entorno, 3) Base de datos, 🚀 Instalación y configuración, Opción A: contenedor PostgreSQL del proyecto, Opción B: iniciar todo el stack, Requisitos
 
 ### Community 71 - "requireAuth"
-Cohesion: 0.14
-Nodes (18): API, Arquitectura, Base de datos, Componentes, Convenciones del proyecto, Credenciales de prueba (seed), Estilos, Fetching en cliente (+10 more)
+Cohesion: 0.19
+Nodes (13): API, Arquitectura, Base de datos, Componentes, Convenciones del proyecto, Credenciales de prueba (seed), Estilos, Fetching en cliente (+5 more)
 
 ### Community 72 - "4. PROCESO DE INSCRIPCIÓN"
 Cohesion: 0.33
 Nodes (6): 4.1 Requisitos de forma (Art. 7), 4.2 Plazos (Art. 6), 4.3 Efectos de la inscripción (Art. 8), 4.4 Modificaciones (Art. 12), 4.5 Cancelación (Art. 16), 4. PROCESO DE INSCRIPCIÓN
 
 ### Community 73 - "🔒 Reporte Completo de Auditoría de Seguridad — Portal Registro Mercantil Cuba"
-Cohesion: 0.15
-Nodes (12): 📁 Artefactos Generados, H-001: XSS Almacenado via `NewsArticle.content` en `HomeSection.tsx`, H-002: CSP en Producción sin Nonce Real ni `strict-dynamic`, H-003: `serverActions.allowedOrigins` Ausente (Regresión documentada), H-004: `poweredByHeader` No Deshabilitado (Regresión documentada), H-005: Enumeración de Usuarios en `/api/portal/auth/login`, 🟠 Hallazgos ALTOS, ⚠️ Needs Validation (Requiere Verificación en Entorno) (+4 more)
+Cohesion: 0.18
+Nodes (10): 📁 Artefactos Generados, C-001: Exposición de `passwordHash` en `/api/cms/portal-users` (GET), C-002: Bypass de autorización CMS — ~10 rutas usan `requireAuth()` en vez de `requireAdmin()`, C-003: Prompt Injection + DoS de coste en `/api/chat/send`, 🔴 Hallazgos CRÍTICOS, ⚠️ Needs Validation (Requiere Verificación en Entorno), 📝 Notas Finales, 🔒 Reporte Completo de Auditoría de Seguridad — Portal Registro Mercantil Cuba (+2 more)
 
 ### Community 74 - "13. INSCRIPCIONES ESPECÍFICAS"
 Cohesion: 0.33
@@ -489,9 +508,9 @@ Nodes (6): Configurar dominios públicos, Construir y levantar, Despliegue compl
 Cohesion: 0.53
 Nodes (4): main(), runCommand(), seedDatabase(), { spawnSync }
 
-### Community 79 - "cmsCreate"
-Cohesion: 0.13
-Nodes (15): cmsCreate(), createBotConfig(), createContactChannel(), createFAQ(), createGuide(), createNewsArticle(), createProcedure(), createRegulation() (+7 more)
+### Community 79 - "cms-faq.tsx"
+Cohesion: 0.33
+Nodes (5): createFAQ(), updateFAQ(), CATEGORIES, EMPTY, FormData
 
 ### Community 80 - "11. PUBLICIDAD E INFORMACIÓN REGISTRAL"
 Cohesion: 0.40
@@ -537,13 +556,13 @@ Nodes (12): devDependencies, bun-types, eslint, eslint-config-next, tailwindcss,
 Cohesion: 0.70
 Nodes (4): error(), info(), deploy.sh script, warn()
 
-### Community 92 - "cms-dashboard.tsx"
-Cohesion: 0.22
-Nodes (10): Autenticación y CMS, 📊 Modelos de Base de Datos (Prisma), getStats(), loadStats(), CmsDashboardProps, CmsLayoutProps, NavItem, CMSStats (+2 more)
+### Community 92 - "PortalHeader.tsx"
+Cohesion: 0.13
+Nodes (24): Layout (Portal Público), @radix-ui/react-dialog, getPageMetadata(), PortalFooter(), PortalFooterProps, ICON_MAP, NAV_ITEMS_CONFIG, PortalHeader() (+16 more)
 
-### Community 93 - "handleResponse"
-Cohesion: 0.14
-Nodes (14): createBlock(), createMenu(), createPage(), getBlocks(), getMe(), getMenus(), getPage(), getProcedureDocuments() (+6 more)
+### Community 93 - "cms-procedures.tsx"
+Cohesion: 0.29
+Nodes (11): createProcedure(), deleteProcedure(), deleteProcedureDocument(), getProcedureDocuments(), getProcedures(), updateProcedure(), uploadProcedureDocument(), CmsProcedures() (+3 more)
 
 ### Community 94 - "chat-knowledge.ts"
 Cohesion: 0.32
@@ -585,9 +604,9 @@ Nodes (4): 💾 Backups y restauración de la base de datos, Copia de seguridad 
 Cohesion: 0.50
 Nodes (4): 🚀 Características Principales, 🔍 Funcionalidades Avanzadas, 🔧 Panel de Administración (CMS), 📊 Portal Público
 
-### Community 105 - "📜 Logs"
-Cohesion: 0.50
-Nodes (4): Diagnóstico rápido de autenticación, 📜 Logs, Logs de Docker, Logs del proyecto
+### Community 105 - "WCAG 2.1 AA Accessibility Audit Report"
+Cohesion: 0.09
+Nodes (21): Acceso (86% - FAIL), Asistencia (88% - FAIL), Blocker (Fix Immediately), Conclusion, Consultas (87% - FAIL), Critical (Next Sprint), Detailed Findings, Estadísticas (82% - FAIL - WORST) (+13 more)
 
 ### Community 106 - "backup-db.sh"
 Cohesion: 0.83
@@ -597,9 +616,9 @@ Nodes (3): log(), backup-db.sh script, usage()
 Cohesion: 0.83
 Nodes (3): ask(), info(), prepare-preprod-env.sh script
 
-### Community 108 - "Hallazgos detallados"
-Cohesion: 0.20
-Nodes (10): 10) Carencia de rate limiting y protección anti-bruta, 1) JWT con secreto por defecto y fallback inseguro, 2) Login del portal usa contraseña fija y no autenticación real, 3) Credenciales default exponiendo acceso administrativo, 4) Upload sin validación ni control de contenido, 5) XSS por renderizado de contenido HTML no sanitizado, 6) Falta de cabeceras de seguridad en la app, 8) Logs de Prisma revelando estructura del sistema (+2 more)
+### Community 108 - "api/auth/login/route.ts"
+Cohesion: 0.19
+Nodes (14): main(), jsonwebtoken, loginSchema, POST(), POST(), generateToken(), getJwtSecret(), hashPassword() (+6 more)
 
 ### Community 109 - "15. REQUISITOS TÉCNICOS PARA EL PORTAL DIGITAL"
 Cohesion: 0.67
@@ -617,16 +636,16 @@ Nodes (3): 5.1 Procedimiento, 5.2 Recursos, 5. CALIFICACIÓN REGISTRAL Y RECURSO
 Cohesion: 0.67
 Nodes (3): 21.1 Sección de denominaciones (Art. 194), 21.2 Reglas sobre denominaciones (Arts. 195-199), 21. DENOMINACIONES (Arts. 194-199)
 
-### Community 113 - "🧠 Grafo de Conocimiento (Graphify)"
-Cohesion: 0.67
-Nodes (3): 🧠 Grafo de Conocimiento (Graphify), Instalación, Uso
+### Community 113 - "dropdown-menu.tsx"
+Cohesion: 0.12
+Nodes (10): @radix-ui/react-dropdown-menu, DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator(), DropdownMenuShortcut() (+2 more)
 
 ### Community 114 - "✅ Usuarios por defecto y autenticación"
 Cohesion: 0.67
 Nodes (3): Reforzar contraseña del admin, ✅ Usuarios por defecto y autenticación, Verificar autenticación
 
 ### Community 121 - "captcha.ts"
-Cohesion: 0.31
+Cohesion: 0.27
 Nodes (6): CaptchaEntry, generateCaptcha(), randInt(), store, svgText(), sweepCaptcha()
 
 ### Community 122 - "🟡 Hallazgos MEDIOS"
@@ -645,37 +664,109 @@ Nodes (7): Accesibilidad (WCAG 2.1 AA), Consola del navegador, Funcionalidad ver
 Cohesion: 0.33
 Nodes (5): Criterio de actualización futura, Fuentes incorporadas, Implementación, Operación, Plan de actualización normativa del Portal
 
-### Community 126 - "Plan de mejora y remediación priorizado"
+### Community 126 - "captcha-v2.ts"
+Cohesion: 0.27
+Nodes (11): CaptchaEntry, CaptchaResult, generateCaptchaV2(), rand(), randInt(), randomChars(), store, svgCircle() (+3 more)
+
+### Community 127 - "guardian.ts"
+Cohesion: 0.24
+Nodes (10): POST(), evaluateEvents(), eventsToScoreDelta(), GuardEvent, guardianCheck(), GuardianResult, IpProfile, isLocalIp() (+2 more)
+
+### Community 129 - "verifyCaptchaV2"
+Cohesion: 0.31
+Nodes (8): GET(), POST(), GET(), verifyCaptchaV2(), rateLimit(), RateLimitConfig, RateLimitEntry, store
+
+### Community 131 - "FloatingChatbot.tsx"
+Cohesion: 0.33
+Nodes (8): 🟢 Hallazgos BAJOS / INFORMACIÓN, isomorphic-dompurify, ChatMessage, FAQItem, FloatingChatbot(), GuideItem, sanitizeHtml(), sanitizeLine()
+
+### Community 132 - "pagination.tsx"
+Cohesion: 0.28
+Nodes (7): Pagination(), PaginationContent(), PaginationEllipsis(), PaginationLink(), PaginationLinkProps, PaginationNext(), PaginationPrevious()
+
+### Community 133 - "Artículo VI: Despliegue y Docker"
+Cohesion: 0.25
+Nodes (8): 6.2 Docker Compose, 6.3 Script de despliegue, 6.4 Proxy inverso, 6.5 Build standalone, 6.6 Verificación post-deploy, 6.7 Configuración de entornos, 6.7 Dominios soportados, Artículo VI: Despliegue y Docker
+
+### Community 134 - "JsonFieldEditor.tsx"
+Cohesion: 0.43
+Nodes (7): JsonFieldEditor(), JsonFieldEditorProps, jsonToKVs(), KVPair, kvsToJson(), uid(), validateJson()
+
+### Community 135 - "ObfuscatedContact.tsx"
+Cohesion: 0.39
+Nodes (7): buildEmailTokens(), buildPhoneTokens(), copyToClipboard(), fallbackCopy(), ObfuscatedContact(), Props, TokenSource
+
+### Community 136 - "POST"
+Cohesion: 0.33
+Nodes (6): POST(), AntiBotPayload, botOkResponse(), checkAntiBot(), HONEYPOT_FIELD, MIN_SUBMIT_MS
+
+### Community 137 - "cms-search-names.tsx"
+Cohesion: 0.29
+Nodes (6): deleteSearchableName(), EMPTY, FormData, PROVINCES, STATUSES, TYPES
+
+### Community 138 - "Artículo IV: Estándares de API"
+Cohesion: 0.33
+Nodes (6): 4.1 Formato de respuesta, 4.2 Validación de entrada, 4.3 Métodos HTTP, 4.4 Manejo de errores, 4.5 Fetching en cliente, Artículo IV: Estándares de API
+
+### Community 139 - "Artículo V: Base de Datos y Migraciones"
+Cohesion: 0.33
+Nodes (6): 5.1 ORM y esquema, 5.2 Migraciones, 5.3 Seeds, 5.4 Backups, 5.5 Modelos, Artículo V: Base de Datos y Migraciones
+
+### Community 140 - "🟠 Hallazgos ALTOS"
+Cohesion: 0.33
+Nodes (6): H-001: XSS Almacenado via `NewsArticle.content` en `HomeSection.tsx`, H-002: CSP en Producción sin Nonce Real ni `strict-dynamic`, H-003: `serverActions.allowedOrigins` Ausente (Regresión documentada), H-004: `poweredByHeader` No Deshabilitado (Regresión documentada), H-005: Enumeración de Usuarios en `/api/portal/auth/login`, 🟠 Hallazgos ALTOS
+
+### Community 141 - "FileUpload.tsx"
+Cohesion: 0.33
+Nodes (5): CMS (22 componentes), 📁 Componentes Principales, FileListProps, FileUpload(), FileUploadProps
+
+### Community 143 - "Artículo II: Accesibilidad WCAG 2.1 AA"
 Cohesion: 0.40
-Nodes (5): Fase 0: Contención inmediata (0-72 horas), Fase 1: Corregir vulnerabilidades críticas (1-2 semanas), Fase 2: Defensa de la capa de aplicación (2-4 semanas), Fase 3: Madurez y continuidad (mensual), Plan de mejora y remediación priorizado
+Nodes (5): 2.1 Compromiso obligatorio, 2.2 Contraste de colores, 2.3 Navegación por teclado, 2.4 Semántica y ARIA, Artículo II: Accesibilidad WCAG 2.1 AA
 
-### Community 127 - "calendar.tsx"
-Cohesion: 0.67
-Nodes (3): react-day-picker, Calendar(), CalendarDayButton()
+### Community 144 - "Artículo III: Arquitectura Next.js App Router"
+Cohesion: 0.40
+Nodes (5): 3.1 Estructura obligatoria, 3.2 Server Components vs Client Components, 3.3 Path alias, 3.4 Providers, Artículo III: Arquitectura Next.js App Router
 
-### Community 129 - "Task ID: api-routes-rebuild - Main Agent"
+### Community 145 - "Artículo VII: Convenciones de Código"
+Cohesion: 0.40
+Nodes (5): 7.1 Lenguaje y tipado, 7.2 Estilo, 7.3 Nomenclatura, 7.4 Commits, Artículo VII: Convenciones de Código
+
+### Community 146 - "guardian/route.ts"
+Cohesion: 0.60
+Nodes (4): GET(), POST(), getAllProfiles(), getProfile()
+
+### Community 147 - "knowledge/route.ts"
 Cohesion: 0.67
-Nodes (3): Task ID: api-routes-rebuild - Main Agent, Work Summary, Work Task
+Nodes (3): extractKeywords(), KnowledgeItem, POST()
+
+### Community 148 - "Task ID: 3b - glass-tramites"
+Cohesion: 0.67
+Nodes (3): Task ID: 3b - glass-tramites, Work Summary, Work Task
+
+### Community 149 - "Task ID: 3c - Main Agent"
+Cohesion: 0.67
+Nodes (3): Task ID: 3c - Main Agent, Work Summary, Work Task
 
 ## Knowledge Gaps
 - **24 isolated node(s):** `@hookform/resolvers`, `@reactuses/core`, `@tanstack/react-query`, `@tanstack/react-table`, `@types/nodemailer` (+19 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1020 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1070 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `next` connect `next` to `handleCMSPut`, `checkOrigin`, `react`, `card.tsx`, `cms-handler.ts`, `app/page.tsx`, `PortalHeader.tsx`, `package.json`, `CardHeader`, `upload/route.ts`, `portal-auth.ts`, `use-toast.ts`, `forgot-password/route.ts`, `ConsultasSection.tsx`, `FAQAccordion.tsx`, `middleware.ts`, `cms-enzona-config.tsx`, `chat-knowledge.ts`?**
-  _High betweenness centrality (0.253) - this node is a cross-community bridge._
+- **Why does `next` connect `next` to `handleCMSPut`, `checkOrigin`, `verifyCaptchaV2`, `cms-handler.ts`, `package.json`, `POST`, `upload/route.ts`, `portal-auth.ts`, `use-toast.ts`, `forgot-password/route.ts`, `ConsultasSection.tsx`, `FAQAccordion.tsx`, `guardian/route.ts`, `knowledge/route.ts`, `CardContent`, `cms-enzona-config.tsx`, `app/page.tsx`, `card.tsx`, `react`, `middleware.ts`, `PortalHeader.tsx`, `chat-knowledge.ts`, `api/auth/login/route.ts`, `guardian.ts`?**
+  _High betweenness centrality (0.245) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `checkOrigin()` (e.g. with `🟢 Hallazgos BAJOS / INFORMACIÓN` and `M-006: `origin-check.ts` — `ALLOWED_ORIGINS` Calculado en Module Init`) actually correct?**
   _`checkOrigin()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `@hookform/resolvers`, `@reactuses/core`, `@tanstack/react-query` to the rest of the system?**
   _24 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `handleCMSPut` be split into smaller, more focused modules?**
   _Cohesion score 0.07175141242937853 - nodes in this community are weakly interconnected._
-- **Why does `react` connect `react` to `next`, `PremiumFeaturesExample.tsx`, `cn`, `package.json`, `CardHeader`, `toggle-group.tsx`, `use-toast.ts`, `ConsultasSection.tsx`, `FAQAccordion.tsx`, `utils.ts`, `Registro Mercantil de Cuba — Índice del Proyecto`, `CardContent`, `cms-enzona-config.tsx`, `resizable.tsx`, `carousel.tsx`, `app/page.tsx`, `form.tsx`, `PortalHeader.tsx`, `GuideStepsEditor.tsx`, `drawer.tsx`, `context-menu.tsx`, `navigation-menu.tsx`, `chart.tsx`, `HomeSection.tsx`, `sections/index.ts`, `card.tsx`, `cms-dashboard.tsx`, `calendar.tsx`?**
-  _High betweenness centrality (0.091) - this node is a cross-community bridge._
+- **Why does `react` connect `react` to `next`, `FloatingChatbot.tsx`, `PremiumFeaturesExample.tsx`, `JsonFieldEditor.tsx`, `ObfuscatedContact.tsx`, `package.json`, `cms-regulations.tsx`, `cms-search-names.tsx`, `menubar.tsx`, `pagination.tsx`, `FileUpload.tsx`, `popover.tsx`, `use-toast.ts`, `ConsultasSection.tsx`, `FAQAccordion.tsx`, `toggle-group.tsx`, `utils.ts`, `CardContent`, `cms-enzona-config.tsx`, `cms-services.tsx`, `cms-api.ts`, `resizable.tsx`, `carousel.tsx`, `app/page.tsx`, `form.tsx`, `PortalHeader.tsx`, `GuideStepsEditor.tsx`, `drawer.tsx`, `context-menu.tsx`, `navigation-menu.tsx`, `chart.tsx`, `HomeSection.tsx`, `sections/index.ts`, `card.tsx`, `cms-faq.tsx`, `PortalHeader.tsx`, `cms-procedures.tsx`, `dropdown-menu.tsx`?**
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._
 - **Should `checkOrigin` be split into smaller, more focused modules?**
-  _Cohesion score 0.0564050288820931 - nodes in this community are weakly interconnected._
-- **Why does `requireAdmin()` connect `checkOrigin` to `handleCMSPut`, `Task ID: api-routes-rebuild - Main Agent`, `cms-handler.ts`, `requireAuth`, `upload/route.ts`, `Constitución del Portal del Registro Mercantil de Cuba`, `portal-auth.ts`, `forgot-password/route.ts`, `Revisión de seguridad del portal: front-end, back-end y despliegue`, `🟡 Hallazgos MEDIOS`, `Plan de mejora y remediación priorizado`?**
-  _High betweenness centrality (0.078) - this node is a cross-community bridge._
+  _Cohesion score 0.058896138247222715 - nodes in this community are weakly interconnected._
+- **Why does `requireAdmin()` connect `checkOrigin` to `handleCMSPut`, `cms-handler.ts`, `requireAuth`, `🔒 Reporte Completo de Auditoría de Seguridad — Portal Registro Mercantil Cuba`, `upload/route.ts`, `Constitución del Portal del Registro Mercantil de Cuba`, `portal-auth.ts`, `guardian/route.ts`, `Revisión de seguridad del portal: front-end, back-end y despliegue`, `worklog.md`, `Estado: EN PROGRESO`, `🟡 Hallazgos MEDIOS`?**
+  _High betweenness centrality (0.106) - this node is a cross-community bridge._
