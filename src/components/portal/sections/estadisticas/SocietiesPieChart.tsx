@@ -27,6 +27,7 @@ export default function SocietiesPieChart() {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
+            <title>Sociedades activas por tipo: SRL 18,450; SA 12,040; Cooperativa 6,780; Estatal 4,560; Mixta 2,350; Natural 1,100</title>
             <Pie
               data={CHART_SOCIEDADES}
               cx="50%"

@@ -151,7 +151,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                   />
                   <span
                     className={`relative z-10 flex items-center gap-2 transition-colors duration-300 ${
-                      isActive ? 'text-white' : 'text-white/75 hover:text-white'
+                      isActive ? 'text-white' : 'text-white/90 hover:text-white'
                     }`}
                   >
                     {IconComponent && <IconComponent className="w-4 h-4 shrink-0" />}
@@ -176,7 +176,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white/75 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg min-w-[44px] min-h-[44px]"
+                  className="text-white/90 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-lg min-w-[44px] min-h-[44px]"
                   aria-label="Notificaciones"
                 >
                   <Bell className="w-4 h-4" />
@@ -188,7 +188,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
             <Button
               variant="ghost"
               size="icon"
-              className="text-white/75 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg min-w-[44px] min-h-[44px]"
+              className="text-white/90 hover:text-white hover:bg-white/5 hidden sm:flex transition-all duration-300 rounded-lg min-w-[44px] min-h-[44px]"
               onClick={() => handleNavClick('consultas')}
               aria-label="Buscar sociedades"
             >
@@ -199,7 +199,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
               <Button
                 variant="ghost"
                 size="sm"
-                className="hidden sm:flex transition-all duration-300 rounded-lg text-white/75 hover:text-white hover:bg-white/5"
+                className="hidden sm:flex transition-all duration-300 rounded-lg text-white/90 hover:text-white hover:bg-white/5 min-w-[44px] min-h-[44px]"
               >
                 <Building2 className="w-4 h-4 mr-1" />
                 Acceder al SGR
@@ -225,7 +225,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white/75 hover:text-white lg:hidden transition-colors rounded-lg min-w-[44px] min-h-[44px]"
+                  className="text-white/90 hover:text-white lg:hidden transition-colors rounded-lg min-w-[44px] min-h-[44px]"
                   aria-label="Abrir menú de navegación"
                 >
                   <Menu className="w-5 h-5" />
@@ -258,7 +258,7 @@ export default function PortalHeader({ activeSection, onNavigate }: PortalHeader
                           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-300 ${
                             isActive
                               ? 'text-white shadow-lg'
-                              : 'text-white/75 hover:bg-white/5 hover:text-white'
+                        : 'text-white/90 hover:bg-white/5 hover:text-white min-h-[44px]' 
                           }`}
                           style={
                             isActive

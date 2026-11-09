@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Palette, Check, ChevronRight } from 'lucide-react';
+import { Palette, Check, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   THEME_PRESETS,
@@ -159,7 +159,7 @@ export default function ThemeSwitcher() {
                   onClick={() => setOpen(false)}
                   aria-label="Cerrar selector de tema"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </Button>
               </div>
 

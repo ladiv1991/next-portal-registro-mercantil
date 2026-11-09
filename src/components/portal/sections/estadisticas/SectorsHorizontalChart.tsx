@@ -32,6 +32,7 @@ export default function SectorsHorizontalChart() {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={CHART_SECTORES} layout="vertical" margin={{ left: 40 }}>
+            <title>Sectores económicos más dinámicos: porcentajes de dinamismo 2020-2025</title>
             <CartesianGrid strokeDasharray="3 3" stroke="#E2E6EA" />
             <XAxis type="number" tick={{ fontSize: 11 }} unit="%" />
             <YAxis type="category" dataKey="sector" tick={{ fontSize: 10 }} width={120} />

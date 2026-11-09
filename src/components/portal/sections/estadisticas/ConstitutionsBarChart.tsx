@@ -28,6 +28,7 @@ export default function ConstitutionsBarChart() {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={CHART_CONST_CANCEL}>
+            <title>Constituciones y cancelaciones por año: 2020 a 2025</title>
             <CartesianGrid strokeDasharray="3 3" stroke="#E2E6EA" />
             <XAxis dataKey="year" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />

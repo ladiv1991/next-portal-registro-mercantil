@@ -212,7 +212,7 @@ export default function SitePagesSection() {
               variant="ghost"
               size="sm"
               onClick={() => window.location.href = '#home'}
-              className="text-white/70 hover:text-white"
+              className="text-white/90 hover:text-white"
             >
               <ChevronRight className="w-4 h-4 mr-1 rotate-180" />
               Volver al inicio
