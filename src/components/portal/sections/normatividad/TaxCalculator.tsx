@@ -196,6 +196,36 @@ export default function TaxCalculator() {
   const [hasLateFee, setHasLateFee] = useState(false);
   const [exemption, setExemption] = useState('');
 
+  // Fee calculations — guarded by selectedScenario to avoid ReferenceError on empty state
+  let presentationFee = 0;
+  let inscriptionFee = 0;
+  let booksFee = 0;
+  let reservationFee = 0;
+  let subtotal = 0;
+  let lateFeeAmount = 0;
+  let total = 0;
+  let applicableTaxes: TaxRule[] = [];
+
+  if (selectedScenario) {
+    const scenario = REGISTRATION_FEES.find((s) => s.key === selectedScenario)!;
+    presentationFee = scenario.basePresentation;
+    inscriptionFee = scenario.baseInscription;
+    booksFee = scenario.key === 'constitution' ? numBooks * 300 : 0;
+    reservationFee = scenario.key === 'constitution' ? 600 : 0;
+
+    if (selectedScenario === 'certification') {
+      const certAmounts: Record<string, number> = { '15': 900, '16': 600, '17': 600, '18': 300 };
+      subtotal = certAmounts[exemption] || 0;
+    } else {
+      subtotal = presentationFee + inscriptionFee + booksFee + reservationFee;
+    }
+
+    const lateFeePercent = 30;
+    lateFeeAmount = hasLateFee ? Math.round(subtotal * (lateFeePercent / 100)) : 0;
+    total = hasLateFee || exemption ? subtotal + lateFeeAmount : subtotal;
+    applicableTaxes = TAX_RULES.filter((tax) => tax.aplicableA.includes(selectedScenario));
+  }
+
   const handleReset = () => {
     setSelectedScenario('');
     setNumBooks(2);
