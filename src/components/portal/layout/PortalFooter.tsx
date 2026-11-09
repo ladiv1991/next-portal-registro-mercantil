@@ -10,7 +10,6 @@ import {
   Phone,
   Clock,
   ChevronRight,
-  Palette,
   CheckCircle2,
 } from 'lucide-react';
 import {
@@ -28,6 +27,102 @@ interface PortalFooterProps {
 
 const FOOTER_PHONE = '(+53) 7 862-3456';
 const FOOTER_EMAIL = 'info@registromercantil.cu';
+
+// Minimal placeholder QR SVG — visual decoration only. To encode real data, swap in qrcode.react or a build-time generator.
+function QrCode() {
+  return (
+    <svg
+      viewBox="0 0 21 21"
+      width={64}
+      height={64}
+      aria-label="Código QR del portal"
+      role="img"
+      className="text-white/80"
+    >
+      {/* Three finder patterns */}
+      {[
+        [0, 0],
+        [14, 0],
+        [0, 14],
+      ].map(([cx, cy], idx) => (
+        <g key={idx}>
+          <rect x={cx} y={cy} width="7" height="7" fill="currentColor" />
+          <rect
+            x={cx + 1}
+            y={cy + 1}
+            width="5"
+            height="5"
+            fill="var(--footer-bg, #0f172a)"
+          />
+          <rect
+            x={cx + 2}
+            y={cy + 2}
+            width="3"
+            height="3"
+            fill="currentColor"
+          />
+        </g>
+      ))}
+      {/* Data modules — deterministic pattern for visual QR feel */}
+      <g fill="currentColor">
+        <rect x="8" y="0" width="1" height="1" />
+        <rect x="11" y="0" width="2" height="1" />
+        <rect x="17" y="0" width="1" height="1" />
+        <rect x="19" y="0" width="1" height="1" />
+        <rect x="0" y="8" width="1" height="1" />
+        <rect x="2" y="8" width="2" height="1" />
+        <rect x="6" y="8" width="1" height="1" />
+        <rect x="10" y="8" width="1" height="1" />
+        <rect x="13" y="8" width="2" height="1" />
+        <rect x="18" y="8" width="1" height="1" />
+        <rect x="1" y="10" width="1" height="1" />
+        <rect x="4" y="10" width="2" height="1" />
+        <rect x="8" y="10" width="1" height="1" />
+        <rect x="11" y="10" width="1" height="1" />
+        <rect x="15" y="10" width="2" height="1" />
+        <rect x="19" y="10" width="1" height="1" />
+        <rect x="0" y="12" width="1" height="1" />
+        <rect x="3" y="12" width="1" height="1" />
+        <rect x="7" y="12" width="2" height="1" />
+        <rect x="12" y="12" width="1" height="1" />
+        <rect x="16" y="12" width="1" height="1" />
+        <rect x="19" y="12" width="1" height="1" />
+        <rect x="1" y="14" width="1" height="1" />
+        <rect x="4" y="14" width="1" height="1" />
+        <rect x="8" y="14" width="1" height="1" />
+        <rect x="13" y="14" width="2" height="1" />
+        <rect x="17" y="14" width="1" height="1" />
+        <rect x="0" y="16" width="2" height="1" />
+        <rect x="5" y="16" width="1" height="1" />
+        <rect x="9" y="16" width="1" height="1" />
+        <rect x="14" y="16" width="2" height="1" />
+        <rect x="18" y="16" width="1" height="1" />
+        <rect x="1" y="18" width="1" height="1" />
+        <rect x="4" y="18" width="2" height="1" />
+        <rect x="8" y="18" width="1" height="1" />
+        <rect x="11" y="18" width="1" height="1" />
+        <rect x="15" y="18" width="1" height="1" />
+        <rect x="19" y="18" width="1" height="1" />
+        <rect x="0" y="19" width="1" height="1" />
+        <rect x="3" y="19" width="1" height="1" />
+        <rect x="7" y="19" width="2" height="1" />
+        <rect x="12" y="19" width="1" height="1" />
+        <rect x="16" y="19" width="2" height="1" />
+        <rect x="19" y="19" width="1" height="1" />
+        <rect x="6" y="10" width="1" height="1" />
+        <rect x="17" y="10" width="1" height="1" />
+        <rect x="9" y="8" width="1" height="1" />
+        <rect x="16" y="14" width="1" height="1" />
+        <rect x="12" y="16" width="1" height="1" />
+        <rect x="5" y="18" width="1" height="1" />
+        <rect x="18" y="15" width="1" height="1" />
+        <rect x="2" y="15" width="1" height="1" />
+        <rect x="10" y="17" width="1" height="1" />
+        <rect x="19" y="17" width="1" height="1" />
+      </g>
+    </svg>
+  );
+}
 
 export default function PortalFooter({ onNavigate }: PortalFooterProps) {
   const { theme } = useTheme();
@@ -71,8 +166,11 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
     onNavigate(sectionId);
   };
 
+  const portalUrl =
+    typeof window !== 'undefined' ? window.location.origin : 'https://registro-mercantil.xetid.cu';
+
   return (
-    <footer className="footer-gradient">
+    <footer className="footer-gradient" style={{ backgroundColor: theme.colors.dark }}>
       <div className="multicolor-stripe" />
       {/* Accent gradient line */}
       <div
@@ -97,7 +195,7 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
                 { icon: Share2, tip: 'Compartir página', action: handleShare },
                 { icon: Megaphone, tip: 'Redes Sociales', action: () => {} },
                 { icon: Mail, tip: 'Contacto', action: () => {
-                  window.location.href = `mailto:${FOOTER_EMAIL}`;
+                  window.location.href = `mailto:${FOOTER_EMAIL}?subject=${encodeURIComponent('Consulta Portal Registro Mercantil')}&body=${encodeURIComponent('Hola,\n\nMe comunico desde el portal web del Registro Mercantil de Cuba.')}`;
                 }},
               ].map(({ icon: Icon, tip, action }) => (
                 <Tooltip key={tip}>
@@ -154,17 +252,23 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
               </li>
               <li className="flex items-start gap-2.5 relative">
                 <Phone className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
-                <ObfuscatedContact
-                  fullValue={FOOTER_PHONE.replace(/[() ]/g, '-')}
-                  type="phone"
-                  label={FOOTER_PHONE}
-                  className="py-0.5"
-                />
+                <a
+                  href={`tel:${FOOTER_PHONE.replace(/[^\d+]/g, '')}`}
+                  className="inline-flex"
+                  aria-label={`Llamar a ${FOOTER_PHONE}`}
+                >
+                  <ObfuscatedContact
+                    fullValue={FOOTER_PHONE.replace(/[() ]/g, '-')}
+                    type="phone"
+                    label={FOOTER_PHONE}
+                    className="py-0.5"
+                  />
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
                 <a
-                  href={`mailto:${FOOTER_EMAIL}`}
+                  href={`mailto:${FOOTER_EMAIL}?subject=${encodeURIComponent('Consulta Portal Registro Mercantil')}&body=${encodeURIComponent('Hola,\n\nMe comunico desde el portal web del Registro Mercantil de Cuba.\n\n')}`}
                   className="text-white/70 hover:text-white transition-colors"
                   aria-label={`Enviar correo a ${FOOTER_EMAIL}`}
                 >
@@ -179,6 +283,13 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 mt-0.5 shrink-0" style={{ color: theme.colors.warm }} />
                 <span className="text-white/70">Lun-Vie: 8:30 AM - 4:30 PM</span>
+              </li>
+              {/* QR code */}
+              <li className="flex items-start gap-2.5 pt-2 border-t border-white/10 mt-1">
+                <QrCode />
+                <span className="text-xs text-white/50 leading-relaxed">
+                  Escanea para acceder<br />al portal ({portalUrl})
+                </span>
               </li>
             </ul>
           </div>

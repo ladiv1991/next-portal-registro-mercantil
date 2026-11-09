@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { Copy, Phone } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
@@ -26,6 +26,26 @@ function buildPhoneTokens(phone: string): string[] {
   return parts || [phone];
 }
 
+function fallbackCopyToClipboard(text: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      const successful = document.execCommand('copy');
+      resolve(successful);
+    } catch {
+      resolve(false);
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  });
+}
+
 type TokenSource = string[];
 type Props = {
   fullValue: string;
@@ -40,15 +60,24 @@ export default function ObfuscatedContact({ fullValue, type, label, className = 
   const tokens: TokenSource = type === 'email' ? buildEmailTokens(fullValue) : buildPhoneTokens(fullValue);
 
   const handleTap = useCallback(async () => {
+    // Primary: modern clipboard API
     try {
       await navigator.clipboard.writeText(fullValue);
       setRevealed(true);
       setTimeout(() => setRevealed(false), 1800);
+      return;
     } catch {
-      // Fallback: open mailto / tel directly
-      if (type === 'email') window.location.href = `mailto:${fullValue}`;
-      else window.location.href = `tel:${fullValue.replace(/\s/g, '')}`;
+      // Fallback: textarea + execCommand
+      const succeeded = await fallbackCopyToClipboard(fullValue);
+      if (succeeded) {
+        setRevealed(true);
+        setTimeout(() => setRevealed(false), 1800);
+        return;
+      }
     }
+    // Last resort: browser protocol handlers
+    if (type === 'email') window.location.href = `mailto:${fullValue}`;
+    else window.location.href = `tel:${fullValue.replace(/\s/g, '')}`;
   }, [fullValue, type]);
 
   return (
