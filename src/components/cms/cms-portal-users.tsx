@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Edit2, Trash2, Loader2, Shield, Mail, Phone, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
+import { Search, Edit2, Trash2, Loader2, Shield, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,19 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { formatCmsToast } from '@/lib/cms-helpers';
 
+// ─── Validation helpers mirroring backend Zod schema rules ─────────────────────
+const EMAIL_REGEX = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+const CUBAN_PHONE_REGEX = /^(?:\+53|5)[0-9]{7}$/;
+// OWASP/BIPA password strength — must match PASSWORD_STRENGTH in cms-schemas.ts
+function validatePassword(val: string): string | null {
+  if (!val) return null;
+  if (val.length < 8) return 'Mínimo 8 caracteres';
+  if (!/[A-Z]/.test(val)) return 'Debe tener al menos una mayúscula';
+  if (!/[0-9]/.test(val)) return 'Debe tener al menos un número';
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(val)) return 'Debe tener al menos un carácter especial';
+  return null;
+}
+
 interface PortalUser {
   id: string;
   email: string;
@@ -26,6 +39,7 @@ interface PortalUser {
   isActive: boolean;
   lastLogin?: string;
   createdAt: string;
+  _newPassword?: string;
 }
 
 export default function CmsPortalUsers() {
@@ -40,10 +54,9 @@ export default function CmsPortalUsers() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [newUser, setNewUser] = useState({ email: '', password: '', name: '', phone: '', role: 'user' });
+  const [newUser, setNewUser] = useState({ email: '', password: '', name: '', phone: '', role: '' });
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
-  const [createErrors, setCreateErrors] = React.useState<Record<string, string>>({});
   const [formErrors, setFormErrors] = React.useState<Record<string, string>>({});
   const [rolesLoading, setRolesLoading] = useState(true);
   const newUserRef = useRef(newUser);
@@ -79,10 +92,10 @@ export default function CmsPortalUsers() {
       if (res.ok) {
         const data = await res.json();
         setRoles(data.data || []);
-        setRolesLoading(false);
       }
     } catch (error) {
       console.error('Error fetching roles:', error);
+    } finally {
       setRolesLoading(false);
     }
   };
@@ -92,7 +105,6 @@ export default function CmsPortalUsers() {
       await fetchUsers();
       return;
     }
-
     setSearching(true);
     try {
       const res = await fetch(`/api/cms/portal-users?search=${encodeURIComponent(searchQuery)}`);
@@ -119,7 +131,7 @@ export default function CmsPortalUsers() {
     if (!selectedUser) return;
 
     const errs: Record<string, string> = {};
-    if (!editRole) errs.role = 'El rol es obligatorio';
+    if (!editRole) errs.role = 'El rol es requerido';
 
     if (Object.keys(errs).length > 0) {
       setFieldErrors(errs);
@@ -148,7 +160,8 @@ export default function CmsPortalUsers() {
         setDialogOpen(false);
         await fetchUsers();
       } else {
-        toast.error('Error al actualizar usuario');
+        const data = await res.json().catch(() => null);
+        toast.error(data?.error ?? 'Error al actualizar usuario');
       }
     } catch (error) {
       toast.error('Error al guardar');
@@ -158,16 +171,24 @@ export default function CmsPortalUsers() {
   };
 
   const handleCreateUser = async () => {
-    // Client-side validation before network call
+    // Client-side validation mirroring createPortalUserSchema
     const errs: Record<string, string> = {};
-    if (!newUser.email.trim()) errs.email = 'El email es requerido';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.email)) errs.email = 'Email inválido';
-    if (!newUser.password) errs.password = 'La contraseña es requerida';
-    else if (newUser.password.length < 8) errs.password = 'Mínimo 8 caracteres';
-    else if (!/[A-Z]/.test(newUser.password)) errs.password = 'Debe tener al menos una mayúscula';
-    else if (!/[0-9]/.test(newUser.password)) errs.password = 'Debe tener al menos un número';
-    else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(newUser.password)) errs.password = 'Debe tener al menos un carácter especial';
-    if (newUser.phone && !/^(?:\+53|5)[0-9]{7}$/.test(newUser.phone)) errs.phone = 'Teléfono cubano inválido (ej: +53 5XXXXXXX)';
+    if (!newUser.email.trim()) {
+      errs.email = 'El email es requerido';
+    } else if (!EMAIL_REGEX.test(newUser.email)) {
+      errs.email = 'Email inválido';
+    }
+    const pwErr = validatePassword(newUser.password);
+    if (pwErr) errs.password = pwErr;
+    if (newUser.name && newUser.name.length < 2) {
+      errs.name = 'El nombre debe tener al menos 2 caracteres';
+    }
+    if (newUser.phone && !CUBAN_PHONE_REGEX.test(newUser.phone)) {
+      errs.phone = 'Teléfono cubano inválido (ej: +53 5XXXXXXX)';
+    }
+    if (!newUser.role) {
+      errs.role = 'El rol es requerido';
+    }
     if (Object.keys(errs).length > 0) {
       setFormErrors(errs);
       return;
@@ -175,7 +196,6 @@ export default function CmsPortalUsers() {
 
     setCreating(true);
     setFormErrors({});
-    setCreateErrors({});
     try {
       const res = await fetch('/api/cms/portal-users', {
         method: 'POST',
@@ -187,18 +207,24 @@ export default function CmsPortalUsers() {
       if (data.success) {
         toast.success(formatCmsToast('Usuario', newUser.email, 'creado'));
         setCreateDialogOpen(false);
-        setNewUser({ email: '', password: '', name: '', phone: '', role: 'user' });
+        setNewUser({ email: '', password: '', name: '', phone: '', role: '' });
         await fetchUsers();
       } else {
-        // Map server validation errors to form fields
-        if (res.status === 400 && data.error) {
-          setCreateErrors({ general: data.error });
+        // Backend now returns { success, error, fields: [{field, message}] } on 400
+        if (res.status === 400 && data.fields?.length) {
+          const errMap: Record<string, string> = {};
+          for (const f of data.fields as { field: string; message: string }[]) {
+            errMap[f.field] = f.message;
+          }
+          setFormErrors(errMap);
+        } else if (res.status === 409) {
+          setFormErrors({ email: data.error || 'Ya existe un usuario con ese email' });
         } else {
           toast.error(data.error || 'Error al crear usuario');
         }
       }
     } catch {
-      setCreateErrors({ general: 'Error de conexión. Intente nuevamente.' });
+      toast.error('Error de conexión. Intente nuevamente.');
     } finally {
       setCreating(false);
     }
@@ -398,20 +424,62 @@ export default function CmsPortalUsers() {
             <div className="space-y-4">
               <div>
                 <Label>Email</Label>
-                <Input value={selectedUser.email} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
+                <Input
+                  value={selectedUser.email}
+                  onChange={(e) => { setSelectedUser({ ...selectedUser, email: e.target.value }); clearError('email'); }}
+                  onBlur={(e) => {
+                    if (e.target.value.trim() && !EMAIL_REGEX.test(e.target.value)) {
+                      setFieldErrors(p => ({ ...p, email: 'Email inválido' }));
+                    }
+                  }}
+                />
                 {fieldErrors.email && <p className="text-sm text-red-600 mt-1">{fieldErrors.email}</p>}
               </div>
               <div>
                 <Label>Nombre</Label>
-                <Input value={selectedUser.name || ''} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
+                <Input
+                  value={selectedUser.name || ''}
+                  onChange={(e) => { setSelectedUser({ ...selectedUser, name: e.target.value }); clearError('name'); }}
+                  onBlur={(e) => {
+                    if (e.target.value.trim().length < 2) {
+                      setFieldErrors(p => ({ ...p, name: 'El nombre debe tener al menos 2 caracteres' }));
+                    }
+                  }}
+                />
+                {fieldErrors.name && <p className="text-sm text-red-600 mt-1">{fieldErrors.name}</p>}
               </div>
               <div>
                 <Label>Teléfono</Label>
-                <Input value={selectedUser.phone || ''} onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })} />
+                <Input
+                  value={selectedUser.phone || ''}
+                  onChange={(e) => { setSelectedUser({ ...selectedUser, phone: e.target.value }); clearError('phone'); }}
+                  onBlur={(e) => {
+                    if (e.target.value.trim() && !CUBAN_PHONE_REGEX.test(e.target.value)) {
+                      setFieldErrors(p => ({ ...p, phone: 'Teléfono cubano inválido' }));
+                    }
+                  }}
+                />
+                {fieldErrors.phone && <p className="text-sm text-red-600 mt-1">{fieldErrors.phone}</p>}
               </div>
               <div>
                 <Label>Nueva Contraseña (dejar vacío para no cambiar)</Label>
-                <PasswordInput placeholder="••••••" onChange={(e) => setSelectedUser({ ...selectedUser, _newPassword: e.target.value } as typeof selectedUser)} />
+                <PasswordInput
+                  placeholder="••••••"
+                  value=""
+                  onChange={(v) => {
+                    setSelectedUser({ ...selectedUser, _newPassword: v } as typeof selectedUser);
+                    const err = validatePassword(v);
+                    if (err) setFieldErrors(p => ({ ...p, password: err }));
+                    else clearError('password');
+                  }}
+                  onBlur={(e) => {
+                    if (e.target.value.trim()) {
+                      const err = validatePassword(e.target.value);
+                      if (err) setFieldErrors(p => ({ ...p, password: err }));
+                    }
+                  }}
+                />
+                {fieldErrors.password && <p className="text-sm text-red-600 mt-1">{fieldErrors.password}</p>}
               </div>
               <div>
                 <Label htmlFor="edit-role">Rol</Label>
@@ -450,28 +518,68 @@ export default function CmsPortalUsers() {
             <DialogTitle>Crear Usuario</DialogTitle>
           </DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); handleCreateUser(); }} className="space-y-4">
+            {/* Email */}
             <div>
               <Label>Email *</Label>
-              <Input type="email" value={newUser.email} onChange={(e) => { setNewUser({ ...newUser, email: e.target.value }); setFormErrors(p => { const n = { ...p }; delete n.email; return n; }); }} onBlur={(e) => { if (e.target.value.trim()) { const val = e.target.value; if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { setFormErrors(p => ({ ...p, email: 'Email inválido' })); } else if (!val.trim()) { setFormErrors(p => ({ ...p, email: 'El email es requerido' })); } } }} />
+              <Input
+                type="email"
+                value={newUser.email}
+                onChange={(e) => { setNewUser({ ...newUser, email: e.target.value }); setFormErrors(p => { const n = { ...p }; delete n.email; return n; }); }}
+                onBlur={(e) => {
+                  const val = e.target.value.trim();
+                  if (!val) setFormErrors(p => ({ ...p, email: 'El email es requerido' }));
+                  else if (!EMAIL_REGEX.test(val)) setFormErrors(p => ({ ...p, email: 'Email inválido' }));
+                }}
+              />
               {formErrors.email && <p className="text-sm text-red-600 mt-1">{formErrors.email}</p>}
-              {createErrors.general && <p className="text-sm text-red-600 mt-1">{createErrors.general}</p>}
             </div>
+            {/* Password */}
             <div>
               <Label>Contraseña *</Label>
-              <PasswordInput value={newUser.password} onChange={(v) => { setNewUser({ ...newUser, password: v }); setFormErrors(p => { const n = { ...p }; delete n.password; return n; }); }} onBlur={(e) => { const val = e.target.value; if (val) { if (val.length < 8) { setFormErrors(p => ({ ...p, password: 'Mínimo 8 caracteres' })); } else if (!/[A-Z]/.test(val)) { setFormErrors(p => ({ ...p, password: 'Debe tener al menos una mayúscula' })); } else if (!/[0-9]/.test(val)) { setFormErrors(p => ({ ...p, password: 'Debe tener al menos un número' })); } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(val)) { setFormErrors(p => ({ ...p, password: 'Debe tener al menos un carácter especial' })); } } }} placeholder="Mín. 8 chars, mayúscula, número, especial" />
+              <PasswordInput
+                value={newUser.password}
+                onChange={(v) => { setNewUser({ ...newUser, password: v }); setFormErrors(p => { const n = { ...p }; delete n.password; return n; }); }}
+                onBlur={(e) => {
+                  const err = validatePassword(e.target.value);
+                  if (err) setFormErrors(p => ({ ...p, password: err }));
+                }}
+                placeholder="Mín. 8 chars, mayúscula, número, especial"
+              />
               {formErrors.password && <p className="text-sm text-red-600 mt-1">{formErrors.password}</p>}
             </div>
+            {/* Name */}
             <div>
               <Label>Nombre</Label>
-              <Input value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+              <Input
+                value={newUser.name}
+                onChange={(e) => { setNewUser({ ...newUser, name: e.target.value }); setFormErrors(p => { const n = { ...p }; delete n.name; return n; }); }}
+                onBlur={(e) => {
+                  if (e.target.value.trim().length > 0 && e.target.value.trim().length < 2) {
+                    setFormErrors(p => ({ ...p, name: 'El nombre debe tener al menos 2 caracteres' }));
+                  }
+                }}
+              />
+              {formErrors.name && <p className="text-sm text-red-600 mt-1">{formErrors.name}</p>}
             </div>
+            {/* Phone */}
             <div>
               <Label>Teléfono</Label>
-              <Input value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} onBlur={(e) => { if (e.target.value.trim() && !/^(?:\+53|5)[0-9]{7}$/.test(e.target.value)) { setFormErrors(p => ({ ...p, phone: 'Teléfono cubano inválido (ej: +53 5XXXXXXX)' })); } }} placeholder="+53 5XXXXXXX" />
+              <Input
+                value={newUser.phone}
+                onChange={(e) => { setNewUser({ ...newUser, phone: e.target.value }); setFormErrors(p => { const n = { ...p }; delete n.phone; return n; }); }}
+                onBlur={(e) => {
+                  const val = e.target.value.trim();
+                  if (val && !CUBAN_PHONE_REGEX.test(val)) {
+                    setFormErrors(p => ({ ...p, phone: 'Teléfono cubano inválido (ej: +53 5XXXXXXX)' }));
+                  }
+                }}
+                placeholder="+53 5XXXXXXX"
+              />
               {formErrors.phone && <p className="text-sm text-red-600 mt-1">{formErrors.phone}</p>}
             </div>
+            {/* Role */}
             <div>
-              <Label>Rol</Label>
+              <Label>Rol *</Label>
               <Select value={newUser.role} onValueChange={(val) => { setNewUser({ ...newUser, role: val }); setFormErrors(p => { const n = { ...p }; delete n.role; return n; }); }}>
                 <SelectTrigger disabled={rolesLoading}>
                   <SelectValue placeholder={rolesLoading ? 'Cargando roles...' : 'Seleccionar rol'} />
@@ -485,8 +593,13 @@ export default function CmsPortalUsers() {
                   )}
                 </SelectContent>
               </Select>
+              {formErrors.role && <p className="text-sm text-red-600 mt-1">{formErrors.role}</p>}
             </div>
-            <Button type="submit" disabled={creating || !newUser.email || !newUser.password} className="w-full bg-[#005A9C] hover:bg-[#0074C8] text-white">
+            <Button
+              type="submit"
+              disabled={creating || !newUser.email || !newUser.password || !newUser.role || rolesLoading}
+              className="w-full bg-[#005A9C] hover:bg-[#0074C8] text-white"
+            >
               {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
               Crear Usuario
             </Button>

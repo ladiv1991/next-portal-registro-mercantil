@@ -58,9 +58,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validation = createPortalUserSchema.safeParse(body);
     if (!validation.success) {
-      const first = validation.error.errors[0];
-      const msg = first?.message ?? 'Datos inválidos';
-      return NextResponse.json({ success: false, error: msg }, { status: 400 });
+      // Return structured field-level errors so the UI can highlight each invalid field
+      const fieldErrors = validation.error.errors.map(e => ({
+        field: e.path[0] as string,
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { success: false, error: fieldErrors[0]?.message ?? 'Datos inválidos', fields: fieldErrors },
+        { status: 400 },
+      );
     }
 
     const data = validation.data;

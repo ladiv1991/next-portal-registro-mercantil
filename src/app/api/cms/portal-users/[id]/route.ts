@@ -21,9 +21,15 @@ export async function PUT(
 
     const validation = updatePortalUserSchema.safeParse(body);
     if (!validation.success) {
-      const first = validation.error.errors[0];
-      const msg = first?.message ?? 'Datos inválidos';
-      return NextResponse.json({ success: false, error: msg }, { status: 400 });
+      // Return structured field-level errors for UI feedback
+      const fieldErrors = validation.error.errors.map(e => ({
+        field: e.path[0] as string,
+        message: e.message,
+      }));
+      return NextResponse.json(
+        { success: false, error: fieldErrors[0]?.message ?? 'Datos inválidos', fields: fieldErrors },
+        { status: 400 },
+      );
     }
 
     const data = { ...validation.data } as Record<string, unknown>;
