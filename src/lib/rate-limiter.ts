@@ -23,6 +23,18 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
+/** Export store for admin endpoints to clear rate limits */
+export function getRateLimitStore(): Map<string, RateLimitEntry> {
+  return store;
+}
+
+/** Clear all rate limit entries (admin only) */
+export function clearAllRateLimits(): number {
+  const count = store.size;
+  store.clear();
+  return count;
+}
+
 export async function rateLimit(
   key: string,
   config: RateLimitConfig,

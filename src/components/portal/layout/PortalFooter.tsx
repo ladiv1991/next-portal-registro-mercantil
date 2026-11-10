@@ -231,13 +231,19 @@ export default function PortalFooter({ onNavigate }: PortalFooterProps) {
                 { label: 'Sugerencias', slug: 'sugerencias' },
               ].map((item) => (
                 <li key={item.slug}>
-                  <a
-                    href={`/legal/${item.slug}`}
+                  <button
+                    onClick={() => {
+                      onNavigate('legal');
+                      setTimeout(() => {
+                        const el = document.getElementById(`legal-${item.slug}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }}
                     className="text-sm text-white/80 hover:text-white transition-colors flex items-center gap-1.5 group"
                   >
                     <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" style={{ color: theme.colors.accent }} />
                     <span>{item.label}</span>
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
