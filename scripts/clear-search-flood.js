@@ -6,7 +6,12 @@
  * o producción. Requiere autenticación de administrador.
  *
  * Uso:
- *   # Limpiar todas las IPs bloqueadas (producción)
+ *   # Opción 1: Usar RMC_ADMIN_TOKEN (recomendado para CI/automatización)
+ *   # Obtén el token desde las cookies del navegador tras loguearte como admin
+ *   export RMC_ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *   node scripts/clear-search-flood.js --all
+ *
+ *   # Opción 2: Login automático (requiere capturar respuesta de captcha manualmente)
  *   node scripts/clear-search-flood.js --all
  *
  *   # Limpiar IP específica (desarrollo local)
@@ -20,6 +25,7 @@
  *
  * Requiere variable de entorno:
  *   NEXT_PUBLIC_APP_URL=http://localhost:3003
+ *   RMC_ADMIN_TOKEN=<jwt>           (opcional, omite login)
  */
 
 const { execSync } = require('child_process');
@@ -73,7 +79,7 @@ function getToken() {
 
 /**
  * Autenticarse y obtener token de sesión.
- * En desarrollo: intenta con credenciales seed.
+ * En desarrollo: intenta con credenciales seed + captcha automático.
  */
 async function authenticate() {
   const token = getToken();
@@ -85,19 +91,46 @@ async function authenticate() {
 
   log(`Autenticando como ${email}...`);
 
+  // Step 1: get captcha
+  const captchaUrl = new URL('/api/captcha/new', baseUrl);
+  const captchaLib = captchaUrl.protocol === 'https:' ? https : http;
+  const captchaRes = await new Promise((resolve, reject) => {
+    const req = captchaLib.request(captchaUrl, { method: 'GET' }, (res) => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => resolve(JSON.parse(data)));
+    });
+    req.on('error', reject);
+    req.end();
+  });
+
+  if (!captchaRes.success) {
+    throw new Error(`No se pudo obtener CAPTCHA: ${JSON.stringify(captchaRes)}`);
+  }
+
+  log('✅ CAPTCHA obtenido, autenticando...');
+
+  // Step 2: login with captcha
   return new Promise((resolve, reject) => {
-    const postData = JSON.stringify({ email, password });
+    const postData = JSON.stringify({
+      email,
+      password,
+      captchaId: captchaRes.id,
+      captchaAnswer: captchaRes.answer,
+    });
     const url = new URL('/api/auth/login', baseUrl);
-    const req = https.request(url, {
+    const lib = url.protocol === 'https:' ? https : http;
+    const req = lib.request(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(postData),
+        'Origin': baseUrl,
       },
     }, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
-      res.on('end', async () => {
+      res.on('end', () => {
         if (res.statusCode === 200) {
           const setCookie = res.headers['set-cookie']?.[0];
           if (setCookie) {
