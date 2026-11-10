@@ -51,8 +51,6 @@ export default function FloatingChatbot() {
   guidesRef.current = dynamicGuides;
   const faqsRef = useRef(dynamicFAQs);
   faqsRef.current = dynamicFAQs;
-  const sendRef = useRef(send);
-  sendRef.current = send;
 
   // Auto-scroll
   useEffect(() => {
@@ -172,9 +170,13 @@ export default function FloatingChatbot() {
       return;
     }
 
-    // No KB match → LLM
+// No KB match → LLM
     callLLM();
   }, [isLoading, searchKnowledgeBase, callLLM]);
+
+  // Ref to access send from event handlers without including it in deps
+  const sendRef = useRef(send);
+  sendRef.current = send;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && chatInput.trim()) {
