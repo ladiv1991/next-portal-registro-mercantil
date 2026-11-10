@@ -636,9 +636,9 @@
     "semantic_hash": ""
   },
   "src/app/api/search/route.ts": {
-    "mtime": 1794025083.5285602,
-    "seen": 1794030620.1364388,
-    "ast_hash": "cbcdac93fa7fd35a3eb127c58d220799",
+    "mtime": 1794232643.2524405,
+    "seen": 1794319941.5128715,
+    "ast_hash": "33bb0359d697439828faa5dfee5840a5",
     "semantic_hash": ""
   },
   "src/app/api/stats/route.ts": {
@@ -948,14 +948,14 @@
     "semantic_hash": ""
   },
   "src/components/portal/layout/FloatingChatbot.tsx": {
-    "mtime": 1794226124.9663272,
-    "seen": 1794228434.11275,
-    "ast_hash": "1762b1a60d4b902ae03687e6c0e442b9",
+    "mtime": 1794320438.9159205,
+    "seen": 1794320762.771584,
+    "ast_hash": "71e777169be9a5a2cf0e193a89f7b0f8",
     "semantic_hash": ""
   },
   "src/components/portal/layout/PortalFooter.tsx": {
-    "mtime": 1794226334.2507453,
-    "seen": 1794228434.1127553,
+    "mtime": 1794231814.9786036,
+    "seen": 1794319941.5202987,
     "ast_hash": "baa6d00a276b86ea655b9c8308801bfa",
     "semantic_hash": ""
   },
@@ -996,9 +996,9 @@
     "semantic_hash": ""
   },
   "src/components/portal/sections/ConsultasSection.tsx": {
-    "mtime": 1794225924.4664793,
-    "seen": 1794228434.1129053,
-    "ast_hash": "dd984118aa8f662b3a1a7b4f6d3dfeac",
+    "mtime": 1794319143.8955755,
+    "seen": 1794319941.5212312,
+    "ast_hash": "8245c4a4d0ed8bccf8399d70621a2edc",
     "semantic_hash": ""
   },
   "src/components/portal/sections/EstadisticasSection.tsx": {
@@ -1518,9 +1518,9 @@
     "semantic_hash": ""
   },
   "src/lib/captcha-v2.ts": {
-    "mtime": 1794101436.638076,
-    "seen": 1794102163.7809613,
-    "ast_hash": "a45e575e1cbbffe199c1726759c17c45",
+    "mtime": 1794232371.0832326,
+    "seen": 1794319941.5342474,
+    "ast_hash": "b26a9d96fb53bdccade85019ace7b606",
     "semantic_hash": ""
   },
   "src/lib/captcha.ts": {
@@ -1590,9 +1590,9 @@
     "semantic_hash": ""
   },
   "src/lib/rate-limiter.ts": {
-    "mtime": 1792715857.355353,
-    "seen": 1794018555.5358229,
-    "ast_hash": "dbc5e77283359c38af37538f696d1009",
+    "mtime": 1794319172.8876824,
+    "seen": 1794319941.5358737,
+    "ast_hash": "a5f3595afae58edfc73c17545367eb25",
     "semantic_hash": ""
   },
   "src/lib/reset-token.ts": {
@@ -1884,9 +1884,9 @@
     "semantic_hash": ""
   },
   "src/components/portal/sections/normatividad/GacetaLink.tsx": {
-    "mtime": 1794217113.5775445,
-    "seen": 1794222837.164544,
-    "ast_hash": "2f8d7c2a137e0bd807d620f41b135f28",
+    "mtime": 1794232616.9783218,
+    "seen": 1794319941.5238113,
+    "ast_hash": "8befaa9038db007b3d5c256048d1870b",
     "semantic_hash": ""
   },
   "src/data/gaceta-registry.ts": {
@@ -1986,9 +1986,27 @@
     "semantic_hash": ""
   },
   "src/components/portal/sections/SitePagesSection.tsx": {
-    "mtime": 1794228226.3934586,
-    "seen": 1794228434.1131918,
+    "mtime": 1794231814.982867,
+    "seen": 1794319941.5218897,
     "ast_hash": "1b19dc733262c7107cf116c9c06fd6a5",
+    "semantic_hash": ""
+  },
+  "scripts/clear-search-flood.js": {
+    "mtime": 1794320182.3101661,
+    "seen": 1794320205.6298807,
+    "ast_hash": "86a60951ea805bf432a37886a16a9f88",
+    "semantic_hash": ""
+  },
+  "src/app/api/cms/admin/rate-limits/reset/route.ts": {
+    "mtime": 1794319287.4481387,
+    "seen": 1794319941.5027359,
+    "ast_hash": "8223d16a8557b1dffbe8b451f389b750",
+    "semantic_hash": ""
+  },
+  "src/app/api/cms/admin/rate-limits/status/route.ts": {
+    "mtime": 1794319301.7060194,
+    "seen": 1794319941.5027387,
+    "ast_hash": "aa2af9f4bcf06ffb2350a0eb787a5b8f",
     "semantic_hash": ""
   }
 }
